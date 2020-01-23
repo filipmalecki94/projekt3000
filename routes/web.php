@@ -12,10 +12,10 @@
  */
 
 Route::get('/', function () {
-	return view('welcome');
+	return view('index');
 });
 
 Route::get('/fifi/{id?}', function (int $id = 1) {
 
 	return view('fifi', ['id' => $id]);
-})->where('id', '[0-9]+');
+})->where('id', '\d+');
