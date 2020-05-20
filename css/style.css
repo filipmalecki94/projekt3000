@@ -1,0 +1,9 @@
+.graphical-section {
+	height: 500px;
+}
+
+.graph,
+.code {
+	border: solid black 1px;
+	height: 100%;
+}
