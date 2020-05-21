@@ -2,7 +2,6 @@
 include 'graph.php';
 
 $Graph = new Graph;
-var_dump($Graph->getCollection());
 ?>
 <html>
 	<head>
@@ -35,8 +34,11 @@ var_dump($Graph->getCollection());
 			<!-- graphical section start -->
 			<div class="graphical-section row">
 				<div class="graph-block col-8">
-					<div class="graph m-1">
-						<?php var_dump($_GET);?>
+					<div class="graph my-1 mx-3 p-4 d-flex justify-content-around">
+						<?php foreach ($Graph->getCollection() as $value) {
+	echo $value;
+}
+?>
 					</div>
 				</div>
 				<div class="code-block col-4">
