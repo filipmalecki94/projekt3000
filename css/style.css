@@ -7,3 +7,18 @@
 	border: solid black 1px;
 	height: 100%;
 }
+
+.bar-block {
+	position: relative;
+}
+
+.bar {
+	position: absolute;
+	bottom: 0;
+	width: 10px;
+	background: red;
+}
+
+.code {
+	font-size: .8rem;
+}
