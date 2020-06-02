@@ -6,6 +6,14 @@
 .code {
 	border: solid black 1px;
 	height: 100%;
+	position: relative;
+}
+
+.indexes,
+.bars {
+	height: 100%;
+	width: 100%;
+	position: absolute;
 }
 
 .bar-block {
@@ -21,4 +29,22 @@
 
 .code {
 	font-size: .8rem;
+}
+
+.index-container {
+	position: relative;
+	width:10px;
+	z-index: 1;
+}
+
+.index {
+	margin-top:25px;
+}
+
+.index-bar {
+	height: 5px;
+	width: 10px;
+	background: red;
+	margin-top:2px;
+	display: none;
 }

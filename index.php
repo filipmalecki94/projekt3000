@@ -28,22 +28,27 @@ $Code = new InsertionSort;
 			<div class="text-center m-4 app-title">Sorting algoritms</div>
 			<!-- sort nav start -->
 			<div class="sorting-nav row my-4">
-				<div class="col text-center sort-option">sort1</div>
-				<div class="col text-center sort-option">sort2</div>
-				<div class="col text-center sort-option">sort3</div>
-				<div class="col text-center sort-option">sort4</div>
-				<div class="col text-center sort-option">sort5</div>
+				<a class="col text-center sort-option">Insertion Sort</a>
+				<a class="col text-center sort-option">Merge Sort</a>
+				<a class="col text-center sort-option">Quick Sort</a>
+				<a class="col text-center sort-option">Bucket Sort</a>
+				<a class="col text-center sort-option">Counting Sort</a>
 			</div>
 			<!-- sort nav end -->
 			<!-- graphical section start -->
 			<div class="graphical-section row">
 				<div class="graph-block col-8">
-					<div class="graph my-1 mx-3 p-4 d-flex justify-content-around">
+					<div class="graph my-1 mx-3">
+						<div class="indexes d-flex justify-content-around p-4">
+							<?php echo $Graph->getIndexes(); ?>
+						</div>
+						<div class="bars d-flex justify-content-around p-4">
 						<?php
 foreach ($Graph->getFormattedCollection() as $value) {
 	echo $value;
 }
 ?>
+						</div>
 					</div>
 				</div>
 				<div class="code-block col-4">
@@ -59,8 +64,8 @@ foreach ($Code->getFormatCode() as $value) {
 			<!-- grapghical section end -->
 			<!-- algorithm nav start -->
 			<div class="algorithm-nav row my-4 mx-1 border border-dark">
-				<div class="col text-center nav-option prev">prev</div>
-				<div class="col text-center nav-option play">play</div>
+				<button class="col text-center nav-option prev">prev</button>
+				<button class="col text-center nav-option play">play</button>
 				<button class="col text-center nav-option next">next</button>
 			</div>
 			<!-- algorithm nav end -->

@@ -4,6 +4,8 @@ class Graph {
 
 	protected $collection = [];
 
+	private $indexes = ['i', 'j'];
+
 	public function __construct(array $collection = []) {
 		$this->setCollection($collection);
 	}
@@ -35,6 +37,19 @@ class Graph {
 				;},
 			$this->collection
 		);
+	}
+
+	public function getIndexes(): string{
+		$indexes = '';
+		foreach ($this->collection as $position => $value) {
+			$indexes = $indexes . '<div id="' . $position . '" class="index">';
+			foreach ($this->indexes as $index) {
+				$indexes = $indexes . '<div class="index-bar ' . $index . '"></div>';
+			}
+			$indexes = $indexes . '</div>';
+		}
+
+		return $indexes;
 	}
 
 	private function getMax(): int {
