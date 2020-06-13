@@ -72,15 +72,19 @@ class Graph {
 		$counterArr = [];
 		for ($i = 0; $i <= $this->getMax(); $i++) {
 			$counterArr[] = '
-				<div id="' . $i . '" class="counter-block d-flex justify-content-center" style="width:100%;">' . $i . '
+				<div id="' . $i . '" class="counter-block d-flex flex-wrap justify-content-center" style="width:100%;">' . $i . '
 					<div class="counter-box d-flex justify-content-center align-items-center">0</div>
 				</div>
 			';
 		}
+
 		return $counterArr;
 	}
 
 	private function getMax(): int {
+		if (count($this->collection) === 0) {
+			return 0;
+		}
 		return max($this->collection);
 	}
 
@@ -112,8 +116,8 @@ $Code = new CountingSort;
 			<div class="text-center m-4 app-title">Sorting algoritms</div>
 			<!-- sort nav start -->
 			<div class="sorting-nav row my-4">
-				<div class="col text-center sort-option">Insertion sort</div>
-				<div class="col text-center sort-option">CountingSort</div>
+				<a class="col text-center sort-option" href="InsertionSort/InsertionSort.php">Insertion sort</a>
+				<a class="col text-center sort-option" href="CountingSort/CountingSort.php">Counting sort</a>
 				<div class="col text-center sort-option">sort3</div>
 				<div class="col text-center sort-option">sort4</div>
 				<div class="col text-center sort-option">sort5</div>

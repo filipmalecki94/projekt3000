@@ -96,8 +96,8 @@ $Code = new InsertionSort;
 			<div class="text-center m-4 app-title">Sorting algoritms</div>
 			<!-- sort nav start -->
 			<div class="sorting-nav row my-4">
-				<div class="col text-center sort-option">Insertion sort</div>
-				<div class="col text-center sort-option">sort2</div>
+				<a class="col text-center sort-option" href="/projekt3000/InsertionSort/InsertionSort.php">Insertion sort</a>
+				<a class="col text-center sort-option" href="/projekt3000/CountingSort/CountingSort.php">Counting sort</a>
 				<div class="col text-center sort-option">sort3</div>
 				<div class="col text-center sort-option">sort4</div>
 				<div class="col text-center sort-option">sort5</div>

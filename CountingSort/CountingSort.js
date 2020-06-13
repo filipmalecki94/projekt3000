@@ -72,23 +72,23 @@ $(".next").click(function() {
 	if(stepDone === 3){
 		$('.graph').empty();
 		for(i=1;i<=n;i++){
-			$('.graph').append('<div id="'+i+'" class="slot"></div>')
+			$('.graph').append('<div id="'+i+'" class="slot">'+i+'</div>')
 		}
 		i = n-1;
 		var interval = setInterval(function(){
 			var e = --counter[init[i].val].count;
-
+			counter[init[i].val].div.find('.counter-box').text(e)
 			sorted[e].val = init[i].val;
 			sorted[e].div = init[i].div;
 			console.log(init[i].val)
 			$('.graph #'+(e+1)+'.slot').replaceWith(sorted[e].div);
 			sorted[e].div.animate({
 				    opacity: 1
-				  }, 1,function(){i--;});
+				  }, 1000,function(){i--;});
 			if(i === 0){
 		    	clearInterval(interval)
 		    }
-		},1000);
+		},2000);
 		stepDone = 4;
 		return;
 	}
