@@ -3,21 +3,20 @@
 }
 
 .graph,
-.code {
+.code,
+.counter {
 	border: solid black 1px;
 	height: 100%;
-	position: relative;
-}
-
-.indexes,
-.bars {
-	height: 100%;
-	width: 100%;
-	position: absolute;
 }
 
 .bar-block {
 	position: relative;
+}
+
+.counter-block {
+	position: relative;
+	width: 100%;
+	opacity: 0;
 }
 
 .bar {
@@ -27,24 +26,21 @@
 	background: red;
 }
 
+.counter-box {
+	width: 100%;
+    position: absolute;
+    height: 70%;
+    bottom: 0;
+    border: solid 1px;
+    display: none;
+}
+
 .code {
 	font-size: .8rem;
+	padding: 15px;
+	font-weight: bold;
 }
 
-.index-container {
-	position: relative;
-	width:10px;
-	z-index: 1;
-}
-
-.index {
-	margin-top:25px;
-}
-
-.index-bar {
-	height: 5px;
-	width: 10px;
-	background: red;
-	margin-top:2px;
-	display: none;
+.code .highlight {
+	color: red;
 }

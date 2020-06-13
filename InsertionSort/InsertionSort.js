@@ -1,49 +1,77 @@
 var collection = {count:0},
-	i = 0,
-	j = 0;
+	i = 1,
+	key,
+	j;
 
-$('.bar-block').each(function(index,$div) {
+$('.bar-block:not(#empty)').each(function(index,$div) {
 	collection.count++;
 	collection[index] = {
-		div:$div,
+		div:$($div),
 		val:parseInt($(this).attr('id')),
-		index: $('#'+index+'.index')
 	};
 });
 
 $(".next").click(function() {
-	var that = this;
-
-	$(collection[i].index).find('.i').show();
-	$(collection[j].index).find('.j').show();
-
-	$(this).attr('disabled',true);
-    
-	if(collection[j].val > collection[j+1].val){			
-		var promise = new Promise(function(resolve){
-			$(collection[j].div).swap({  
-	        	target: collection[j+1].div,  
-	            opacity: "0.5",
-	            speed: 1000,
-	            callback: function(){resolve();}
-	        });  
-		});
-		var temp = collection[j];
-		collection[j] = collection[j+1];
-		collection[j+1] = temp;
-	}
-	if(j < collection.count - i - 2){
-		$(collection[j].index).find('.j').hide();	
-		$(collection[++j].index).find('.j').show();	
-	} else {
-		i++;
-		j=0;
-	}
-
-	if(typeof promise !== 'undefined'){
-		promise.then(function(){
-			$(that).removeAttr('disabled');
-		});
-	}
+	key = copyObj(collection[i]);
+	$(key.div).swap({  
+        target: $('#empty'),  
+        opacity: "0.5",
+        speed: 1000,
+        callback:function(){
+		j = i - 1;
+			loop(j).then((res) => {
+				collection[res+1] = key;
+				$(collection[res+1].div).swap({  
+		            target: $('#empty'),  
+		            opacity: "0.5",
+		            speed: 1000,
+		        });
+				i++;
+			});
+        }
+    }); 
 });
 
+const doSomething = value =>
+  	new Promise(resolve => {
+	    if(value >= 0 && collection[value].val > key.val) {
+	    	collection[value + 1] = collection[value];
+	    	$(collection[value].div).swap({  
+		            target: $('#empty'),  
+		            opacity: "0.5",
+		            speed: 1000,
+		            callback:function(){
+	    				resolve(value -1);
+		            }
+		        });
+	    } else {
+	    	resolve(value);
+	    }
+	});
+
+const loop = value =>
+  	doSomething(value).then(result => {
+    	if(result >= 0 && collection[result].val > key.val) {
+   		   	return loop(result);
+    	}
+    	return result;
+  	});
+
+
+function swapCollectionItems(value) {
+	var temp = collection[value];
+
+	collection[value] = collection[value+1];
+	collection[value+1] = temp;
+}
+
+function changeCodeHighlight(id,time) {
+	setTimeout(function(){
+		$('.code .highlight').removeClass('highlight');
+		$('.step.'+id).addClass('highlight');
+	},time);
+}
+
+function copyObj(obj) {
+	return $.extend(true,{},obj);
+}
