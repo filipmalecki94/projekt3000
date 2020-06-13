@@ -29,11 +29,14 @@ $(".next").click(function() {
 		var interval = setInterval(function(){
 		    counter[i].div.animate({
 				    opacity: 1
-				  }, 1000);
-		    i++;
-		    if(i > n) {
+				  }, 1,function(){
+				   i++;
+				   if(i > k) {
 		        clearInterval(interval);
 		    }
+		});
+		   
+		    
 		}, 500);
     	stepDone = 1;
     	return;
@@ -71,27 +74,23 @@ $(".next").click(function() {
 		for(i=1;i<=n;i++){
 			$('.graph').append('<div id="'+i+'" class="slot"></div>')
 		}
-		for(i = n-1; i >= 0; i--){
+		i = n-1;
+		var interval = setInterval(function(){
 			var e = --counter[init[i].val].count;
+
 			sorted[e].val = init[i].val;
 			sorted[e].div = init[i].div;
-		}
-		stepDone = 4;
-		return;
-	}
-	if(stepDone === 4){
-		i = 1
-		var interval = setInterval(function(){
-		    $('.graph #'+i+'.slot').replaceWith(sorted[i-1].div)
-		    sorted[i-1].div.animate({
+			console.log(init[i].val)
+			$('.graph #'+(e+1)+'.slot').replaceWith(sorted[e].div);
+			sorted[e].div.animate({
 				    opacity: 1
-				  }, 1,function(){i++;});
-		    if(i >= n){
+				  }, 1,function(){i--;});
+			if(i === 0){
 		    	clearInterval(interval)
 		    }
-		}, 1000);
-    	stepDone = 5;
-    	return;
+		},1000);
+		stepDone = 4;
+		return;
 	}
 });
 
