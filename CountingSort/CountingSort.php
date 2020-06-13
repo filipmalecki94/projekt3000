@@ -1,18 +1,23 @@
 <?php
-class InsertionSort {
+class CountingSort {
 	protected $codeStructure = [
-		['line' => 'int i,key,j;', 'tab' => 0],
-		['line' => 'for(i = 1; i < n; i++)', 'tab' => 0],
-		['line' => '{', 'tab' => 0],
-		['line' => 'key = arr[i];', 'tab' => 1],
-		['line' => 'j = i - 1;', 'tab' => 1],
-		['line' => 'while(j >= 0 && arr[j] > key)', 'tab' => 1],
-		['line' => '{', 'tab' => 1],
-		['line' => 'arr[j + 1] = arr[j];', 'tab' => 2],
-		['line' => 'j = j - 1;', 'tab' => 2],
-		['line' => '}', 'tab' => 1],
-		['line' => 'arr[j + 1] = key;', 'tab' => 1],
-		['line' => '}', 'tab' => 0],
+		['line' => 'int k=max(arr);', 'tab' => 0],
+		['line' => 'int n=count(arr);', 'tab' => 0],
+		['line' => 'int i;', 'tab' => 0],
+		['line' => 'int counter[k + 1];', 'tab' => 0],
+		['line' => 'int sorted[k + 1];', 'tab' => 0],
+		['line' => '&nbsp;', 'tab' => 0],
+		['line' => 'for(i = 0; i < k; i++)', 'tab' => 0],
+		['line' => 'counter[i] = 0;', 'tab' => 1],
+		['line' => '&nbsp;', 'tab' => 0],
+		['line' => 'for(i = 0; i < n; i++)', 'tab' => 0],
+		['line' => 'counter[arr[i]]++;', 'tab' => 1],
+		['line' => '&nbsp;', 'tab' => 0],
+		['line' => 'for(i = 1; i < k; i++)', 'tab' => 0],
+		['line' => 'counter[i] += counter[i-1];', 'tab' => 1],
+		['line' => '&nbsp;', 'tab' => 0],
+		['line' => 'for(i = n-1; i >= 0; i--)', 'tab' => 0],
+		['line' => 'sorted[--counter[arr[i]]] = arr[i];', 'tab' => 1],
 	];
 
 	public function getFormatCode(): array
@@ -50,7 +55,7 @@ class Graph {
 
 	public function getFormattedCollection(): array
 	{
-		return array_merge(array_map(
+		return array_map(
 			function ($value) {
 				return '
 						<div id="' . $value . '" class="bar-block d-flex justify-content-center ">
@@ -59,19 +64,34 @@ class Graph {
 						</div>'
 				;},
 			$this->collection
-		),
-			['<div id="empty" class="bar-block d-flex justify-content-center">&nbsp;</div>']
 		);
 	}
 
+	public function getCounter(): array
+	{
+		$counterArr = [];
+		for ($i = 0; $i <= $this->getMax(); $i++) {
+			$counterArr[] = '
+				<div id="' . $i . '" class="counter-block d-flex flex-wrap justify-content-center" style="width:100%;">' . $i . '
+					<div class="counter-box d-flex justify-content-center align-items-center">0</div>
+				</div>
+			';
+		}
+
+		return $counterArr;
+	}
+
 	private function getMax(): int {
+		if (count($this->collection) === 0) {
+			return 0;
+		}
 		return max($this->collection);
 	}
 
 }
 
 $Graph = new Graph;
-$Code = new InsertionSort;
+$Code = new CountingSort;
 ?>
 <html>
 	<head>
@@ -96,8 +116,8 @@ $Code = new InsertionSort;
 			<div class="text-center m-4 app-title">Sorting algoritms</div>
 			<!-- sort nav start -->
 			<div class="sorting-nav row my-4">
-				<a class="col text-center sort-option" href="/projekt3000/InsertionSort/InsertionSort.php">Insertion sort</a>
-				<a class="col text-center sort-option" href="/projekt3000/CountingSort/CountingSort.php">Counting sort</a>
+				<a class="col text-center sort-option" href="InsertionSort/InsertionSort.php">Insertion sort</a>
+				<a class="col text-center sort-option" href="CountingSort/CountingSort.php">Counting sort</a>
 				<div class="col text-center sort-option">sort3</div>
 				<div class="col text-center sort-option">sort4</div>
 				<div class="col text-center sort-option">sort5</div>
@@ -106,9 +126,16 @@ $Code = new InsertionSort;
 			<!-- graphical section start -->
 			<div class="graphical-section row">
 				<div class="graph-block col-8">
-					<div class="graph my-1 mx-3 p-4 d-flex justify-content-around">
+					<div class="graph h-75 my-1 mx-3 p-4 d-flex justify-content-around">
 						<?php
 foreach ($Graph->getFormattedCollection() as $value) {
+	echo $value;
+}
+?>
+					</div>
+					<div class="counter h-25 my-1 mx-3 p-4 d-flex justify-content-around">
+<?php
+foreach ($Graph->getCounter() as $value) {
 	echo $value;
 }
 ?>
@@ -133,6 +160,6 @@ foreach ($Code->getFormatCode() as $value) {
 			</div>
 			<!-- algorithm nav end -->
 		</div>
-		<script src="/projekt3000/InsertionSort/InsertionSort.js"></script>
+		<script src="/projekt3000/CountingSort/CountingSort.js"></script>
 	</body>
 </html>

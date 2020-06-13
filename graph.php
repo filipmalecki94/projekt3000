@@ -25,7 +25,7 @@ class Graph {
 
 	public function getFormattedCollection(): array
 	{
-		return array_map(
+		return array_merge(array_map(
 			function ($value) {
 				return '
 						<div id="' . $value . '" class="bar-block d-flex justify-content-center ">
@@ -34,6 +34,8 @@ class Graph {
 						</div>'
 				;},
 			$this->collection
+		),
+			['<div id="empty" class="bar-block d-flex justify-content-center">&nbsp;</div>']
 		);
 	}
 

@@ -1,10 +1,3 @@
-<?php
-include 'Graph.php';
-include 'InsertionSort/InsertionSort.php';
-
-$Graph = new Graph;
-$Code = new InsertionSort;
-?>
 <html>
 	<head>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -28,8 +21,8 @@ $Code = new InsertionSort;
 			<div class="text-center m-4 app-title">Sorting algoritms</div>
 			<!-- sort nav start -->
 			<div class="sorting-nav row my-4">
-				<div class="col text-center sort-option">sort1</div>
-				<div class="col text-center sort-option">sort2</div>
+				<a class="col text-center sort-option" href="InsertionSort/InsertionSort.php">Insertion sort</a>
+				<a class="col text-center sort-option" href="CountingSort/CountingSort.php">Counting sort</a>
 				<div class="col text-center sort-option">sort3</div>
 				<div class="col text-center sort-option">sort4</div>
 				<div class="col text-center sort-option">sort5</div>
@@ -39,20 +32,10 @@ $Code = new InsertionSort;
 			<div class="graphical-section row">
 				<div class="graph-block col-8">
 					<div class="graph my-1 mx-3 p-4 d-flex justify-content-around">
-						<?php
-foreach ($Graph->getFormattedCollection() as $value) {
-	echo $value;
-}
-?>
 					</div>
 				</div>
 				<div class="code-block col-4">
 					<div class="code m-1">
-						<?php
-foreach ($Code->getFormatCode() as $value) {
-	echo $value;
-}
-?>
 					</div>
 				</div>
 			</div>
