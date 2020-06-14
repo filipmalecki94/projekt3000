@@ -1,29 +1,32 @@
 <?php
-class CountingSort {
-	protected $codeStructure = [
-		['line' => 'int k=max(arr);', 'tab' => 0],
-		['line' => 'int n=count(arr);', 'tab' => 0],
-		['line' => 'int i;', 'tab' => 0],
-		['line' => 'int counter[k + 1];', 'tab' => 0],
-		['line' => 'int sorted[k + 1];', 'tab' => 0],
+class QuickSort {
+	public $partitionCodeStructure = [
+		['line' => 'int pivot = arr[high];', 'tab' => 0],
+		['line' => 'int i = (low - 1);', 'tab' => 0],
 		['line' => '&nbsp;', 'tab' => 0],
-		['line' => 'for(i = 0; i < k; i++)', 'tab' => 0],
-		['line' => 'counter[i] = 0;', 'tab' => 1],
-		['line' => '&nbsp;', 'tab' => 0],
-		['line' => 'for(i = 0; i < n; i++)', 'tab' => 0],
-		['line' => 'counter[arr[i]]++;', 'tab' => 1],
-		['line' => '&nbsp;', 'tab' => 0],
-		['line' => 'for(i = 1; i < k; i++)', 'tab' => 0],
-		['line' => 'counter[i] += counter[i-1];', 'tab' => 1],
-		['line' => '&nbsp;', 'tab' => 0],
-		['line' => 'for(i = n-1; i >= 0; i--)', 'tab' => 0],
-		['line' => 'sorted[--counter[arr[i]]] = arr[i];', 'tab' => 1],
+		['line' => 'for(int j = low; j <= high-1; j++) {', 'tab' => 0],
+		['line' => 'if(arr[j] < pivot) {', 'tab' => 1],
+		['line' => 'i++;', 'tab' => 2],
+		['line' => 'swap(&arr[i], &arr[j]);', 'tab' => 2],
+		['line' => '}', 'tab' => 1],
+		['line' => '}', 'tab' => 0],
+		['line' => 'swap(&arr[i+1],&arr[high];', 'tab' => 0],
+		['line' => 'return (i+1);', 'tab' => 0],
 	];
 
-	public function getFormatCode(): array
+	public $quickSortCodeStructure = [
+		['line' => 'if(low < high) {', 'tab' => 0],
+		['line' => 'int pi = partition(arr, low, high);', 'tab' => 1],
+		['line' => '&nbsp;', 'tab' => 1],
+		['line' => 'quickSort(arr, low, pi - 1);', 'tab' => 1],
+		['line' => 'quickSort(arr, pi + 1, high);', 'tab' => 1],
+		['line' => '}', 'tab' => 0],
+	];
+
+	public function getFormatCode(array $code = []): array
 	{
 		$formattedCode = [];
-		foreach ($this->codeStructure as $line => $codePart) {
+		foreach ($code as $line => $codePart) {
 			$formattedCode[] = '<div style="margin-left: ' . $codePart['tab'] * 10 . 'px;"class="step ' . $line . '">' . $codePart['line'] . '</div>';
 		}
 
@@ -91,7 +94,7 @@ class Graph {
 }
 
 $Graph = new Graph;
-$Code = new CountingSort;
+$Code = new QuickSort;
 ?>
 <html>
 	<head>
@@ -126,25 +129,25 @@ $Code = new CountingSort;
 			<!-- graphical section start -->
 			<div class="graphical-section row">
 				<div class="graph-block col-8">
-					<div class="graph h-75 my-1 mx-3 p-4 d-flex justify-content-around">
+					<div class="graph my-1 mx-3 p-4 d-flex justify-content-around">
 						<?php
 foreach ($Graph->getFormattedCollection() as $value) {
 	echo $value;
 }
 ?>
 					</div>
-					<div class="counter h-25 my-1 mx-3 p-4 d-flex justify-content-around">
-<?php
-foreach ($Graph->getCounter() as $value) {
+				</div>
+				<div class="code-block col-4">
+					<div class="code m-1 h-50">
+						<?php
+foreach ($Code->getFormatCode($Code->partitionCodeStructure) as $value) {
 	echo $value;
 }
 ?>
 					</div>
-				</div>
-				<div class="code-block col-4">
-					<div class="code m-1">
+					<div class="code m-1 h-50">
 						<?php
-foreach ($Code->getFormatCode() as $value) {
+foreach ($Code->getFormatCode($Code->quickSortCodeStructure) as $value) {
 	echo $value;
 }
 ?>
@@ -160,6 +163,6 @@ foreach ($Code->getFormatCode() as $value) {
 			</div>
 			<!-- algorithm nav end -->
 		</div>
-		<script src="/projekt3000/CountingSort/CountingSort.js"></script>
+		<script src="/projekt3000/QuickSort/QuickSort.js"></script>
 	</body>
 </html>

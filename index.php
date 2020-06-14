@@ -23,7 +23,7 @@
 			<div class="sorting-nav row my-4">
 				<a class="col text-center sort-option" href="InsertionSort/InsertionSort.php">Insertion sort</a>
 				<a class="col text-center sort-option" href="CountingSort/CountingSort.php">Counting sort</a>
-				<div class="col text-center sort-option">sort3</div>
+				<a class="col text-center sort-option" href="QuickSort/QuickSort.php">Quick sort</a>
 				<div class="col text-center sort-option">sort4</div>
 				<div class="col text-center sort-option">sort5</div>
 			</div>
