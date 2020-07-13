@@ -1,24 +1,32 @@
 <?php
-class InsertionSort {
-	protected $codeStructure = [
-		['line' => 'int i,key,j;', 'tab' => 0],
-		['line' => 'for(i = 1; i < n; i++)', 'tab' => 0],
-		['line' => '{', 'tab' => 0],
-		['line' => 'key = arr[i];', 'tab' => 1],
-		['line' => 'j = i - 1;', 'tab' => 1],
-		['line' => 'while(j >= 0 && arr[j] > key)', 'tab' => 1],
-		['line' => '{', 'tab' => 1],
-		['line' => 'arr[j + 1] = arr[j];', 'tab' => 2],
-		['line' => 'j = j - 1;', 'tab' => 2],
+class QuickSort {
+	public $partitionCodeStructure = [
+		['line' => 'int pivot = arr[high];', 'tab' => 0],
+		['line' => 'int i = (low - 1);', 'tab' => 0],
+		['line' => '&nbsp;', 'tab' => 0],
+		['line' => 'for(int j = low; j <= high-1; j++) {', 'tab' => 0],
+		['line' => 'if(arr[j] < pivot) {', 'tab' => 1],
+		['line' => 'i++;', 'tab' => 2],
+		['line' => 'swap(&arr[i], &arr[j]);', 'tab' => 2],
 		['line' => '}', 'tab' => 1],
-		['line' => 'arr[j + 1] = key;', 'tab' => 1],
+		['line' => '}', 'tab' => 0],
+		['line' => 'swap(&arr[i+1],&arr[high];', 'tab' => 0],
+		['line' => 'return (i+1);', 'tab' => 0],
+	];
+
+	public $quickSortCodeStructure = [
+		['line' => 'if(low < high) {', 'tab' => 0],
+		['line' => 'int pi = partition(arr, low, high);', 'tab' => 1],
+		['line' => '&nbsp;', 'tab' => 1],
+		['line' => 'quickSort(arr, pi + 1, high);', 'tab' => 1],
+		['line' => 'quickSort(arr, low, pi - 1);', 'tab' => 1],
 		['line' => '}', 'tab' => 0],
 	];
 
-	public function getFormatCode(): array
+	public function getFormatCode(array $code = []): array
 	{
 		$formattedCode = [];
-		foreach ($this->codeStructure as $line => $codePart) {
+		foreach ($code as $line => $codePart) {
 			$formattedCode[] = '<div style="margin-left: ' . $codePart['tab'] * 10 . 'px;"class="step ' . $line . '">' . $codePart['line'] . '</div>';
 		}
 
@@ -43,19 +51,6 @@ class Graph {
 		return $this;
 	}
 
-	public function getIndexes() {
-		$indexes = [];
-		for ($i = 0; $i <= count($this->collection); $i++) {
-			$indexes[] = '
-						<div id="' . $i . '" class="bar-block d-flex justify-content-center ">
-							' . ($i === count($this->collection) ? 'key' : $i) . '
-							<div class="bar "></div>
-						</div>';
-		}
-
-		return $indexes;
-	}
-
 	public function getCollection(): array
 	{
 		return $this->collection;
@@ -63,7 +58,7 @@ class Graph {
 
 	public function getFormattedCollection(): array
 	{
-		return array_merge(array_map(
+		return array_map(
 			function ($value) {
 				return '
 						<div id="' . $value . '" class="bar-block d-flex justify-content-center ">
@@ -72,8 +67,6 @@ class Graph {
 						</div>'
 				;},
 			$this->collection
-		),
-			['<div id="empty" class="bar-block d-flex justify-content-center">&nbsp;</div>']
 		);
 	}
 
@@ -86,14 +79,31 @@ class Graph {
 		return 'hsl(' . $c . ', 100%, 50%)';
 	}
 
+	public function getCounter(): array
+	{
+		$counterArr = [];
+		for ($i = 0; $i <= $this->getMax(); $i++) {
+			$counterArr[] = '
+				<div id="' . $i . '" class="counter-block d-flex flex-wrap justify-content-center" style="width:100%;">' . $i . '
+					<div class="counter-box d-flex justify-content-center align-items-center">0</div>
+				</div>
+			';
+		}
+
+		return $counterArr;
+	}
+
 	private function getMax(): int {
+		if (count($this->collection) === 0) {
+			return 0;
+		}
 		return max($this->collection);
 	}
 
 }
 
 $Graph = new Graph;
-$Code = new InsertionSort;
+$Code = new QuickSort;
 ?>
 <html>
 	<head>
@@ -115,18 +125,19 @@ $Code = new InsertionSort;
 	</head>
 	<body>
 		<div class="container">
-			<div class="text-center m-4 app-title">Sorting algoritms</div>
+			<div class="text-center m-4 app-title">Sorting algorithms</div>
 			<!-- sort nav start -->
 			<div class="sorting-nav row my-4">
 				<a class="col text-center sort-option" href="InsertionSort/InsertionSort.php">Insertion sort</a>
 				<a class="col text-center sort-option" href="CountingSort/CountingSort.php">Counting sort</a>
 				<a class="col text-center sort-option" href="QuickSort/QuickSort.php">Quick sort</a>
+				<div class="col text-center sort-option">sort4</div>
+				<div class="col text-center sort-option">sort5</div>
 			</div>
 			<!-- sort nav end -->
 			<!-- graphical section start -->
 			<div class="graphical-section row">
 				<div class="graph-block col-8">
-
 					<div class="graph my-1 mx-3 p-4 d-flex justify-content-around">
 						<?php
 foreach ($Graph->getFormattedCollection() as $value) {
@@ -136,9 +147,16 @@ foreach ($Graph->getFormattedCollection() as $value) {
 					</div>
 				</div>
 				<div class="code-block col-4">
-					<div class="code m-1">
+					<div class="code m-1 h-50">
 						<?php
-foreach ($Code->getFormatCode() as $value) {
+foreach ($Code->getFormatCode($Code->partitionCodeStructure) as $value) {
+	echo $value;
+}
+?>
+					</div>
+					<div class="code m-1 h-50">
+						<?php
+foreach ($Code->getFormatCode($Code->quickSortCodeStructure) as $value) {
 	echo $value;
 }
 ?>
@@ -147,11 +165,11 @@ foreach ($Code->getFormatCode() as $value) {
 			</div>
 			<!-- grapghical section end -->
 			<!-- algorithm nav start -->
-			<div class="algorithm-nav row my-4 mx-1">
-				<button class="text-center nav-option next float-right">next</button>
+			<div class="algorithm-nav row my-4 mx-1 border border-dark">
+				<button class="col text-center nav-option next">next</button>
 			</div>
 			<!-- algorithm nav end -->
 		</div>
-		<script src="/projekt3000/InsertionSort/InsertionSort.js"></script>
+		<script src="/projekt3000/QuickSort/QuickSort.js"></script>
 	</body>
 </html>

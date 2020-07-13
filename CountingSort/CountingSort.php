@@ -60,11 +60,20 @@ class Graph {
 				return '
 						<div id="' . $value . '" class="bar-block d-flex justify-content-center ">
 							' . $value . '
-							<div class="bar " style="background-color:' . sprintf("#%06X\n", mt_rand(0, 0xffffff)) . ';height: ' . 0.85 * 100 * $value / $this->getMax() . '%"></div>
+							<div class="bar " style="background-color:' . $this->hsl_col_perc(100 * $value / $this->getMax(), 0, 300) . ';height: ' . 0.85 * 100 * $value / $this->getMax() . '%"></div>
 						</div>'
 				;},
 			$this->collection
 		);
+	}
+
+	public function hsl_col_perc($percent, $start, $end) {
+		$a = $percent / 100;
+		$b = ($end - $start) * $a;
+		$c = $b + $start;
+
+		// Return a CSS HSL string
+		return 'hsl(' . $c . ', 100%, 50%)';
 	}
 
 	public function getCounter(): array
@@ -113,12 +122,12 @@ $Code = new CountingSort;
 	</head>
 	<body>
 		<div class="container">
-			<div class="text-center m-4 app-title">Sorting algoritms</div>
+			<div class="text-center m-4 app-title">Sorting algorithms</div>
 			<!-- sort nav start -->
 			<div class="sorting-nav row my-4">
 				<a class="col text-center sort-option" href="InsertionSort/InsertionSort.php">Insertion sort</a>
 				<a class="col text-center sort-option" href="CountingSort/CountingSort.php">Counting sort</a>
-				<div class="col text-center sort-option">sort3</div>
+				<a class="col text-center sort-option" href="QuickSort/QuickSort.php">Quick sort</a>
 				<div class="col text-center sort-option">sort4</div>
 				<div class="col text-center sort-option">sort5</div>
 			</div>
@@ -154,8 +163,6 @@ foreach ($Code->getFormatCode() as $value) {
 			<!-- grapghical section end -->
 			<!-- algorithm nav start -->
 			<div class="algorithm-nav row my-4 mx-1 border border-dark">
-				<div class="col text-center nav-option prev">prev</div>
-				<div class="col text-center nav-option play">play</div>
 				<button class="col text-center nav-option next">next</button>
 			</div>
 			<!-- algorithm nav end -->
