@@ -1,6 +1,7 @@
 <html>
 	<head>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600&display=swap" rel="stylesheet">
 		<link rel="stylesheet" href="css/style.css" type="text/css" />
 		<link
 			rel="stylesheet"
@@ -16,18 +17,29 @@
 		<script src="js/jquery.js" type="text/javascript"></script>
 		<script src="js/jquery-swapsies.js" type="text/javascript"></script>
 	</head>
-	<body>
-		<div class="container">
-			<div class="text-center m-4 app-title">Sorting algoritms</div>
-			<!-- sort nav start -->
-			<div class="sorting-nav row my-4">
-				<a class="col text-center sort-option" href="InsertionSort/InsertionSort.php">Insertion sort</a>
-				<a class="col text-center sort-option" href="CountingSort/CountingSort.php">Counting sort</a>
-				<a class="col text-center sort-option" href="QuickSort/QuickSort.php">Quick sort</a>
-				<div class="col text-center sort-option">sort4</div>
-				<div class="col text-center sort-option">sort5</div>
-			</div>
+	<body id="override">
+		<!-- sort nav start -->
+			<div class="fixed-header scroll">
+		        <div class="container">
+		            <div class="navbar-header">
+		                <button type="button" class="navbar-toggle">
+		                    <span class="icon-bar"></span>
+		                    <span class="icon-bar"></span>
+		                    <span class="icon-bar"></span>                        
+		                </button>
+		                <a class="navbar-brand" href="#">Sorting algoritms</a>
+		            </div>
+		            <nav class="main-menu">
+		                <ul>
+		                    <li><a href="#insertion-sort" class="current">Insertion sort</a></li>
+		                    <li><a href="#countig-sort" class="">Counting sort</a></li>
+		                    <li><a href="#client-" class="">Quick sort</a></li>
+		                </ul>
+		            </nav>
+		        </div>
+		    </div>
 			<!-- sort nav end -->
+		<div class="container">
 			<!-- graphical section start -->
 			<div class="graphical-section row">
 				<div class="graph-block col-8">
@@ -41,10 +53,8 @@
 			</div>
 			<!-- grapghical section end -->
 			<!-- algorithm nav start -->
-			<div class="algorithm-nav row my-4 mx-1 border border-dark">
-				<div class="col text-center nav-option prev">prev</div>
-				<div class="col text-center nav-option play">play</div>
-				<button class="col text-center nav-option next">next</button>
+			<div class="algorithm-nav row my-4 mx-1">
+				<button type="button" class="btn btn-light float-right">Step</button>
 			</div>
 			<!-- algorithm nav end -->
 		</div>

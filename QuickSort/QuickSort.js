@@ -17,19 +17,37 @@ $('.bar-block').each(function(index,$div) {
 	};
 });
 
-	const doSomething = value =>
-  	new Promise(resolve => {
-  		if(value <= high - 1){
-  			if(collection[value].val < pivot)
-  			{
+const doSomething = value =>
+	new Promise(resolve => {
+		if(value <= high - 1){
+
+			if(collection[value].val < pivot)
+			{
 				i++;
-				swap(i,value);
-  			}
-		    resolve(value + 1);
-  		} else {
-  			resolve(9999)
-  		}
-	});
+
+
+			$('.border.border-primary').removeClass('border border-primary');
+
+			$(collection[i].div).addClass('border border-danger')
+			$(collection[value].div).addClass('border border-primary')
+				$(collection[i].div).swap({  
+		            target: $(collection[value].div),  
+		            opacity: "0.5",
+		            speed: 2000,
+		            callback: function(){
+		    			$('.border.border-danger').removeClass('border border-danger');
+		    			$('.border.border-primary').removeClass('border border-primary');
+						swap(i,value);
+	    				resolve(value + 1);
+		            }
+		        });
+			} else {
+	    		resolve(value + 1);
+			}
+		} else {
+			resolve(9999)
+		}
+});
 
 const loop = value =>
   	doSomething(value).then(result => {
@@ -43,16 +61,19 @@ const loop = value =>
 
 $(".next").click(function() {
 	if(t >= 0){
-		
+
 		h = stack[t--];
 		l = stack[t--];
 
 		var pr = new Promise(resolve => {
+
+			$('.border.border-success').removeClass('border border-success');
+			$(collection[l].div).addClass('border border-danger')
+			$(collection[h].div).addClass('border border-success')
 			partition2(l,h,resolve);
 		});
 
 		pr.then(function(res){
-
 		if(pi - 1 > l){
 			stack[++t] = l;
 			stack[++t] = pi - 1;
@@ -62,7 +83,12 @@ $(".next").click(function() {
 			stack[++t] = pi + 1;
 			stack[++t] = h;
 		}
-		console.log(collection)
+		
+		$('.border.border-danger').removeClass('border border-success');
+		$('.border.border-primary').removeClass('border border-primary');
+		$(collection[stack[t-1]].div).addClass('border border-primary')
+		$(collection[stack[t]].div).addClass('border border-success')
+		console.log(stack[t-1],stack[t])
 		});
 	}
 
@@ -73,10 +99,18 @@ function partition2(low,high,resolve)
 	pivot = collection[high].val;
 	i = (low - 1);
 	j = low;
-	loop(j).then((res) => {	
-			swap(i+1,high);
-			pi = i+1;
-			resolve();
+	loop(j).then((res) => {
+			$(collection[i+1].div).swap({  
+		            target: $(collection[high].div),  
+		            opacity: "0.5",
+		            speed: 2000,
+		            callback: function(){	
+		    			$('.border.border-success').removeClass('border border-success');
+						swap(i+1,high);
+						pi = i+1;
+						resolve();
+		            }
+		        });	
 		});
 }
 
