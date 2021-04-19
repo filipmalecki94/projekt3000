@@ -19,7 +19,7 @@ var swapping = false;
 				callback: function() {}
 			};
 			var options = $.extend(defaults, options);
-			
+
 			return this.each(function() {
 				
 				var obj = $(this);
@@ -38,7 +38,7 @@ var swapping = false;
 						$(options.target).css("position", "relative");
 					}
 					//
-					
+
 					// calculate y-axis movement
 					var current_primary_position = obj.offset();
 					var current_primary_top = current_primary_position.top;
