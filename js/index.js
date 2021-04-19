@@ -1,6 +1,6 @@
-require(['helper','insertion','quicksort'], function (helper, insertion, quicksort) {
+require(['helper','insertion','counting','quicksort'], function (helper, insertion, counting, quicksort) {
     var maxValue = 10,
-        collectionSize = 10;
+        collectionSize = 50;
 
     $(document).ready(function () {
         changeSortPage();
@@ -8,6 +8,7 @@ require(['helper','insertion','quicksort'], function (helper, insertion, quickso
 
     $(window).resize(function (){
         $('.bar').css('width',helper.getBarWidth())
+        $('.slot').css('width',helper.getBarWidth())
     });
 
     window.onhashchange = function () {
@@ -23,17 +24,20 @@ require(['helper','insertion','quicksort'], function (helper, insertion, quickso
         $('.code-block').empty();
         $('.graph').empty();
         $('.next').unbind();
+        $('.counter').remove();
+        $('body').attr('class','').addClass(hash.replace('#',''))
         switch (hash){
             case '#insertion-sort':
                 insertion.init(helper.initCollection(collectionSize, maxValue, true))
                 break;
             case '#counting-sort':
+                counting.init(helper.initCollection(collectionSize, maxValue))
                 break;
             case '#quicksort':
                 quicksort.init(helper.initCollection(collectionSize, maxValue))
                 break;
             default:
-                console.log('x')
+                console.log('homepage')
                 break
         }
     }

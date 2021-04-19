@@ -6,10 +6,21 @@
     height: 100%;
 }
 
+.sorted .slot {
+    position: relative;
+    width: 10px;
+    border: 0;
+    background: #807D7D;
+}
+
+.counting-sort .graph,
+.counting-sort .sorted {
+    height: 35%;
+}
+
 .code,
 .counter {
 	height: 100%;
-	border-left: 1px solid #ffffff;
     color: #ffffff;
 }
 
@@ -35,7 +46,7 @@
     position: absolute;
     height: 70%;
     bottom: 0;
-    border: solid 1px;
+    border: 1px solid;
     display: none;
 }
 

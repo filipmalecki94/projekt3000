@@ -3,9 +3,10 @@ define(['helper'], function (helper) {
 
 
 	function initVars(){
-		n=collection.count;
+		n=collection.count
 		low=0;
 		high=n-1;
+		stack={}
 		t=-1;
 		stack[++t] = low;
 		stack[++t] = high;
@@ -39,7 +40,6 @@ define(['helper'], function (helper) {
 
 	function sortIteration() {
 		if(t >= 0){
-
 			var h = stack[t--],
 				l = stack[t--],
 				pr = new Promise(resolve => {
@@ -65,7 +65,6 @@ define(['helper'], function (helper) {
 				$('.border.border-primary').removeClass('border border-primary');
 				$(collection[stack[t-1]].div).addClass('border border-primary')
 				$(collection[stack[t]].div).addClass('border border-success')
-				console.log(stack[t-1],stack[t])
 			});
 		}
 	}
@@ -140,6 +139,7 @@ define(['helper'], function (helper) {
 	return {
 		init: function (graphContainer) {
 			initQuicksortCode();
+			collection = {count:0}
 			graphContainer.find('.bar-block:not(#empty)').each(function(index,$div) {
 				collection.count++;
 				collection[index] = {

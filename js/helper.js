@@ -34,7 +34,7 @@ define([], function () {
             var collection = [];
 
             for(var i=0; i < collectionSize; i++){
-                collection.push(Math.floor(Math.random() * maxValue) + 1);
+                collection.push(Math.ceil(Math.random() * maxValue));
             }
 
             return collection;
@@ -81,10 +81,10 @@ define([], function () {
             return 'hsl(' + c + ', 100%, 50%)';
         },
         changeCodeHighlight: function (id,time) {
-        setTimeout(function(){
-            $('.code .highlight').removeClass('highlight');
-            $('.step.'+id).addClass('highlight');
-        },time);
-    }
+            setTimeout(function(){
+                $('.code .highlight').removeClass('highlight');
+                $('.step.'+id).addClass('highlight');
+            },time);
+        }
     }
 });
