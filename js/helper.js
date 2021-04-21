@@ -46,13 +46,13 @@ define([], function () {
                 'text': size < 50 ? value : ''
             }).css({
                 'color':
-                    this.getHslValue( 100 * value / this.getMaxValue(), 0, 300)
+                    this.getHslValue( 100 * value / this.getMaxValue(), 100, 300)
             }).append(
                 $('<div/>',{
                     'class':'bar',
                 }).css({
                     'height':(0.85 * 100 * value / this.getMaxValue()) + '%',
-                    'background-color': this.getHslValue( 100 * value / this.getMaxValue(), 0, 300),
+                    'background-color': this.getHslValue( 100 * value / this.getMaxValue(), 100, 300),
                     'width': this.getBarWidth()
                 })
             );

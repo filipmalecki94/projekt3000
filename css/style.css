@@ -26,6 +26,11 @@
 
 .bar-block {
 	position: relative;
+    /*width: 100%;*/
+}
+
+.bar-block.sorted {
+    background: #212121;
 }
 
 .counter-block {

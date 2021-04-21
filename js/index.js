@@ -25,10 +25,11 @@ require(['helper','insertion','counting','quicksort'], function (helper, inserti
         $('.graph').empty();
         $('.next').unbind();
         $('.counter').remove();
+        $('.graph-block .sorted').remove();
         $('body').attr('class','').addClass(hash.replace('#',''))
         switch (hash){
             case '#insertion-sort':
-                insertion.init(helper.initCollection(collectionSize, maxValue, true))
+                insertion.init(helper.initCollection(collectionSize, maxValue))
                 break;
             case '#counting-sort':
                 counting.init(helper.initCollection(collectionSize, maxValue))
