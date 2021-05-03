@@ -1,6 +1,13 @@
 require(['helper','insertion','counting','quicksort'], function (helper, insertion, counting, quicksort) {
-    var maxValue = 10,
-        collectionSize = 50;
+    var maxValue = 100,
+        collectionSize = 20,
+        animationSpeed = 500;
+
+    window.onhashchange = function () {
+        $('.main-menu a').removeClass('current');
+        $(location.hash.toString()).addClass('current');
+        changeSortPage();
+    };
 
     $(document).ready(function () {
         changeSortPage();
@@ -11,34 +18,32 @@ require(['helper','insertion','counting','quicksort'], function (helper, inserti
         $('.slot').css('width',helper.getBarWidth())
     });
 
-    window.onhashchange = function () {
-        $('.main-menu a').removeClass('current');
-        $(location.hash.toString()).addClass('current');
-        changeSortPage();
-    };
-
     function changeSortPage() {
-        var hash = location.hash.toString();
+        var hash = location.hash.toString(),
+            sort;
 
         $(hash).addClass('current');
         $('.code-block').empty();
         $('.graph').empty();
         $('.next').unbind();
         $('.counter').remove();
+        $('.graph-block .sorted').remove();
         $('body').attr('class','').addClass(hash.replace('#',''))
         switch (hash){
             case '#insertion-sort':
-                insertion.init(helper.initCollection(collectionSize, maxValue, true))
+                sort = insertion;
                 break;
             case '#counting-sort':
-                counting.init(helper.initCollection(collectionSize, maxValue))
+                sort = counting;
                 break;
             case '#quicksort':
-                quicksort.init(helper.initCollection(collectionSize, maxValue))
+                sort = quicksort;
                 break;
             default:
                 console.log('homepage')
                 break
         }
+        sort.init(helper.initCollection(collectionSize, maxValue))
+            .setAnimationSpeed(animationSpeed);
     }
 });

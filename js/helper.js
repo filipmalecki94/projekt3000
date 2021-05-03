@@ -15,18 +15,15 @@ define([], function () {
                 )
             });
         },
-        initCollection: function  (collectionSize, maxValue, $withNull = false) {
+        initCollection: function  (collectionSize, maxValue) {
             var that = this,
                 $graph = $('.graph');
 
             size = collectionSize;
             max = maxValue;
             $.each(this.getCollectionArr(collectionSize, maxValue), function (index, value){
-                $graph.append(that.createBar(value));
+                $graph.append(that.createBar(index, value));
             });
-            if($withNull){
-                $graph.append(that.createBar(null));
-            }
 
             return $graph;
         },
@@ -39,20 +36,21 @@ define([], function () {
 
             return collection;
         },
-        createBar: function  (value) {
+        createBar: function  (index, value) {
             return $('<div/>',{
                 'id': value !== null ? value : 'empty',
                 'class':'bar-block d-flex justify-content-center',
                 'text': size < 50 ? value : ''
             }).css({
                 'color':
-                    this.getHslValue( 100 * value / this.getMaxValue(), 0, 300)
+                    this.getHslValue( 100 * value / this.getMaxValue(), 100, 350),
+                'order': index
             }).append(
                 $('<div/>',{
                     'class':'bar',
                 }).css({
                     'height':(0.85 * 100 * value / this.getMaxValue()) + '%',
-                    'background-color': this.getHslValue( 100 * value / this.getMaxValue(), 0, 300),
+                    'background-color': this.getHslValue( 100 * value / this.getMaxValue(), 100, 350),
                     'width': this.getBarWidth()
                 })
             );
