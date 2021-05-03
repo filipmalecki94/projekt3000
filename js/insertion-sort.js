@@ -1,5 +1,5 @@
 define(['helper'], function (helper) {
-	var collection = {count:0},
+	var collection = {},
 		animationSpeed = 1000,
 		i = 1,
 		key,
@@ -8,7 +8,6 @@ define(['helper'], function (helper) {
 	function sortIteration() {
 		helper.getStepButton().off('click',sortIteration);
 
-		// key = arr[i];
 		helper.changeCodeHighlight(2)
 		key = helper.copyObj(collection[i]);
 
@@ -16,71 +15,72 @@ define(['helper'], function (helper) {
 		$(key.div).addClass('border border-success');
 		$(collection[i-1].div).addClass('border border-primary');
 
-		// j = i - 1
 		helper.changeCodeHighlight(3)
 		j = i - 1;
 
 		helper.getStepButton().off('click',sortIteration);
 
-		// while(j >= 0 && arr[j] > key) {
-		loop(j).then((res) => {
-			console.log(res+1)
-			$(collection[res+1].div).addClass('sorted');
-			collection[res+1] = key;
+		loop(j).then(function (res) {
+			$(collection[res + 1].div).addClass('sorted');
+			collection[res + 1] = key;
 			$(key.div).removeClass('border border-success');
-			$('.border.border-primary').removeClass('border border-primary');
-			if(typeof collection[++i] === 'undefined'){
+
+			if (typeof collection[++i] === 'undefined') {
+				$.each(collection, function (index, object) {
+					$(object.div).removeClass('sorted')
+				});
 				return;
 			}
+
 			$(collection[i].div).addClass('border border-danger');
 			helper.changeCodeHighlight(1)
-			helper.getStepButton().on('click',sortIteration);
+			helper.getStepButton().on('click', sortIteration);
 		});
 		helper.getStepButton().off('click',sortIteration);
 	}
 
-	// while(j >= 0 && arr[j] > key) {
-	const loop = value =>
-		doSomething(value).then(result => {
-			if(result >= 0 && collection[result].val > key.val) {
+	function loop(value) {
+		return loopCode(value).then(function (result) {
+			$('.border.border-primary').removeClass('border border-primary');
+			if (result >= 0 && collection[result].val > key.val) {
 				helper.changeCodeHighlight(5)
+				$(collection[result].div).addClass('border border-primary')
 				return loop(result);
 			}
 			helper.changeCodeHighlight(8)
 			return result;
 		});
+	}
 
-	const doSomething = value =>
-		new Promise(resolve => {
-			// while(j >= 0 && arr[j] > key) {
+	function loopCode(value) {
+		return new Promise(function (resolve) {
 			helper.changeCodeHighlight(4)
 			$(collection[value].div).addClass('border border-primary');
-			// setTimeout(function (){
-				if(value >= 0 && collection[value].val > key.val) {
+			setTimeout(function () {
+				if (value >= 0 && collection[value].val > key.val) {
 					helper.changeCodeHighlight(5)
-					$(collection[value].div).swap({
-						target: collection[value+1].div,
-						speed: animationSpeed,
-						callback:function(){
-							$(collection[value].div).removeClass('border border-primary');
-							helper.changeCodeHighlight(6)
-
-							setTimeout(function(){
-								collection[value + 1] = collection[value];
-								collection[value] = key;
-								resolve(value - 1);
-							},500)
-							helper.getStepButton().off('click',sortIteration)
-						}
+					setTimeout(function () {
+						$(collection[value].div).swap({
+							target: collection[value + 1].div,
+							speed: animationSpeed,
+							callback: function () {
+								setTimeout(function () {
+									helper.changeCodeHighlight(6)
+									collection[value + 1] = collection[value];
+									collection[value] = key;
+									resolve(value - 1);
+									helper.getStepButton().off('click', sortIteration)
+								}, animationSpeed)
+							}
+						}, animationSpeed * 3);
 					});
 				} else {
 					resolve(value);
-					helper.getStepButton().on('click',sortIteration)
+					helper.getStepButton().on('click', sortIteration)
 				}
-			// },
-			// 	2000);
+			}, animationSpeed * 2);
 		});
-
+	}
 
 	function initInsertionSortCode() {
 		var $codeField = $('<div/>',{'class': 'code m-1'}),
@@ -105,7 +105,6 @@ define(['helper'], function (helper) {
 		init: function (graphContainer) {
 			initInsertionSortCode();
 			graphContainer.find('.bar-block:not(#empty)').each(function(index,$div) {
-				collection.count++;
 				collection[index] = {
 					div:$($div),
 					val:parseInt($(this).attr('id')),
@@ -115,6 +114,13 @@ define(['helper'], function (helper) {
 			$(collection[i].div).addClass('border border-danger');
 			$(collection[0].div).addClass('sorted')
 			helper.getStepButton().on('click',sortIteration);
+
+			return this;
+		},
+		setAnimationSpeed: function (newAnimationSpeed) {
+			animationSpeed = newAnimationSpeed;
+
+			return this;
 		},
 		sortIteration: function () {
 			return sortIteration()
