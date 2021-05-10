@@ -19,10 +19,10 @@ define([], function () {
             var that = this,
                 $graph = $('.graph');
 
-            size = collectionSize;
+            size = collectionSize > 300 ? 300 : collectionSize;
             max = maxValue;
-            $.each(this.getCollectionArr(collectionSize, maxValue), function (index, value){
-                $graph.append(that.createBar(index, value));
+            $.each(this.getCollectionArr(size, maxValue), function (index, value){
+                $graph.append(that.createBar(index, value,{'isOversize': size < 31}));
             });
 
             return $graph;
@@ -36,24 +36,44 @@ define([], function () {
 
             return collection;
         },
-        createBar: function  (index, value) {
+        createBar: function  (index, value, customOptions = {}) {
+            var $bar,
+                options = {
+                    'withNumbers': null,
+                    'glueToTop': false,
+                    'height': null,
+                    'barWidth': null,
+                    'onlyBar': false,
+                    'customBarClasses': '',
+                    'customBarBlockClasses': '',
+                    'backgroundColor': null,
+                    'noBorder': null,
+                    'isOversize': false,
+                };
+            $.extend(options,customOptions);
+           $bar = $('<div/>',{
+                    'class':'bar ' + options.customBarClasses,
+                }).css({
+                    'height': options.height ?? (0.85 * 100 * value / this.getMaxValue()) + '%',
+                    'background-color': options.backgroundColor ?? this.getHslValue( 100 * value / this.getMaxValue(), 100, 350),
+                    'width': options.barWidth ?? this.getBarWidth(),
+                    'top': options.glueToTop ? '25px' : 'unset',
+
+                });
+
+            if(options.onlyBar){
+                return $bar;
+            }
             return $('<div/>',{
                 'id': value !== null ? value : 'empty',
-                'class':'bar-block d-flex justify-content-center',
-                'text': size < 50 ? value : ''
+                'class':'bar-block d-flex justify-content-center ' +
+                    (options.noBorder ?? 'border-black ') + options.customBarBlockClasses,
+                'text': (options.withNumbers ?? false) || options.isOversize ? value : '',
+                'data-index': index
             }).css({
-                'color':
-                    this.getHslValue( 100 * value / this.getMaxValue(), 100, 350),
+                'color': this.getHslValue( 100 * value / this.getMaxValue(), 100, 350),
                 'order': index
-            }).append(
-                $('<div/>',{
-                    'class':'bar',
-                }).css({
-                    'height':(0.85 * 100 * value / this.getMaxValue()) + '%',
-                    'background-color': this.getHslValue( 100 * value / this.getMaxValue(), 100, 350),
-                    'width': this.getBarWidth()
-                })
-            );
+            }).append($bar);
         },
         getBarWidth: function  () {
             var $graphContainer = $('.graph'),
@@ -78,11 +98,13 @@ define([], function () {
 
             return 'hsl(' + c + ', 100%, 50%)';
         },
-        changeCodeHighlight: function (id,time) {
-            setTimeout(function(){
+        changeCodeHighlight: function (ids,time) {
+            setTimeout(function() {
                 $('.code .highlight').removeClass('highlight');
-                $('.step.'+id).addClass('highlight');
-            },time);
+                $.each(Array.isArray(ids) ? ids : [ids], function (index, value) {
+                    $('.step.' + value).addClass('highlight');
+                });
+            }, time);
         }
     }
 });

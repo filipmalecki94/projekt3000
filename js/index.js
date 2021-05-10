@@ -1,7 +1,10 @@
-require(['helper','insertion','counting','quicksort'], function (helper, insertion, counting, quicksort) {
-    var maxValue = 100,
-        collectionSize = 20,
-        animationSpeed = 500;
+require(['helper',
+    'insertion',
+    'counting',
+    'quicksort'], function (helper, insertion, counting, quicksort) {
+    var maxValue = 20,
+        collectionSize = 10,
+        animationSpeed = 50;
 
     window.onhashchange = function () {
         $('.main-menu a').removeClass('current');
@@ -14,7 +17,8 @@ require(['helper','insertion','counting','quicksort'], function (helper, inserti
     });
 
     $(window).resize(function (){
-        $('.bar').css('width',helper.getBarWidth())
+        $('.graph .bar').css('width',helper.getBarWidth())
+        $('.counter-container .bar').css('width',helper.getBarWidth())
         $('.slot').css('width',helper.getBarWidth())
     });
 
@@ -26,7 +30,7 @@ require(['helper','insertion','counting','quicksort'], function (helper, inserti
         $('.code-block').empty();
         $('.graph').empty();
         $('.next').unbind();
-        $('.counter').remove();
+        $('.counter-container').remove();
         $('.graph-block .sorted').remove();
         $('body').attr('class','').addClass(hash.replace('#',''))
         switch (hash){
@@ -41,7 +45,7 @@ require(['helper','insertion','counting','quicksort'], function (helper, inserti
                 break;
             default:
                 console.log('homepage')
-                break
+                return;
         }
         sort.init(helper.initCollection(collectionSize, maxValue))
             .setAnimationSpeed(animationSpeed);
