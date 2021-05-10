@@ -1,6 +1,6 @@
 define(['helper'], function (helper) {
 	var collection = {},
-		animationSpeed = 1000,
+		animationSpeed = 500,
 		i = 1,
 		key,
 		j;
@@ -103,6 +103,9 @@ define(['helper'], function (helper) {
 
 	return {
 		init: function (graphContainer) {
+			collection = {};
+			i = 1;
+
 			initInsertionSortCode();
 			graphContainer.find('.bar-block:not(#empty)').each(function(index,$div) {
 				collection[index] = {
@@ -118,7 +121,9 @@ define(['helper'], function (helper) {
 			return this;
 		},
 		setAnimationSpeed: function (newAnimationSpeed) {
-			animationSpeed = newAnimationSpeed;
+			if (newAnimationSpeed > animationSpeed) {
+				animationSpeed = newAnimationSpeed;
+			}
 
 			return this;
 		},
