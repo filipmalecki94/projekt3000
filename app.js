@@ -5,6 +5,7 @@ requirejs.config({
         insertion: 'insertion-sort',
         counting: 'counting-sort',
         quicksort: 'quick-sort',
+        mergesort: 'merge-sort',
         helper: 'helper'
     }
 });

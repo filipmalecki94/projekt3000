@@ -16,7 +16,7 @@ define(['helper'], function (helper) {
 			helper.changeCodeHighlight([9,10])
 			interval = setInterval(function () {
 				++counter[init[i].val].count;
-				darkenBars(init[i].div, function () {
+				helper.darkenBars(init[i].div, function () {
 					$('#'+init[i].val+'.bar-block-container').append(helper.createBar(0, init[i].val, {
 						'withNumbers': false,
 						'height': 50 / Math.max(...Object.values(getPreCountedInit())) + 'px',
@@ -27,7 +27,7 @@ define(['helper'], function (helper) {
 					if (++i >= n) {
 						clearInterval(interval);
 						stepDone = 2;
-						darkenBars($('.graph .bar-block .bar'),null,true);
+						helper.darkenBars($('.graph .bar-block .bar'),null,true);
 						helper.getStepButton().on('click', sortIteration);
 					}
 				});
@@ -46,7 +46,7 @@ define(['helper'], function (helper) {
 			interval = setInterval(function() {
 				i++;
 				$('.sorted #'+i+' .bar').removeClass('invisible');
-				darkenBars($('.counter-bars #'+i+'.bar-block'));
+				helper.darkenBars($('.counter-bars #'+i+'.bar-block'));
 				if(i > maxValue){
 					clearInterval(interval);
 					stepDone = 3;
@@ -64,7 +64,7 @@ define(['helper'], function (helper) {
 
 				sorted[e].val = init[i].val;
 				sorted[e].div = init[i].div;
-				darkenBars(sorted[e].div,function() {
+				helper.darkenBars(sorted[e].div,function() {
 					$('.sorted .bar-block[data-index="'+e+'"] .bar')
 						.replaceWith(helper.createBar(e,sorted[e].val,
 							{
@@ -74,7 +74,7 @@ define(['helper'], function (helper) {
 					if(i-- === 0) {
 						clearInterval(interval);
 						stepDone = 4;
-						darkenBars($('.graph .bar-block .bar'),null);
+						helper.darkenBars($('.graph .bar-block .bar'),null);
 						helper.getStepButton().on('click', sortIteration);
 					}
 				},true);
@@ -196,10 +196,6 @@ define(['helper'], function (helper) {
 		}
 
 		return verticalBarsOrder
-	}
-
-	function darkenBars($object, callback = null, brightenBars = false) {
-		$object.animate({opacity: brightenBars ? 1 : 0.2}, 100, callback);
 	}
 
 	return {

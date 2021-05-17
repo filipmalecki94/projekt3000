@@ -1,9 +1,10 @@
 require(['helper',
     'insertion',
     'counting',
-    'quicksort'], function (helper, insertion, counting, quicksort) {
-    var maxValue = 20,
-        collectionSize = 10,
+    'quicksort',
+    'mergesort'], function (helper, insertion, counting, quicksort, mergesort) {
+    var maxValue = 100,
+        collectionSize = 8,
         animationSpeed = 50;
 
     window.onhashchange = function () {
@@ -42,6 +43,9 @@ require(['helper',
                 break;
             case '#quicksort':
                 sort = quicksort;
+                break;
+            case '#mergesort':
+                sort = mergesort;
                 break;
             default:
                 console.log('homepage')
