@@ -47,7 +47,7 @@
 }
 
 .bar-block.merged {
-    /*visibility: hidden;*/
+    visibility: hidden;
     /*order: unset;*/
 }
 

@@ -15,14 +15,14 @@ define([], function () {
                 )
             });
         },
-        initCollection: function  (collectionSize, maxValue) {
+        initCollection: function  (collectionSize, maxValue,barOptions = {}) {
             var that = this,
                 $graph = $('.graph');
 
             size = collectionSize > 300 ? 300 : collectionSize;
             max = maxValue;
             $.each(this.getCollectionArr(size, maxValue), function (index, value){
-                $graph.append(that.createBar(index, value,{'isOversize': size < 31}));
+                $graph.append(that.createBar(index, value,$.extend(barOptions,{'isOversize': size < 31})));
             });
 
             return $graph;
@@ -52,7 +52,7 @@ define([], function () {
                     'isOversize': false,
                     'noOrder': index
                 };
-            $.extend(options,customOptions);
+            options = $.extend(options,customOptions);
            $bar = $('<div/>',{
                     'class':'bar ' + options.customBarClasses,
                 }).css({
@@ -68,8 +68,8 @@ define([], function () {
             }
             return $('<div/>',{
                 'id': options.barBlockId ?? (value !== null ? value : 'empty'),
-                'class':'bar-block d-flex justify-content-center ' +
-                    (options.noBorder ?? 'border-black ') + options.customBarBlockClasses,
+                'class':'bar-block d-flex justify-content-center ' + (options.noBorder ? '' : 'border-black ')
+                     + options.customBarBlockClasses,
                 'text': (options.withNumbers ?? false) || options.isOversize ? value : '',
                 'data-index': index
             }).css({

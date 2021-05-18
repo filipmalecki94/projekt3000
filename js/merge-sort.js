@@ -1,128 +1,124 @@
 define(['helper'], function (helper) {
     var init = {},
         buffer = {},
-        animationSpeed = 2000,
+        animationSpeed = 500,
         level = 0,
         n = 0,
         C = 0;
 
     function sortIteration() {
-        var itemsInBufferContainer = $('.buffer-container').first().children().length,
+        var itemsInBufferContainer = $('.buffer .buffer-container').first().children().length,
             bufferContainerCount = Object.keys(buffer).length,
             i=0,j=bufferContainerCount,L=0;
-// console.log(buffer)
+
         loop(C * itemsInBufferContainer,itemsInBufferContainer/2 + (C * itemsInBufferContainer),C * itemsInBufferContainer).then(function (res) {
             var I = res['i'], J = res['j'], L = res['l'];
-            // console.log(res)
 
-
-            console.log(buffer)
             C++;
+            console.log(buffer)
+            if (C >= bufferContainerCount) {
+                setTimeout(function () {
+                    $('.graph').html($('.buffer').html());
+                    init = buffer;
+                    buffer = {};
+                    $('.buffer').remove();
+                    level++;
+                    C=0
+                    initBuffer()
+                    console.log('----------------------------')
+                },animationSpeed * 2);
+            }
             // koniec petli
         });
     }
 
     function loop(I,J,L) {
-        // console.log(1)
-        // console.log({'i':I,'j':J,'l':L})
         return loopCode(I,J,L).then(function (result) {
             var I = result['i'], J = result['j'], L = result['l'];
-            // console.log(2)
-            console.log({'i':I,'j':J,'l':L})
-            console.log(I , $('.buffer-container').first().children().length/2 + (C * $('.buffer-container').first().children().length) , J , C * $('.buffer-container').first().children().length)
-            if (I < $('.buffer-container').first().children().length/2 + (C * $('.buffer-container').first().children().length) && J < C * $('.buffer-container').first().children().length) {
-                console.log(3)
-                // console.log({'i':I,'j':J,'l':L})
-                return loop(I,J,L);
-            } else {
 
-                console.log({'i':I,'j':J,'l':L})
-                console.log(L%$('.buffer-container').first().children().length)
-                if (I < $('.buffer-container').first().children().length/2 + (C * $('.buffer-container').first().children().length)) {
+            return new Promise(function (resolve) {
+                setTimeout(function () {
+                    var x_x =I%($('.graph .buffer-container').first().children().length),
+                        y_y = J%($('.graph .buffer-container').first().children().length);
 
-                    console.log('X',$('.buffer-container').first().children().length-1)
-                    console.log('I',I)
-                    buffer[C][$('.buffer-container').first().children().length-1].val = init[I][0].val;
-                    // helper.swapDivs(buffer[C][$('.buffer-container').first().children().length-1].div,init[I][0].div,true)
-
-                    console.log(init[I][0].div)
-                    // init[I][0].div.addClass('merged')
-                    // setTimeout(function () {
-                    buffer[C][$('.buffer-container').first().children().length-1].div.replaceWith(helper.createBar(0,init[I][0].val,{
-                            'withNumbers': true,
-                            'noOrder': true,
-                            'customBarClasses': 'merged',
-                            'noBorder': true,
+                    if (I < (C+1) * $('.buffer .buffer-container').first().children().length / 2  && J < (C+1) * $('.buffer .buffer-container').first().children().length) {
+                        return resolve(loop(I, J, L));
+                    } else {
+                        if (I < $('.buffer .buffer-container').first().children().length / 2 + (C * $('.buffer .buffer-container').first().children().length)) {
+                            buffer[C][$('.buffer .buffer-container').first().children().length - 1].val = init[I][x_x].val;
+                            var $new = helper.createBar(0,init[I][x_x].val,{
+                                    'withNumbers': true,
+                                    'noOrder': true,
+                                    'customBarClasses': 'merged',
+                                    'noBorder': true,
+                                }
+                            )
+                            buffer[C][$('.buffer .buffer-container').first().children().length - 1].div.replaceWith($new);
+                            buffer[C][L%$('.buffer .buffer-container').first().children().length].div = $new;
+                            init[I][x_x].div.addClass('merged')
+                        } else {
+                            buffer[C][$('.buffer .buffer-container').first().children().length - 1].val = init[J][y_y].val;
+                            var $new = helper.createBar(0,init[J][y_y].val,{
+                                    'withNumbers': true,
+                                    'noOrder': true,
+                                    'customBarClasses': 'merged',
+                                    'noBorder': true,
+                                }
+                            )
+                            buffer[C][$('.buffer .buffer-container').first().children().length - 1].div.replaceWith($new);
+                            buffer[C][L%$('.buffer .buffer-container').first().children().length].div = $new;
+                            init[J][y_y].div.addClass('merged')
                         }
-                    ));
-                    // },500);
-                }  else {
-                    console.log('D',$('.buffer-container').first().children().length-1)
-                    console.log('J',J)
-                    buffer[C][$('.buffer-container').first().children().length-1].val = init[J][0].val;
-                    console.log(init[J][0].div)
-                    buffer[C][$('.buffer-container').first().children().length-1].div.replaceWith(helper.createBar(0,init[J][0].val,{
-                            'withNumbers': true,
-                            'noOrder': true,
-                            'customBarClasses': 'merged',
-                            'noBorder': true,
-                        }
-                    ));
-                    // helper.swapDivs(buffer[C][$('.buffer-container').first().children().length-1].div,init[J][0].div,true)
-                }
+                       resolve(result);
 
-                return result;
-            }
+                    }
+                },animationSpeed)
+            })
         });
     }
 
     function loopCode(I,J,L) {
+        var x_x =I%($('.graph .buffer-container').first().children().length),
+            y_y = J%($('.graph .buffer-container').first().children().length);
+
         console.log('iter')
-        // console.log(5)
-        console.log({'i':I,'j':J,'l':L})
         return new Promise(function (resolve) {
-            // console.log(6)
-            // console.log({'i':I,'j':J,'l':L})
             setTimeout(function () {
-                // console.log(7)
-                console.log(I , $('.buffer-container').first().children().length/2 + (C * $('.buffer-container').first().children().length) , J , $('.buffer-container').first().children().length+ (C * $('.buffer-container').first().children().length))
-                if (I < $('.buffer-container').first().children().length/2 + (C * $('.buffer-container').first().children().length) && J < $('.buffer-container').first().children().length+ (C * $('.buffer-container').first().children().length)) {
-                    // console.log(8)
-                    // console.log({'i':I,'j':J,'l':L})
-                    if(init[I][0].val <= init[J][0].val) {
-                        console.log('x')
-                        console.log('i',I)
-                        console.log(L%$('.buffer-container').first().children().length)
-                        console.log(init[I][0].div)
-                        buffer[C][L%$('.buffer-container').first().children().length].val = init[I][0].val;
-                        buffer[C][L%$('.buffer-container').first().children().length].div.replaceWith(helper.createBar(0,init[I][0].val,{
+                if (I < $('.buffer .buffer-container').first().children().length/2 + (C * $('.buffer .buffer-container').first().children().length) && J < $('.buffer .buffer-container').first().children().length+ (C * $('.buffer .buffer-container').first().children().length)) {
+                    if(init[I][x_x].val <= init[J][y_y].val) {
+                        buffer[C][L%$('.buffer .buffer-container').first().children().length].val = init[I][x_x].val;
+                        var $new = helper.createBar(0,init[I][x_x].val,{
                                 'withNumbers': true,
                                 'noOrder': true,
                                 'customBarClasses': 'merged',
                                 'noBorder': true,
                             }
-                        ));
+                        )
+                        buffer[C][L%$('.buffer .buffer-container').first().children().length].div.replaceWith($new);
+                        buffer[C][L%$('.buffer .buffer-container').first().children().length].div = $new;
+                        init[I][x_x].div.addClass('merged')
                         resolve({'i':++I,'j':J,'l':++L});
                     } else {
-                        console.log('d')
-                        console.log('j',J)
-                        console.log(L%$('.buffer-container').first().children().length)
-                        console.log(init[J][0].div)
-                        buffer[C][L%$('.buffer-container').first().children().length].val = init[I][0].val;
-                        buffer[C][L%$('.buffer-container').first().children().length].div.replaceWith(helper.createBar(0,init[J][0].val,{
+                        buffer[C][L%$('.buffer .buffer-container').first().children().length].val = init[J][y_y].val;
+                        var $new = helper.createBar(0,init[J][y_y].val,{
                                 'withNumbers': true,
                                 'noOrder': true,
-                                'customBarClasses': 'merged',
+                                // 'customBarClasses': 'merged',
                                 'noBorder': true,
                             }
-                        ));
+                        )
+                        buffer[C][L%$('.buffer .buffer-container').first().children().length].div.replaceWith($new);
+                        buffer[C][L%$('.buffer .buffer-container').first().children().length].div = $new;
+                        console.log(init[J][y_y].div)
+                        init[J][y_y].div.addClass('merged')
                         resolve({'i':I,'j':++J,'l':++L});
                     }
                 } else {
                     console.log('XD')
+                    C++;
                     resolve({'i':I,'j':J,'l':L});
                 }
-            }, animationSpeed * 2);
+            }, animationSpeed);
         });
     }
 
@@ -149,13 +145,15 @@ define(['helper'], function (helper) {
                 buffer[bufferContainerIndex] = {};
             }
             buffer[bufferContainerIndex][bufferContainerBarIndex] = {
-                div: helper.createBar(bufferContainerBarIndex,1),//bufferContainerBarIndex,{'height':0}),
+                div: helper.createBar(bufferContainerBarIndex,bufferContainerBarIndex,{'height':0}),
                 val: 0
             }
             bufferContainer.append(buffer[bufferContainerIndex][bufferContainerBarIndex].div)
         }
         bufferContainers.push(bufferContainer);
 
+        console.log({buffer})
+        console.log({init})
         $buffer.append(bufferContainers)
         $('.graph-block').append($buffer)
     }

@@ -5,7 +5,8 @@ require(['helper',
     'mergesort'], function (helper, insertion, counting, quicksort, mergesort) {
     var maxValue = 100,
         collectionSize = 8,
-        animationSpeed = 50;
+        animationSpeed = 50,
+        barOptions = {};
 
     window.onhashchange = function () {
         $('.main-menu a').removeClass('current');
@@ -46,12 +47,18 @@ require(['helper',
                 break;
             case '#mergesort':
                 sort = mergesort;
+                barOptions = {
+                    'withNumbers': true,
+                    'noOrder': true,
+                    'customBarBlockClasses': 'buffer-container border border-white',
+                    'noBorder': true
+                }
                 break;
             default:
                 console.log('homepage')
                 return;
         }
-        sort.init(helper.initCollection(collectionSize, maxValue))
+        sort.init(helper.initCollection(collectionSize, maxValue, barOptions))
             .setAnimationSpeed(animationSpeed);
     }
 });
