@@ -105,6 +105,10 @@
     border: 1px solid black;
 }
 
+.border-buffer {
+    border: 1px solid #28a74547;
+}
+
 a,
 a:hover,
 a:focus {

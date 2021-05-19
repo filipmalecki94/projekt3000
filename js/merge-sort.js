@@ -26,7 +26,9 @@ define(['helper'], function (helper) {
             masterL = L
 console.log(buffer)
 console.log(init)
-            if (C > Math.floor(N / itemsInBufferContainer)) {
+console.log(C,Math.ceil(N / itemsInBufferContainer))
+console.log(C,Math.floor(N / itemsInBufferContainer))
+            if (C >= Math.ceil(N / itemsInBufferContainer)) {
                 for(var x = J; x < N; x++){
                     buffer[x].val = init[L++].val
                 }
@@ -48,6 +50,7 @@ console.log(init)
                     masterL = 0;
                     if(k >= N) {
                         $('.buffer').remove()
+                        $('.graph .buffer-container').removeClass('border')
                         helper.getStepButton().off('click',sortIteration);
                     }
                 },animationSpeed * 2);
@@ -66,31 +69,13 @@ console.log(init)
                         return resolve(loop(I, J, L));
                     } else {
                         if (J < n) {
-                            // var x = L
-                            // interval = setInterval(function (){
-                            //     if(typeof init[J] !== 'undefined') {
-                            //         var idJ= J, idL = L;
-                            //         $('.buffer #'+idL+'.bar-block').replaceWith(helper.createBar(0,init[idJ].val,{
-                            //             'withNumbers': true,
-                            //             'noOrder': true,
-                            //             'customBarBlockClasses': 'buffer-container',
-                            //             'noBorder': true,
-                            //         }))
-                            //         buffer[x++].val = init[J++].val
-                            //         L++;
-                            //     }
-                            //     console.log(x,itemsInBufferContainer)
-                            //     if(x >= itemsInBufferContainer){
-                            //         return clearInterval(interval)
-                            //     }
-                            // },animationSpeed)
                             for(var x = L; x < n; x++){
                                 if(typeof init[J] !== 'undefined') {
                                     var idJ = J;
 
+                                    init[idJ].div.addClass('merged')
                                     buffer[x].val = init[idJ].val
                                     buffer[x].div = moveToBuffer(x,idJ)
-                                    init[idJ].div.addClass('merged')
 
                                     J++;
                                     L++;
@@ -98,32 +83,13 @@ console.log(init)
                             }
                             resolve({'i':I,'j':J,'l':L});
                         } else {
-                            // var x = L
-                            // interval = setInterval(function (){
-                            //     if(typeof init[I] !== 'undefined') {
-                            //         var idI= I, idL = L;
-                            //         $('.buffer #'+idL+'.bar-block').replaceWith(helper.createBar(0,init[idI].val,{
-                            //             'withNumbers': true,
-                            //             'noOrder': true,
-                            //             'customBarBlockClasses': 'buffer-container',
-                            //             'noBorder': true,
-                            //         }))
-                            //         buffer[x++].val = init[I++].val
-                            //         L++;
-                            //     }
-                            //     console.log(x,itemsInBufferContainer)
-                            //     if(x >= itemsInBufferContainer){
-                            //         return clearInterval(interval)
-                            //     }
-                            // },animationSpeed)
-                            //
                             for(var x = L; x < n; x++){
                                 if(typeof init[I] !== 'undefined') {
                                     var idI= I;
 
+                                    init[idI].div.addClass('merged')
                                     buffer[x].val = init[idI].val
                                     buffer[x].div = moveToBuffer(x,idI)
-                                    init[idI].div.addClass('merged')
 
                                     I++;
                                     L++;
@@ -141,31 +107,32 @@ console.log(init)
         console.log('iter')
         return new Promise(function (resolve) {
             setTimeout(function () {
+                $('.graph').find('')
                 if (I < k && J < n) {
                     if(typeof init[J] === 'undefined'){
+                        init[I].div.addClass('merged')
                         buffer[L].val = init[I].val;
                         buffer[L].div = moveToBuffer(L,I)
-                        init[I].div.addClass('merged')
 
                         return resolve({'i':++I,'j':J,'l':++L});
                     }
                     if(typeof init[I] === 'undefined'){
+                        init[J].div.addClass('merged')
                         buffer[L].val = init[J].val;
                         buffer[L].div = moveToBuffer(L,J)
-                        init[J].div.addClass('merged')
 
                         return resolve({'i':I,'j':++J,'l':++L});
                     }
                     if(init[I].val <= init[J].val) {
+                        init[I].div.addClass('merged')
                         buffer[L].val = init[I].val;
                         buffer[L].div =  moveToBuffer(L,I)
-                        init[I].div.addClass('merged')
 
                         resolve({'i':++I,'j':J,'l':++L});
                     } else {
+                        init[J].div.addClass('merged')
                         buffer[L].val = init[J].val;
                         buffer[L].div = moveToBuffer(L,J)
-                        init[J].div.addClass('merged')
 
                         resolve({'i':I,'j':++J,'l':++L});
                     }
@@ -179,10 +146,11 @@ console.log(init)
 
     function moveToBuffer(L,X) {
         var $bar = helper.createBar(0,init[X].val,{
-            'withNumbers': true,
+            'withNumbers': N < 31,
             'noOrder': true,
             'customBarBlockClasses': 'buffer-container',
             'noBorder': true,
+            'isOversize': N < 31
         });
         $('.buffer #'+L+'.bar-block .bar').last().replaceWith($bar)
 
@@ -211,7 +179,7 @@ console.log(init)
             }
         }
 
-        for(var i = 0; i <= N; i++) {
+        for(var i = 0; i < N; i++) {
             console.log(itemsInBufferContainer)
             var bufferContainerBarIndex = itemsInBufferContainer ?  i%(2 * itemsInBufferContainer) : i%(2 * (level + 1))
 
@@ -221,7 +189,7 @@ console.log(init)
                     $bufferContainer = undefined;
                 }
                 $bufferContainer = $('<div/>', {
-                    'class': 'buffer-container w-100 d-flex justify-content-around',
+                    'class': 'buffer-container w-100 d-flex justify-content-around border-buffer',
                     'id': ++bufferContainerIndex
                 });
             }
@@ -275,9 +243,9 @@ console.log(init)
                 {'line' : '}', 'tab' : 0},
             ];
 
-        helper.initCode(codeStructureMerge,$codeFieldMerge);
-        helper.initCode(codeStructureSort,$codeFieldSort);
-        $('.code-block').append($codeFieldMerge).append($codeFieldSort);
+        // helper.initCode(codeStructureMerge,$codeFieldMerge);
+        // helper.initCode(codeStructureSort,$codeFieldSort);
+        // $('.code-block').append($codeFieldMerge).append($codeFieldSort);
     }
 
     return {
