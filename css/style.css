@@ -18,6 +18,11 @@
     height: 35%;
 }
 
+.mergesort .graph,
+.mergesort .buffer {
+    height: 50%;
+}
+
 .code {
     height: 100%;
     color: #ffffff;
@@ -39,6 +44,11 @@
 	position: relative;
     width: 100%;
     height: 100%;
+}
+
+.bar-block.merged {
+    visibility: hidden;
+    /*order: unset;*/
 }
 
 .bar-block.sorted {
@@ -95,6 +105,10 @@
     border: 1px solid black;
 }
 
+.border-buffer {
+    border: 1px solid #28a74547;
+}
+
 a,
 a:hover,
 a:focus {
@@ -118,7 +132,7 @@ p {
     width: 100%;
     height: 100%;
 }
-.header{
+.header {
     background: transparent;
     width:100%;
     float:left;

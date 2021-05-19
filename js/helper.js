@@ -8,21 +8,21 @@ define([], function () {
                 $codeField.append(
                     $('<div/>',{
                         'class' : 'step ' + index,
-                        'html' : value.line
+                        'text' : value.line
                     }).css({
                         'margin-left' : value.tab * 10
                     })
                 )
             });
         },
-        initCollection: function  (collectionSize, maxValue) {
+        initCollection: function  (collectionSize, maxValue,barOptions = {}) {
             var that = this,
                 $graph = $('.graph');
 
             size = collectionSize > 300 ? 300 : collectionSize;
             max = maxValue;
             $.each(this.getCollectionArr(size, maxValue), function (index, value){
-                $graph.append(that.createBar(index, value,{'isOversize': size < 31}));
+                $graph.append(that.createBar(index, value,$.extend(barOptions,{'isOversize': size < 31})));
             });
 
             return $graph;
@@ -33,7 +33,7 @@ define([], function () {
             for(var i=0; i < collectionSize; i++){
                 collection.push(Math.ceil(Math.random() * maxValue));
             }
-
+            // console.log(collection.sort())
             return collection;
         },
         createBar: function  (index, value, customOptions = {}) {
@@ -46,11 +46,13 @@ define([], function () {
                     'onlyBar': false,
                     'customBarClasses': '',
                     'customBarBlockClasses': '',
+                    'barBlockId': null,
                     'backgroundColor': null,
                     'noBorder': null,
                     'isOversize': false,
+                    'noOrder': index
                 };
-            $.extend(options,customOptions);
+            options = $.extend(options,customOptions);
            $bar = $('<div/>',{
                     'class':'bar ' + options.customBarClasses,
                 }).css({
@@ -65,14 +67,14 @@ define([], function () {
                 return $bar;
             }
             return $('<div/>',{
-                'id': value !== null ? value : 'empty',
-                'class':'bar-block d-flex justify-content-center ' +
-                    (options.noBorder ?? 'border-black ') + options.customBarBlockClasses,
+                'id': options.barBlockId ?? (value !== null ? value : 'empty'),
+                'class':'bar-block d-flex justify-content-center ' + (options.noBorder ? '' : 'border-black ')
+                     + options.customBarBlockClasses,
                 'text': (options.withNumbers ?? false) || options.isOversize ? value : '',
                 'data-index': index
             }).css({
                 'color': this.getHslValue( 100 * value / this.getMaxValue(), 100, 350),
-                'order': index
+                'order': options.noOrder ? null : index
             }).append($bar);
         },
         getBarWidth: function  () {
@@ -105,6 +107,23 @@ define([], function () {
                     $('.step.' + value).addClass('highlight');
                 });
             }, time);
+        },
+        darkenBars: function($object, callback = null, brightenBars = false) {
+            $object.animate({opacity: brightenBars ? 1 : 0.2}, 100, callback);
+        },
+        swapDivs: function($div1, $div2, justClone = false) {
+            div1 = $div1;
+            div2 = $div2;
+
+            tdiv1 = div1.clone();
+            tdiv2 = div2.clone();
+
+            if(!div2.is(':empty')){
+                div1.replaceWith(tdiv2);
+                if(!justClone) {
+                    div2.replaceWith(tdiv1);
+                }
+            }
         }
     }
 });

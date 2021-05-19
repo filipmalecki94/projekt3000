@@ -1,10 +1,12 @@
 require(['helper',
     'insertion',
     'counting',
-    'quicksort'], function (helper, insertion, counting, quicksort) {
-    var maxValue = 20,
-        collectionSize = 10,
-        animationSpeed = 50;
+    'quicksort',
+    'mergesort'], function (helper, insertion, counting, quicksort, mergesort) {
+    var maxValue = 100,
+        collectionSize = 8,
+        animationSpeed = 50,
+        barOptions = {};
 
     window.onhashchange = function () {
         $('.main-menu a').removeClass('current');
@@ -43,11 +45,18 @@ require(['helper',
             case '#quicksort':
                 sort = quicksort;
                 break;
+            case '#mergesort':
+                sort = mergesort;
+                barOptions = {
+                    'withNumbers': false,
+                    'noOrder': true,
+                }
+                break;
             default:
                 console.log('homepage')
                 return;
         }
-        sort.init(helper.initCollection(collectionSize, maxValue))
+        sort.init(helper.initCollection(collectionSize, maxValue, barOptions))
             .setAnimationSpeed(animationSpeed);
     }
 });
