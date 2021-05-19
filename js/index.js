@@ -50,7 +50,6 @@ require(['helper',
                 barOptions = {
                     'withNumbers': false,
                     'noOrder': true,
-                    'noBorder': true
                 }
                 break;
             default:

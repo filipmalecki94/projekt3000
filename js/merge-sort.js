@@ -1,7 +1,7 @@
 define(['helper'], function (helper) {
     var init = {},
         buffer = {},
-        animationSpeed = 100,
+        animationSpeed = 1000,
         interval,
         level = 0,
         N = 0,
@@ -15,6 +15,7 @@ define(['helper'], function (helper) {
         masterL =0;
 
     function sortIteration() {
+        helper.getStepButton().off('click',sortIteration)
         loop(masterI,masterJ,masterL).then(function (res) {
             var I = res['i'], J = res['j'], L = res['l'];
 
@@ -24,10 +25,7 @@ define(['helper'], function (helper) {
             masterI = (C) * itemsInBufferContainer;
             masterJ = k;
             masterL = L
-console.log(buffer)
-console.log(init)
-console.log(C,Math.ceil(N / itemsInBufferContainer))
-console.log(C,Math.floor(N / itemsInBufferContainer))
+
             if (C >= Math.ceil(N / itemsInBufferContainer)) {
                 for(var x = J; x < N; x++){
                     buffer[x].val = init[L++].val
@@ -48,12 +46,16 @@ console.log(C,Math.floor(N / itemsInBufferContainer))
                     masterI = 0;
                     masterJ = k;
                     masterL = 0;
+
+                    helper.getStepButton().on('click',sortIteration)
                     if(k >= N) {
                         $('.buffer').remove()
                         $('.graph .buffer-container').removeClass('border')
                         helper.getStepButton().off('click',sortIteration);
                     }
                 },animationSpeed * 2);
+            } else {
+                helper.getStepButton().on('click',sortIteration)
             }
             // koniec petli
         });
@@ -106,8 +108,9 @@ console.log(C,Math.floor(N / itemsInBufferContainer))
     function loopCode(I,J,L) {
         console.log('iter')
         return new Promise(function (resolve) {
+            $('.graph').find('.bar-block[data-index="'+I+'"]').css('border','1px dotted greenyellow')
+            $('.graph').find('.bar-block[data-index="'+J+'"]').css('border','1px dotted coral')
             setTimeout(function () {
-                $('.graph').find('')
                 if (I < k && J < n) {
                     if(typeof init[J] === 'undefined'){
                         init[I].div.addClass('merged')
@@ -145,14 +148,14 @@ console.log(C,Math.floor(N / itemsInBufferContainer))
     }
 
     function moveToBuffer(L,X) {
-        var $bar = helper.createBar(0,init[X].val,{
+        var $bar = helper.createBar(L,init[X].val,{
             'withNumbers': N < 31,
             'noOrder': true,
             'customBarBlockClasses': 'buffer-container',
             'noBorder': true,
             'isOversize': N < 31
         });
-        $('.buffer #'+L+'.bar-block .bar').last().replaceWith($bar)
+        $('.buffer #'+L+'.bar-block').last().replaceWith($bar)
 
         return $bar;
     }
