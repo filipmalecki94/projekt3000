@@ -3,8 +3,8 @@ require(['helper',
     'counting',
     'quicksort',
     'mergesort'], function (helper, insertion, counting, quicksort, mergesort) {
-    var maxValue = 100,
-        collectionSize = 8,
+    var maxValue = 10,
+        collectionSize = 15,
         animationSpeed = 50,
         barOptions = {};
 
@@ -48,9 +48,9 @@ require(['helper',
             case '#mergesort':
                 sort = mergesort;
                 barOptions = {
-                    'withNumbers': true,
+                    'withNumbers': false,
                     'noOrder': true,
-                    'customBarBlockClasses': 'buffer-container border border-white',
+                    'customBarBlockClasses': 'buffer-container ',//border border-white',
                     'noBorder': true
                 }
                 break;
