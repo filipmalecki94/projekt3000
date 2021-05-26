@@ -106,7 +106,19 @@
 }
 
 .border-buffer {
-    border: 1px solid #28a74547;
+    border: 1px solid #3c5f4447;
+}
+
+.border-buffer.merged {
+    border: 1px solid #909090;
+}
+
+
+.graph-block {
+    margin-top: 50px;
+}
+.code-block {
+    margin-top: 20px;
 }
 
 a,

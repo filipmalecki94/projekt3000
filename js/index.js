@@ -4,7 +4,7 @@ require(['helper',
     'quicksort',
     'mergesort'], function (helper, insertion, counting, quicksort, mergesort) {
     var maxValue = 100,
-        collectionSize = 8,
+        collectionSize = 18,
         animationSpeed = 50,
         barOptions = {};
 
@@ -33,6 +33,7 @@ require(['helper',
         $('.graph').empty();
         $('.next').unbind();
         $('.counter-container').remove();
+        $('.buffer').remove();
         $('.graph-block .sorted').remove();
         $('body').attr('class','').addClass(hash.replace('#',''))
         switch (hash){
@@ -50,6 +51,8 @@ require(['helper',
                 barOptions = {
                     'withNumbers': false,
                     'noOrder': true,
+                    'noBorder': true,
+                    'customBarBlockClasses': 'border-buffer'
                 }
                 break;
             default:

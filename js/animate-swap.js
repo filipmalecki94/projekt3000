@@ -10,7 +10,7 @@ var swapping = false;
 
 (function($) {
     $.fn.extend({
-        swap: function(options) {
+        animateSwap: function(options) {
 
             var defaults = {
                 target: "",
