@@ -1,24 +1,22 @@
 define(['helper'], function (helper) {
     var init = {},
         buffer = {},
-        animationSpeed = 1000,
-        interval,
-        level = 0,
-        N = 0,
-        n = 2,
-        k = n/2,
-        C = 0,
-        itemsInBufferContainer = n,
-
-        masterI =0,
-        masterJ =k,
-        masterL =0;
+        animationSpeed = 500,
+        level, maxValue, N, n, k, C, itemsInBufferContainer, masterI, masterJ, masterL;
 
     function sortIteration() {
-        helper.getStepButton().off('click',sortIteration)
+        helper.getStepButton().off('click', sortIteration)
+        console.log(C)
+        console.log($('.graph #'+C*2+'.buffer-container'))
+        $('.graph #' + (C * 2) + '.buffer-container').addClass('merged')
+        $('.graph #' + (C * 2 + 1) + '.buffer-container').addClass('merged')
         loop(masterI,masterJ,masterL).then(function (res) {
             var I = res['i'], J = res['j'], L = res['l'];
 
+            $('.graph #' + (C * 2) + '.buffer-container').addClass('border-black')
+            $('.graph #' + (C * 2) + '.buffer-container').removeClass('merged border-buffer')
+            $('.graph #' + (C * 2 + 1) + '.buffer-container').addClass('border-black')
+            $('.graph #' + (C * 2 + 1) + '.buffer-container').removeClass('merged border-buffer')
             C++;
             n = (C+1) * itemsInBufferContainer;
             k = n/2 + (C) * itemsInBufferContainer/2;
@@ -29,7 +27,9 @@ define(['helper'], function (helper) {
             if (C >= Math.ceil(N / itemsInBufferContainer)) {
                 for(var x = J; x < N; x++){
                     buffer[x].val = init[L++].val
+                    $('.graph').find('.bar-block[data-index="'+L+'"]').css('visibility','hidden')
                 }
+
                 setTimeout(function () {
                     console.log('----------------------------')
                     console.log(buffer)
@@ -37,7 +37,9 @@ define(['helper'], function (helper) {
                     $('.graph').html($('.buffer').html())
                     $('.buffer').remove()
                     buffer = {};
+
                     level++;
+
                     initBuffer(itemsInBufferContainer)
                     C=0
                     itemsInBufferContainer = itemsInBufferContainer * 2
@@ -50,14 +52,13 @@ define(['helper'], function (helper) {
                     helper.getStepButton().on('click',sortIteration)
                     if(k >= N) {
                         $('.buffer').remove()
-                        $('.graph .buffer-container').removeClass('border')
+                        $('.graph .buffer-container').removeClass('border border-buffer')
                         helper.getStepButton().off('click',sortIteration);
                     }
                 },animationSpeed * 2);
             } else {
                 helper.getStepButton().on('click',sortIteration)
             }
-            // koniec petli
         });
     }
 
@@ -75,7 +76,7 @@ define(['helper'], function (helper) {
                                 if(typeof init[J] !== 'undefined') {
                                     var idJ = J;
 
-                                    init[idJ].div.addClass('merged')
+                                    $('.graph').find('.bar-block[data-index="'+idJ+'"]').css('visibility','hidden')
                                     buffer[x].val = init[idJ].val
                                     buffer[x].div = moveToBuffer(x,idJ)
 
@@ -89,7 +90,7 @@ define(['helper'], function (helper) {
                                 if(typeof init[I] !== 'undefined') {
                                     var idI= I;
 
-                                    init[idI].div.addClass('merged')
+                                    $('.graph').find('.bar-block[data-index="'+idI+'"]').css('visibility','hidden')
                                     buffer[x].val = init[idI].val
                                     buffer[x].div = moveToBuffer(x,idI)
 
@@ -108,42 +109,45 @@ define(['helper'], function (helper) {
     function loopCode(I,J,L) {
         console.log('iter')
         return new Promise(function (resolve) {
-            $('.graph').find('.bar-block[data-index="'+I+'"]').css('border','1px dotted greenyellow')
-            $('.graph').find('.bar-block[data-index="'+J+'"]').css('border','1px dotted coral')
+            $('.graph').find('.bar-block[data-index="'+I+'"]').css('background','rgba(255,255,255,0.22)')
+            $('.graph').find('.bar-block[data-index="'+J+'"]').css('background','rgba(255,255,255,0.1)')
             setTimeout(function () {
                 if (I < k && J < n) {
-                    if(typeof init[J] === 'undefined'){
-                        init[I].div.addClass('merged')
+                    if(typeof init[J] === 'undefined' && typeof init[I] !== 'undefined'){
                         buffer[L].val = init[I].val;
                         buffer[L].div = moveToBuffer(L,I)
+                        $('.graph').find('.bar-block[data-index="'+I+'"]').css('visibility','hidden')
 
                         return resolve({'i':++I,'j':J,'l':++L});
                     }
-                    if(typeof init[I] === 'undefined'){
-                        init[J].div.addClass('merged')
+                    if(typeof init[I] === 'undefined' && typeof init[J] !== 'undefined'){
                         buffer[L].val = init[J].val;
                         buffer[L].div = moveToBuffer(L,J)
+                        $('.graph').find('.bar-block[data-index="'+J+'"]').css('visibility','hidden')
 
                         return resolve({'i':I,'j':++J,'l':++L});
                     }
+                    if(typeof init[I] === 'undefined' && typeof init[J] === 'undefined'){
+                        return resolve({'i':k,'j':n,'l':++L})
+                    }
                     if(init[I].val <= init[J].val) {
-                        init[I].div.addClass('merged')
                         buffer[L].val = init[I].val;
                         buffer[L].div =  moveToBuffer(L,I)
+                        $('.graph').find('.bar-block[data-index="'+I+'"]').css('visibility','hidden')
 
-                        resolve({'i':++I,'j':J,'l':++L});
+                        return resolve({'i':++I,'j':J,'l':++L});
                     } else {
-                        init[J].div.addClass('merged')
                         buffer[L].val = init[J].val;
                         buffer[L].div = moveToBuffer(L,J)
+                        $('.graph').find('.bar-block[data-index="'+J+'"]').css('visibility','hidden')
 
-                        resolve({'i':I,'j':++J,'l':++L});
+                        return resolve({'i':I,'j':++J,'l':++L});
                     }
                 } else {
                     C++;
                     resolve({'i':I,'j':J,'l':L});
                 }
-            }, animationSpeed);
+            }, typeof init[I] === 'undefined' && typeof init[J] === 'undefined' ? 0 : animationSpeed);
         });
     }
 
@@ -197,16 +201,44 @@ define(['helper'], function (helper) {
                 });
             }
             if(typeof buffer[i] === 'undefined'){
-                $bufferContainer.append(helper.createBar(i,i,{
+                $bufferContainer.append(helper.createBar(i,1000,{
                     'withNumbers': false,
                     'noOrder': true,
                     'customBarBlockClasses': 'buffer-container',
                     'noBorder': true,
-                    'height': '0'
-                }))
+                }).removeClass('d-flex'))
             } else {
                 $bufferContainer.append(buffer[i].div)
             }
+        }
+        for(var i = N; i < Math.ceil(N/2)*2; i++) {
+            var bufferContainerBarIndex = itemsInBufferContainer ?  i%(2 * itemsInBufferContainer) : i%(2 * (level + 1)),
+                extraBar = helper.createBar(i, 1000, {
+                'withNumbers': false,
+                'noOrder': true,
+                'customBarBlockClasses': 'buffer-container d-none',
+            }).removeClass('d-flex');
+
+            if(bufferContainerBarIndex === 0) {
+                if(typeof $bufferContainer !== 'undefined') {
+                    bufferContainers.push($bufferContainer);
+                    $bufferContainer = undefined;
+                }
+                $bufferContainer = $('<div/>', {
+                    'class': 'buffer-container w-100 d-flex justify-content-around border-buffer',
+                    'id': ++bufferContainerIndex
+                });
+            }
+            if(typeof buffer[i] === 'undefined'){
+                $bufferContainer.append(extraBar)
+            } else {
+                $bufferContainer.append(buffer[i].div)
+            }
+            buffer[i] = {
+                div:$(extraBar),
+                val:maxValue,
+            };
+            $bufferContainer.append(extraBar);
         }
         bufferContainers.push($bufferContainer);
         $buffer.append(bufferContainers)
@@ -246,24 +278,45 @@ define(['helper'], function (helper) {
                 {'line' : '}', 'tab' : 0},
             ];
 
-        // helper.initCode(codeStructureMerge,$codeFieldMerge);
-        // helper.initCode(codeStructureSort,$codeFieldSort);
-        // $('.code-block').append($codeFieldMerge).append($codeFieldSort);
+        helper.initCode(codeStructureMerge,$codeFieldMerge);
+        helper.initCode(codeStructureSort,$codeFieldSort);
+        $('.code-block').append($codeFieldMerge).append($codeFieldSort);
     }
 
     return {
         init: function (graphContainer) {
-            init = {};
-            level = 0;
+            init = {},
+            level = 0,
+            N = 0,
+            n = 2,
+            k = n/2,
+            C = 0,
+            itemsInBufferContainer = n,
+            masterI = 0,
+            masterJ = k,
+            masterL = 0;
 
             initMergeSortCode();
-            N = graphContainer.find('.bar-block').length;
             graphContainer.find('.bar-block').each(function(index,$div) {
                 init[index] = {
                     div:$($div),
                     val:parseInt($(this).attr('id')),
                 };
             });
+            N = graphContainer.find('.bar-block').length;
+            maxValue = Math.max.apply( null, Object.values( init ).map( c => c.val ) )
+            for(var i = N; i < Math.ceil(N/n)*n; i++) {
+                var extraBar = helper.createBar(i, 1000, {
+                    'withNumbers': false,
+                    'noOrder': true,
+                    'customBarBlockClasses': 'd-none'
+                }).removeClass('d-flex');
+                init[i] = {
+                    div:$(extraBar),
+                    val:maxValue,
+                };
+                graphContainer.append(extraBar);
+            }
             initBuffer();
             helper.getStepButton().on('click', sortIteration);
 

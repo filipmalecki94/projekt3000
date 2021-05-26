@@ -15,7 +15,7 @@ define([], function () {
                 )
             });
         },
-        initCollection: function  (collectionSize, maxValue,barOptions = {}) {
+        initCollection: function  (collectionSize, maxValue, barOptions = {}) {
             var that = this,
                 $graph = $('.graph');
 

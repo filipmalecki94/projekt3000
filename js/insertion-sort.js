@@ -60,7 +60,7 @@ define(['helper'], function (helper) {
 				if (value >= 0 && collection[value].val > key.val) {
 					helper.changeCodeHighlight(5)
 					setTimeout(function () {
-						$(collection[value].div).swap({
+						$(collection[value].div).animateSwap({
 							target: collection[value + 1].div,
 							speed: animationSpeed,
 							callback: function () {
@@ -116,7 +116,7 @@ define(['helper'], function (helper) {
 			helper.changeCodeHighlight(1)
 			$(collection[i].div).addClass('border border-danger');
 			$(collection[0].div).addClass('sorted')
-			helper.getStepButton().on('click',sortIteration);
+			helper.getStepButton().on('click', sortIteration);
 
 			return this;
 		},
