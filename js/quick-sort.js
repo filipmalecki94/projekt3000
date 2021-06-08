@@ -1,109 +1,158 @@
 define(['helper'], function (helper) {
-	var collection = {count:0},n,low,high,pi,i,pivot,t,stack={};
+	var collection = [],animationSpeed = 10000, stack = [],
+		N, x, k = -1, pi, working = false;
 
-
-	function initVars(){
-		n=collection.count
-		low=0;
-		high=n-1;
-		stack={}
-		t=-1;
-		stack[++t] = low;
-		stack[++t] = high;
-	}
 
 	function swap(a,b) {
+		console.log({a,b})
+		console.log(collection[a])
+		console.log(collection[b])
 		var temp = collection[a];
 
 		collection[a] = collection[b];
 		collection[b] = temp;
+		console.log(collection)
 	}
 	function partition2(low,high,resolve)
 	{
-		pivot = collection[high].val;
-		i = (low - 1);
-		var j = low;
-		loop(j).then((res) => {
-			$(collection[i+1].div).swap({
+		do {
+			++k;
+			console.log({k})
+		} while (collection[k].val < x)
+
+		do {
+			--high;
+			console.log({high})
+		} while (collection[high].val > x)
+
+		if(k < high) {
+			$(collection[k].div).animateSwap({
 				target: $(collection[high].div),
 				opacity: "0.5",
 				speed: 2000,
 				callback: function(){
-					$('.border.border-success').removeClass('border border-success');
-					swap(i+1,high);
-					pi = i+1;
-					resolve();
+					swap(k,high);
 				}
 			});
-		});
+		} else {
+			return resolve(k)
+		}
+
+		console.log(k,high)
+
+		//
+		// loop(j).then((res) => {
+		//
+		// });
 	}
 
 	function sortIteration() {
-		if(t >= 0){
-			var h = stack[t--],
-				l = stack[t--],
-				pr = new Promise(resolve => {
+		quick(k,N,collection)
+		console.log(stack)
+		// if(working === false) {
+		// 	k = -1;
+		// 	x = collection[N/2].val;
+		// }
+		// var pr = new Promise(resolve => {
+		// 	working = true;
+		// 	partition2(0,N,resolve);
+		// });
+		//
+		// pr.then(function(res){
+		// 	working = false;
+		// 	console.log({res})
+		// });
+	}
 
-				$('.border.border-success').removeClass('border border-success');
-				$(collection[l].div).addClass('border border-danger')
-				$(collection[h].div).addClass('border border-success')
-				partition2(l,h,resolve);
+	function quick( ll,hh, coll) {
+		var pi;
+		console.log(ll,hh)
+		if(ll < hh) {
+			loop(ll,hh,coll[Math.ceil(hh/2)], coll).then(function (res) {
+				console.log('-------------------')
+				console.log({res})
+				pi = res.kk
+				console.log(coll)
+				quick(pi + 1, hh, coll)
+				quick( ll, pi - 1, coll)
 			});
-
-			pr.then(function(res){
-				if(pi - 1 > l){
-					stack[++t] = l;
-					stack[++t] = pi - 1;
-				}
-
-				if(pi + 1 < h){
-					stack[++t] = pi + 1;
-					stack[++t] = h;
-				}
-
-				$('.border.border-danger').removeClass('border border-success');
-				$('.border.border-primary').removeClass('border border-primary');
-				$(collection[stack[t-1]].div).addClass('border border-primary')
-				$(collection[stack[t]].div).addClass('border border-success')
-			});
+			// pi = part(ll,hh,collection[Math.ceil(hh/2)])
+			// console.log(pi)
+		} else {
+			stack.push(collection)
 		}
 	}
-	const doSomething = value =>
-		new Promise(resolve => {
-			if(value <= high - 1){
-				if(collection[value].val < pivot)
-				{
-					i++;
-					$('.border.border-primary').removeClass('border border-primary');
-					$(collection[i].div).addClass('border border-danger')
-					$(collection[value].div).addClass('border border-primary')
-					$(collection[i].div).swap({
-						target: $(collection[value].div),
-						opacity: "0.5",
-						speed: 2000,
-						callback: function(){
-							$('.border.border-danger').removeClass('border border-danger');
-							$('.border.border-primary').removeClass('border border-primary');
-							swap(i,value);
-							resolve(value + 1);
-						}
-					});
-				} else {
-					resolve(value + 1);
-				}
-			} else {
-				resolve(9999)
-			}
-		});
 
-	const loop = value =>
-		doSomething(value).then(result => {
-			if(result <= high - 1){
-				return loop(result);
-			} else {
-				return result;
-			}
+	function part(kk,nn,xx) {
+		var rez;
+		console.log({kk,nn,xx})
+		loop(kk,nn,xx).then(function (res) {
+			console.log({res})
+			return 'x';
 		});
+	}
+	function loop(kk,nn,xx, coll) {
+		console.log({kk,nn,xx})
+		return loopCode(kk,nn,xx, coll).then(function (result) {
+			var KK=result.kk,NN=result.nn,COLL=result.coll;
+
+			console.log({result});
+			return new Promise(function (resolve) {
+				if (KK < NN) {
+					// swap(kk, nn)
+					return resolve(loop(KK,NN,xx, COLL));
+				} else {
+					resolve(result)
+				}
+			});
+		});
+	}
+
+	function loopCode(kk,nn,xx, coll) {
+		console.log({nn})
+		return new Promise(function (resolve) {
+			var pr1 = new Promise(function (resolve1) {
+				do {
+					++kk;
+					if (coll[kk] >= xx) {
+						console.log({kk})
+						return resolve1(kk)
+					} else {
+						console.log('pr1')
+						console.log({kk})
+						// return resolve1(kk)
+					}
+				} while (coll[kk] < xx)
+			});
+			return pr1.then(function (res1) {
+				console.log({res1})
+				var pr2 = new Promise(function (resolve2) {
+					do {
+						--nn;
+						// console.log({'nn': collection[nn]})
+						if (coll[nn] <= xx) {
+							console.log({'kk': res1, 'nn': nn})
+							return resolve2({'kk':res1,'nn':nn})
+						} else {
+							console.log('pr2')
+							console.log({'kk': res1, 'nn': nn})
+							// return resolve2({'kk': res1, 'nn': nn})
+						}
+					} while (coll[nn] > xx)
+				});
+				pr2.then(function (res2) {
+					var data = {'kk': res2.kk, 'nn': res2.nn, 'coll': coll};
+					console.log({data})
+					if (data.kk < data.nn) {
+						swap(kk, nn)
+					}// else {
+					// 	console.log(data.kk);
+						return resolve(data);
+					// }
+				});
+			});
+		});
+	}
 
 
 	function initQuicksortCode() {
@@ -118,17 +167,17 @@ define(['helper'], function (helper) {
 				{'line' : '}', 'tab' : 0},
 			],
 			codeStructurePartition = [
-				{'line' : 'int pivot = arr[high];', 'tab' : 0},
-				{'line' : 'int i = (low - 1);', 'tab' : 0},
-				{'line' : '&nbsp;', 'tab' : 0},
-				{'line' : 'for(int j = low; j <= high-1; j++) {', 'tab' : 0},
-				{'line' : 'if(arr[j] < pivot) {', 'tab' : 1},
-				{'line' : 'i++;', 'tab' : 2},
-				{'line' : 'swap(&arr[i}, &arr[j]);', 'tab' : 2},
+				{'line' : 'int partition (double t[], int n)', 'tab' : 0},
+				{'line' : '{', 'tab' : 0},
+				{'line' : 'int k = -1;', 'tab' : 1},
+				{'line' : 'double x = t[n / 2];', 'tab' : 1},
+				{'line' : 'while() {', 'tab' : 1},
+				{'line' : 'do ++k; while (t[k] < x);', 'tab' : 2},
+				{'line' : 'do --n; while (t[n] > x);', 'tab' : 2},
+				{'line' : 'if (k < n) std::swap(t[k],t[n]);', 'tab' : 2},
+				{'line' : 'else       return k;', 'tab' : 2},
 				{'line' : '}', 'tab' : 1},
 				{'line' : '}', 'tab' : 0},
-				{'line' : 'swap(&arr[i+1},&arr[high];', 'tab' : 0},
-				{'line' : 'return (i+1);', 'tab' : 0},
 			];
 
 		helper.initCode(codeStructureSort,$codeFieldSort);
@@ -139,19 +188,28 @@ define(['helper'], function (helper) {
 	return {
 		init: function (graphContainer) {
 			initQuicksortCode();
-			collection = {count:0}
-			graphContainer.find('.bar-block:not(#empty)').each(function(index,$div) {
-				collection.count++;
-				collection[index] = {
-					div:$($div),
-					val:parseInt($(this).attr('id')),
-				};
+			collection = []
+			N = graphContainer.find('.bar-block').length;
+			graphContainer.find('.bar-block').each(function(index,$div) {
+				collection[index] = //{
+					// div:$($div),
+					//val:
+						parseInt($(this).attr('id'))//,
+				//};
 			});
-			initVars();
 			helper.getStepButton().on('click',sortIteration);
+
+			return this;
 		},
 		sortIteration: function () {
 			return sortIteration()
+		},
+		setAnimationSpeed: function (newAnimationSpeed) {
+			if (newAnimationSpeed > animationSpeed) {
+				animationSpeed = newAnimationSpeed;
+			}
+
+			return this;
 		}
 	};
 });
