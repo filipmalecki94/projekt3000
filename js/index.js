@@ -3,7 +3,7 @@ require(['helper',
     'counting',
     'quicksort',
     'mergesort'], function (helper, insertion, counting, quicksort, mergesort) {
-    var maxValue = 10,
+    var maxValue = 100,
         collectionSize = 10,
         animationSpeed = 50,
         barOptions = {};

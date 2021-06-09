@@ -1,156 +1,103 @@
 define(['helper'], function (helper) {
-	var collection = [],animationSpeed = 10000, stack = [],
-		N, x, k = -1, pi, working = false;
+	var collection = [],animationSpeed = 1,working = false,
+		N, k, a, masterInterval;
 
-
-	function swap(a,b) {
-		console.log({a,b})
-		console.log(collection[a])
-		console.log(collection[b])
-		var temp = collection[a];
-
-		collection[a] = collection[b];
-		collection[b] = temp;
-		console.log(collection)
-	}
-	function partition2(low,high,resolve)
-	{
-		do {
-			++k;
-			console.log({k})
-		} while (collection[k].val < x)
-
-		do {
-			--high;
-			console.log({high})
-		} while (collection[high].val > x)
-
-		if(k < high) {
-			$(collection[k].div).animateSwap({
-				target: $(collection[high].div),
-				opacity: "0.5",
-				speed: 2000,
-				callback: function(){
-					swap(k,high);
-				}
-			});
-		} else {
-			return resolve(k)
-		}
-
-		console.log(k,high)
-
-		//
-		// loop(j).then((res) => {
-		//
-		// });
-	}
 
 	function sortIteration() {
-		quick(k,N,collection)
-		console.log(stack)
-		// if(working === false) {
-		// 	k = -1;
-		// 	x = collection[N/2].val;
-		// }
-		// var pr = new Promise(resolve => {
-		// 	working = true;
-		// 	partition2(0,N,resolve);
-		// });
-		//
-		// pr.then(function(res){
-		// 	working = false;
-		// 	console.log({res})
-		// });
-	}
 
-	function quick( ll,hh, coll) {
-		var pi;
-		console.log(ll,hh)
-		if(ll < hh) {
-			loop(ll,hh,coll[Math.ceil(hh/2)], coll).then(function (res) {
-				console.log('-------------------')
-				console.log({res})
-				pi = res.kk
-				console.log(coll)
-				quick(pi + 1, hh, coll)
-				quick( ll, pi - 1, coll)
-			});
-			// pi = part(ll,hh,collection[Math.ceil(hh/2)])
-			// console.log(pi)
+		if(!working){
+			a=quick(0,N);
+			a.next();
+			working = true;
 		} else {
-			stack.push(collection)
+			if(a.next().done)
+				working = false;
 		}
 	}
 
-	function part(kk,nn,xx) {
-		var rez;
-		console.log({kk,nn,xx})
-		loop(kk,nn,xx).then(function (res) {
-			console.log({res})
-			return 'x';
+	function* quick(i,j) {
+		if(i+1<j)
+		{
+			yield* partition(i,j);
+			yield k;
+			yield* quick(i,k);
+			yield* quick(k,j);
+		}
+	}
+
+	function* partition(i,j)
+	{
+		if(i+1==j) {
+			return;
+		}
+		let mid=Math.floor((i+j)/2);
+		let x=+collection[mid].val;
+		if(mid === N-1){
+			$('.graph .bar-block').removeClass('sorted').removeClass('border border-danger')
+			working = 'done';
+			return;
+			console.log(working)
+		}
+		$('.graph .bar-block').removeClass('border border-danger')
+		collection[mid].div.addClass('border border-danger')
+		 loop(i-1,j,mid,x).then(function (result) {
+			let ii = result.i, jj = result.j, midd = result.mid, xx = result.x;
+
+			 if(ii==j-1)
+			 	collection[ii].div.addClass('sorted')
+			 if(ii==i+1)
+			 	collection[i].div.addClass('sorted')
+			 k = ii
 		});
 	}
-	function loop(kk,nn,xx, coll) {
-		console.log({kk,nn,xx})
-		return loopCode(kk,nn,xx, coll).then(function (result) {
-			var KK=result.kk,NN=result.nn,COLL=result.coll;
-
-			console.log({result});
+	function loop(i,j, mid, x) {
+		return loopCode(i,j, mid, x).then(function (result) {
+			let ii = result.i, jj = result.j, midd = result.mid, xx = result.x;
 			return new Promise(function (resolve) {
-				if (KK < NN) {
-					// swap(kk, nn)
-					return resolve(loop(KK,NN,xx, COLL));
+				if (ii < jj) {
+					$(collection[ii].div).animateSwap({
+						target: collection[jj].div,
+						speed: animationSpeed,
+						opacity: "1",
+						callback: function() {
+							let y = collection[ii];
+							collection[ii]=collection[jj];
+							collection[jj]=y;
+							if(ii==midd || jj==midd)
+							{
+								midd=ii+jj-midd;
+							}
+							return resolve(loop(ii,jj,midd,xx));
+						}
+					});
 				} else {
-					resolve(result)
+
+					// if(ii==j-1)
+					// 	collection[ii].div.addClass('sorted')
+					// if(ii==i+1)
+					// 	collection[i].div.addClass('sorted')
+					resolve({'i':ii,'j':jj,'mid':midd,'x':xx})
 				}
 			});
 		});
 	}
 
-	function loopCode(kk,nn,xx, coll) {
-		console.log({nn})
+	function loopCode(i,j,mid,x) {
 		return new Promise(function (resolve) {
-			var pr1 = new Promise(function (resolve1) {
-				do {
-					++kk;
-					if (coll[kk] >= xx) {
-						console.log({kk})
-						return resolve1(kk)
-					} else {
-						console.log('pr1')
-						console.log({kk})
-						// return resolve1(kk)
+			i++;
+			j--;
+			do {
+				if(collection[i].val >= x && collection[j].val <= x) {
+					return resolve({'i':i,'j':j,'mid':mid,'x':x})
+				} else{
+					if(+collection[i].val < x) {
+						i++;
 					}
-				} while (coll[kk] < xx)
-			});
-			return pr1.then(function (res1) {
-				console.log({res1})
-				var pr2 = new Promise(function (resolve2) {
-					do {
-						--nn;
-						// console.log({'nn': collection[nn]})
-						if (coll[nn] <= xx) {
-							console.log({'kk': res1, 'nn': nn})
-							return resolve2({'kk':res1,'nn':nn})
-						} else {
-							console.log('pr2')
-							console.log({'kk': res1, 'nn': nn})
-							// return resolve2({'kk': res1, 'nn': nn})
-						}
-					} while (coll[nn] > xx)
-				});
-				pr2.then(function (res2) {
-					var data = {'kk': res2.kk, 'nn': res2.nn, 'coll': coll};
-					console.log({data})
-					if (data.kk < data.nn) {
-						swap(kk, nn)
-					}// else {
-					// 	console.log(data.kk);
-						return resolve(data);
-					// }
-				});
-			});
+					if(+collection[j].val > x) {
+						j--;
+					}
+				}
+			} while (true)
 		});
 	}
 
@@ -191,13 +138,19 @@ define(['helper'], function (helper) {
 			collection = []
 			N = graphContainer.find('.bar-block').length;
 			graphContainer.find('.bar-block').each(function(index,$div) {
-				collection[index] = //{
-					// div:$($div),
-					//val:
+				collection[index] = {
+					div:$($div),
+					val:
 						parseInt($(this).attr('id'))//,
-				//};
+				};
 			});
 			helper.getStepButton().on('click',sortIteration);
+			masterInterval = setInterval(function (){
+				sortIteration();
+				if(working === 'done'){
+					clearInterval(masterInterval)
+				}
+			},animationSpeed + 1000)
 
 			return this;
 		},

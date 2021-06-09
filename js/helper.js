@@ -42,9 +42,9 @@ define([], function () {
             var collection = [];
 
             for(var i=0; i < collectionSize; i++){
-                collection.push(this.getUniqueRandom(collection, maxValue));
+                // collection.push(this.getUniqueRandom(collection, maxValue));
 
-                // collection.push(Math.ceil(Math.random() * maxValue));
+                collection.push(Math.ceil(Math.random() * maxValue));
             }
             //
             // for(var i=collectionSize; i > 0; i--) {
