@@ -27,13 +27,30 @@ define([], function () {
 
             return $graph;
         },
+        getUniqueRandom: function (collection, maxValue){
+            var random = Math.ceil(Math.random() * maxValue);
+            if(maxValue < 0){
+                return 0;
+            }
+            if($.inArray(random, collection) < 0) {
+                return random;
+            }
+
+            return this.getUniqueRandom(collection, maxValue)
+        },
         getCollectionArr: function (collectionSize, maxValue) {
             var collection = [];
 
             for(var i=0; i < collectionSize; i++){
+                // collection.push(this.getUniqueRandom(collection, maxValue));
+
                 collection.push(Math.ceil(Math.random() * maxValue));
             }
-            // console.log(collection.sort())
+            //
+            // for(var i=collectionSize; i > 0; i--) {
+            //     collection.push(i);
+            // }
+
             return collection;
         },
         createBar: function  (index, value, customOptions = {}) {
