@@ -44,6 +44,7 @@ define(['helper'], function (helper) {
 			helper.changeCodeHighlight([12,13]);
 			i = 0;
 			interval = setInterval(function() {
+				$('.counter-bars #'+i+'.bar-block').css('border-bottom','1px solid red')
 				i++;
 				$('.sorted #'+i+' .bar').removeClass('invisible');
 				helper.darkenBars($('.counter-bars #'+i+'.bar-block'));

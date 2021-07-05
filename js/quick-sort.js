@@ -1,10 +1,8 @@
 define(['helper'], function (helper) {
-	var collection = [],animationSpeed = 1,working = false,
-		N, k, a, masterInterval;
-
+	var collection = [],animationSpeed = 500,working = false,
+		N, k, a;
 
 	function sortIteration() {
-
 		if(!working){
 			a=quick(0,N);
 			a.next();
@@ -36,7 +34,6 @@ define(['helper'], function (helper) {
 			$('.graph .bar-block').removeClass('sorted').removeClass('border border-danger')
 			working = 'done';
 			return;
-			console.log(working)
 		}
 		$('.graph .bar-block').removeClass('border border-danger')
 		collection[mid].div.addClass('border border-danger')
@@ -50,6 +47,7 @@ define(['helper'], function (helper) {
 			 k = ii
 		});
 	}
+
 	function loop(i,j, mid, x) {
 		return loopCode(i,j, mid, x).then(function (result) {
 			let ii = result.i, jj = result.j, midd = result.mid, xx = result.x;
@@ -71,11 +69,6 @@ define(['helper'], function (helper) {
 						}
 					});
 				} else {
-
-					// if(ii==j-1)
-					// 	collection[ii].div.addClass('sorted')
-					// if(ii==i+1)
-					// 	collection[i].div.addClass('sorted')
 					resolve({'i':ii,'j':jj,'mid':midd,'x':xx})
 				}
 			});
@@ -100,7 +93,6 @@ define(['helper'], function (helper) {
 			} while (true)
 		});
 	}
-
 
 	function initQuicksortCode() {
 		var $codeFieldSort = $('<div/>',{'class': 'code m-1 h-50'}),
@@ -141,16 +133,10 @@ define(['helper'], function (helper) {
 				collection[index] = {
 					div:$($div),
 					val:
-						parseInt($(this).attr('id'))//,
+						parseInt($(this).attr('id'))
 				};
 			});
 			helper.getStepButton().on('click',sortIteration);
-			masterInterval = setInterval(function (){
-				sortIteration();
-				if(working === 'done'){
-					clearInterval(masterInterval)
-				}
-			},animationSpeed + 1000)
 
 			return this;
 		},
