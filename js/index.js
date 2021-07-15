@@ -35,6 +35,7 @@ require(['helper',
         $('.counter-container').remove();
         $('.buffer').remove();
         $('.graph-block .sorted').remove();
+        $('.partition').remove();
         $('body').attr('class','').addClass(hash.replace('#',''))
         switch (hash){
             case '#insertion-sort':

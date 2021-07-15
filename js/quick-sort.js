@@ -1,82 +1,73 @@
 define(['helper'], function (helper) {
-	var collection = [],animationSpeed = 1,working = false,
-		N, k, a, masterInterval;
-
+	var collection = [],animationSpeed = 500, level = 0,
+		N, k, quicksort;
 
 	function sortIteration() {
-
-		if(!working){
-			a=quick(0,N);
-			a.next();
-			working = true;
-		} else {
-			if(a.next().done)
-				working = false;
+		helper.getStepButton().off('click',sortIteration);
+		if(level === 0){
+			appendPartitionLevel(0,N);
+			quicksort = quick(0,N);
 		}
+		quicksort.next()
 	}
 
 	function* quick(i,j) {
-		if(i+1<j)
-		{
+		if(i+1 === N-1 && j === N) {
+			$('.partition .partition-level').remove()
+			return;
+		}
+		if(i+1<j) {
 			yield* partition(i,j);
 			yield k;
+			appendPartitionLevel(i,k);
 			yield* quick(i,k);
+			removePartitionLevelG();
+			appendPartitionLevel(k,j);
 			yield* quick(k,j);
+			removePartitionLevelG();
 		}
 	}
 
-	function* partition(i,j)
-	{
-		if(i+1==j) {
-			return;
-		}
-		let mid=Math.floor((i+j)/2);
-		let x=+collection[mid].val;
-		if(mid === N-1){
-			$('.graph .bar-block').removeClass('sorted').removeClass('border border-danger')
-			working = 'done';
-			return;
-			console.log(working)
-		}
-		$('.graph .bar-block').removeClass('border border-danger')
-		collection[mid].div.addClass('border border-danger')
-		 loop(i-1,j,mid,x).then(function (result) {
-			let ii = result.i, jj = result.j, midd = result.mid, xx = result.x;
+	function* partition(i,j) {
+		let mid=Math.floor((i+j)/2),
+			x = +collection[mid].val;
 
-			 if(ii==j-1)
-			 	collection[ii].div.addClass('sorted')
-			 if(ii==i+1)
-			 	collection[i].div.addClass('sorted')
-			 k = ii
+		if(i+1 === j || mid === N-1) {
+			return;
+		}
+		loop(i-1,j,mid,x).then(function (result) {
+			$('.bar-block').css('background','unset')
+			k = result.i
+			helper.getStepButton().on('click',sortIteration);
 		});
 	}
+
 	function loop(i,j, mid, x) {
 		return loopCode(i,j, mid, x).then(function (result) {
-			let ii = result.i, jj = result.j, midd = result.mid, xx = result.x;
+			let i = result.i, j = result.j, mid = result.mid, x = result.x;
+
 			return new Promise(function (resolve) {
-				if (ii < jj) {
-					$(collection[ii].div).animateSwap({
-						target: collection[jj].div,
+				if (i < j) {
+					collection[i].div.css('background','unset')
+					collection[j].div.css('background','unset')
+					return $(collection[i].div).animateSwap({
+						target: collection[j].div,
 						speed: animationSpeed,
 						opacity: "1",
 						callback: function() {
-							let y = collection[ii];
-							collection[ii]=collection[jj];
-							collection[jj]=y;
-							if(ii==midd || jj==midd)
-							{
-								midd=ii+jj-midd;
+							let y = collection[i];
+							collection[i]=collection[j];
+							collection[j]=y;
+
+							if(i === mid || j == mid) {
+								mid = i+j-mid;
 							}
-							return resolve(loop(ii,jj,midd,xx));
+
+							return resolve(loop(i,j,mid,x));
 						}
 					});
 				} else {
-
-					// if(ii==j-1)
-					// 	collection[ii].div.addClass('sorted')
-					// if(ii==i+1)
-					// 	collection[i].div.addClass('sorted')
-					resolve({'i':ii,'j':jj,'mid':midd,'x':xx})
+					resolve({'i':i,'j':j,'mid':mid,'x':x})
 				}
 			});
 		});
@@ -84,23 +75,75 @@ define(['helper'], function (helper) {
 
 	function loopCode(i,j,mid,x) {
 		return new Promise(function (resolve) {
-			i++;
-			j--;
-			do {
+			i++; j--;
+			collection[i].div.css('background','red')
+			collection[j].div.css('background','blue')
+			let intrvl = setInterval(function () {
+				if(i > j) {
+					clearInterval(intrvl)
+				}
 				if(collection[i].val >= x && collection[j].val <= x) {
+					clearInterval(intrvl)
 					return resolve({'i':i,'j':j,'mid':mid,'x':x})
 				} else{
 					if(+collection[i].val < x) {
-						i++;
+						collection[i].div.css('background','unset')
+						collection[++i].div.css('background','red')
 					}
 					if(+collection[j].val > x) {
-						j--;
+						collection[j].div.css('background','unset')
+						collection[--j].div.css('background','blue')
 					}
 				}
-			} while (true)
+			}, animationSpeed)
 		});
 	}
 
+	function appendPartitionLevel(i,j) {
+		$('.partition').append(createPartitionLevel(level, i, j))
+		enablePartitionRangeField(level++, i, j)
+	}
+
+	function removePartitionLevelG() {
+		return $('.partition .partition-level[data-level='+(--level)+']').remove();
+	}
+
+	function createPartition () {
+		return $('<div/>',{'class' : 'partition'})
+			.css({'width' : '100%','height' : '100px'});
+	}
+
+	function createPartitionLevel (level, i, j) {
+		let $partitionLevel = $('<div/>',{'class' : 'partition-level d-flex'})
+			.css({'width' : '100%','height' : '1px', 'margin-bottom' : '4px'})
+			.attr('data-level', level);
+
+		for(let i = 0; i < N; i++) {
+			$partitionLevel.append(helper.createBar(i,1,{
+					'height' : '100%',
+					'noBorder' : true,
+					'barWidth' : '100%'
+				})
+					.css('visibility','hidden')
+			);
+		}
+		markPivot(Math.floor((i+j)/2))
+
+		return $partitionLevel;
+	}
+
+	function enablePartitionRangeField(level = 0, from = 0, to = 0, turnOn = true) {
+		let $partitionLevel = $('.partition-level[data-level='+level+']');
+
+		for(let i = from; i < to; i++) {
+			$partitionLevel.find('.bar-block[data-index='+i+']').css('visibility','visible');
+		}
+	}
+
+	function markPivot(pivot) {
+		$('.graph .bar-block').removeClass('border border-danger')
+		collection[pivot].div.addClass('border border-danger')
+	}
 
 	function initQuicksortCode() {
 		var $codeFieldSort = $('<div/>',{'class': 'code m-1 h-50'}),
@@ -135,22 +178,16 @@ define(['helper'], function (helper) {
 	return {
 		init: function (graphContainer) {
 			initQuicksortCode();
-			collection = []
+			collection = [];
 			N = graphContainer.find('.bar-block').length;
-			graphContainer.find('.bar-block').each(function(index,$div) {
+			$('.graph-block').prepend(createPartition());
+			graphContainer.find('.bar-block').each(function(index, $div) {
 				collection[index] = {
-					div:$($div),
-					val:
-						parseInt($(this).attr('id'))//,
+					div: $($div),
+					val: parseInt($(this).attr('id'))
 				};
 			});
 			helper.getStepButton().on('click',sortIteration);
-			masterInterval = setInterval(function (){
-				sortIteration();
-				if(working === 'done'){
-					clearInterval(masterInterval)
-				}
-			},animationSpeed + 1000)
 
 			return this;
 		},
