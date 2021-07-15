@@ -3,6 +3,7 @@ define(['helper'], function (helper) {
 		N, k, quicksort;
 
 	function sortIteration() {
+		helper.getStepButton().off('click',sortIteration);
 		if(level === 0){
 			appendPartitionLevel(0,N);
 			quicksort = quick(0,N);
@@ -37,6 +38,7 @@ define(['helper'], function (helper) {
 		loop(i-1,j,mid,x).then(function (result) {
 			$('.bar-block').css('background','unset')
 			k = result.i
+			helper.getStepButton().on('click',sortIteration);
 		});
 	}
 

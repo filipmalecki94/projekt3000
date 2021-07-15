@@ -3,8 +3,8 @@ require(['helper',
     'counting',
     'quicksort',
     'mergesort'], function (helper, insertion, counting, quicksort, mergesort) {
-    var maxValue = 10,
-        collectionSize = 50,
+    var maxValue = 100,
+        collectionSize = 10,
         animationSpeed = 50,
         barOptions = {};
 
@@ -35,6 +35,7 @@ require(['helper',
         $('.counter-container').remove();
         $('.buffer').remove();
         $('.graph-block .sorted').remove();
+        $('.partition').remove();
         $('body').attr('class','').addClass(hash.replace('#',''))
         switch (hash){
             case '#insertion-sort':
