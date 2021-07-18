@@ -1,5 +1,5 @@
 define(['helper'], function (helper) {
-	var collection = [],animationSpeed = 500, level = 0,
+	var collection = [],animationSpeed = 100, level = 0,
 		N, k, quicksort;
 
 	function sortIteration() {
@@ -122,7 +122,8 @@ define(['helper'], function (helper) {
 			$partitionLevel.append(helper.createBar(i,1,{
 					'height' : '100%',
 					'noBorder' : true,
-					'barWidth' : '100%'
+					'barWidth' : '100%',
+					'backgroundColor' : 'rgb(0,255,0)'
 				})
 					.css('visibility','hidden')
 			);
@@ -179,6 +180,8 @@ define(['helper'], function (helper) {
 		init: function (graphContainer) {
 			initQuicksortCode();
 			collection = [];
+			level = 0;
+			k = null;
 			N = graphContainer.find('.bar-block').length;
 			$('.graph-block').prepend(createPartition());
 			graphContainer.find('.bar-block').each(function(index, $div) {
@@ -192,7 +195,7 @@ define(['helper'], function (helper) {
 			return this;
 		},
 		sortIteration: function () {
-			return sortIteration()
+			return sortIteration
 		},
 		setAnimationSpeed: function (newAnimationSpeed) {
 			if (newAnimationSpeed > animationSpeed) {

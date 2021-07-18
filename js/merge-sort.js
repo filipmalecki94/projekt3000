@@ -6,8 +6,8 @@ define(['helper'], function (helper) {
 
     function sortIteration() {
         helper.getStepButton().off('click', sortIteration)
-        console.log(C)
-        console.log($('.graph #'+C*2+'.buffer-container'))
+
+
         $('.graph #' + (C * 2) + '.buffer-container').addClass('merged')
         $('.graph #' + (C * 2 + 1) + '.buffer-container').addClass('merged')
         loop(masterI,masterJ,masterL).then(function (res) {
@@ -31,8 +31,8 @@ define(['helper'], function (helper) {
                 }
 
                 setTimeout(function () {
-                    console.log('----------------------------')
-                    console.log(buffer)
+
+
                     init = buffer;
                     $('.graph').html($('.buffer').html())
                     $('.buffer').remove()
@@ -107,7 +107,7 @@ define(['helper'], function (helper) {
     }
 
     function loopCode(I,J,L) {
-        console.log('iter')
+
         return new Promise(function (resolve) {
             $('.graph').find('.bar-block[data-index="'+I+'"]').css('background','rgba(255,255,255,0.22)')
             $('.graph').find('.bar-block[data-index="'+J+'"]').css('background','rgba(255,255,255,0.1)')
@@ -187,7 +187,6 @@ define(['helper'], function (helper) {
         }
 
         for(var i = 0; i < N; i++) {
-            console.log(itemsInBufferContainer)
             var bufferContainerBarIndex = itemsInBufferContainer ?  i%(2 * itemsInBufferContainer) : i%(2 * (level + 1))
 
             if(bufferContainerBarIndex === 0) {

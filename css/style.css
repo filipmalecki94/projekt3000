@@ -96,10 +96,6 @@
     position: fixed;
 }
 
-.algorithm-nav .next {
-    position: absolute;
-    right: 10px;
-}
 
 .border-black {
     border: 1px solid black;
@@ -121,6 +117,114 @@
     margin-top: 20px;
 }
 
+#control-panel.modal {
+    top: 60%;
+    left: 35%;
+    opacity: 0.8;
+    display: block;
+}
+
+#control-panel.modal .modal-button {
+    color: #93faff;
+    background-color: transparent;
+    border-color: #93faff;
+    border-radius: 0;
+}
+
+#control-panel.modal .modal-button:focus {
+    box-shadow: unset;
+    color: #93faff;
+    background-color: transparent;
+    border-color: #93faff;
+    border-radius: 0;
+    outline: 0;
+}
+
+#control-panel.modal .modal-button:hover {
+    color: #93faff;
+    border-color: #93faff;
+    background: #73a3ab;
+}
+
+#control-panel.modal .modal-content {
+    border-radius: 0;
+    border: 3px solid rgb(147 250 255);
+    background: #000;
+}
+
+#control-panel.modal textarea {
+    background: rgb(0, 0, 0);
+    border: 1px solid;
+    color: #93faff;
+    width: 100%;
+}
+
+#control-panel.modal label {
+    margin: 0;
+    color: #93faff;
+    font-size: 12px;
+    width: 100%;
+}
+
+
+#control-panel.modal .modal-header {
+    border: 0;
+    padding-top: 10px;
+    padding-bottom: 0;
+}
+
+#control-panel.modal .modal-body {
+    height: auto;
+    padding-top: 0;
+}
+
+#control-panel.modal .collection-field,
+#control-panel.modal .generate-field,
+#control-panel.modal .control-buttons {
+    padding: 10px;
+    border: 1px solid;
+    justify-content: space-between;
+}
+#control-panel.modal .generate-field {
+    flex-direction: column;
+}
+#control-panel.modal .numerical-fields {
+    padding: 0;
+    flex-wrap: wrap;
+    margin: 10px 0;
+}
+#control-panel.modal .numerical-field {
+    padding: 5px;
+}
+#control-panel.modal .numerical-field label {
+    align-self: center;
+    text-align: center;
+}
+#control-panel.modal .numerical-field input {
+    max-width: 50px;
+    background: black;
+    border: 1px solid #93faff;
+    color: #93faff;
+    text-align: center;
+}
+#control-panel.modal .generate-buttons {
+    justify-content: space-between;
+}
+
+#control-panel.modal .generate-buttons button {
+    width: 30%;
+}
+
+#control-panel.modal .close {
+    color: rgb(147 250 255);
+    text-shadow: unset;
+    opacity: 1;
+}
+
+#override a.menu-control-panel {
+    color: #00ffd4  ;
+}
+
 a,
 a:hover,
 a:focus {
@@ -132,6 +236,7 @@ a:focus {
 body#override{
     background: #000000;
     position: relative;
+    padding: 0!important;
 }
 .row {
     margin-right: 0;
