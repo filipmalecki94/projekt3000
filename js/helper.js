@@ -15,13 +15,13 @@ define([], function () {
                 )
             });
         },
-        initCollection: function  (collectionSize, maxValue, barOptions = {}) {
+        initCollection: function  (collectionSize, maxValue, barOptions = {}, preCollection = 'random') {
             var that = this,
                 $graph = $('.graph');
 
             size = collectionSize > 300 ? 300 : collectionSize;
-            max = maxValue;
-            $.each(this.getCollectionArr(size, maxValue), function (index, value){
+            max = preCollection !== 'collection' ? this.readCookie('max') : maxValue;
+            $.each(this.getCollectionArr(size, maxValue, preCollection), function (index, value){
                 $graph.append(that.createBar(index, value,$.extend(barOptions,{'isOversize': size < 31})));
             });
 
@@ -38,20 +38,34 @@ define([], function () {
 
             return this.getUniqueRandom(collection, maxValue)
         },
-        getCollectionArr: function (collectionSize, maxValue) {
+        getCollectionArr: function (collectionSize, maxValue, preCollection = 'random') {
             var collection = [];
 
-            for(var i=0; i < collectionSize; i++){
-                // collection.push(this.getUniqueRandom(collection, maxValue));
+            if(preCollection === 'collection') {
+                JSON.parse(this.readCookie('collection') ?? '{}').forEach(function (e,id){
+                    collection.push(parseInt(e))
+                });
+            } else if(preCollection === 'descending') {
+                for(var i = maxValue; i > 0; i--) {
+                    collection.push(i);
+                }
+            } else {
+                var maxCollection = preCollection === 'random' ? collectionSize : maxValue;
 
-                collection.push(Math.ceil(Math.random() * maxValue));
+                for(var i=1; i <= maxCollection; i++){
+                    if(preCollection === 'unique-random') {
+                        collection.push(this.getUniqueRandom(collection, maxValue));
+                    }
+                    if(preCollection === 'random') {
+                        collection.push(Math.ceil(Math.random() * maxValue));
+                    }
+                    if(preCollection === 'ascending') {
+                        collection.push(i);
+                    }
+                }
             }
-            //
-            // for(var i=collectionSize; i > 0; i--) {
-            //     collection.push(i);
-            // }
 
-            return collection;
+            return this.setCollection(collection);
         },
         createBar: function  (index, value, customOptions = {}) {
             var $bar,
@@ -128,19 +142,53 @@ define([], function () {
         darkenBars: function($object, callback = null, brightenBars = false) {
             $object.animate({opacity: brightenBars ? 1 : 0.2}, 100, callback);
         },
-        swapDivs: function($div1, $div2, justClone = false) {
-            div1 = $div1;
-            div2 = $div2;
+        createCookie(name, value, days) {
+            var expires;
 
-            tdiv1 = div1.clone();
-            tdiv2 = div2.clone();
-
-            if(!div2.is(':empty')){
-                div1.replaceWith(tdiv2);
-                if(!justClone) {
-                    div2.replaceWith(tdiv1);
-                }
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toGMTString();
+            } else {
+                expires = "";
             }
+            document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + expires + "; path=/";
+        },
+        readCookie(name) {
+            var nameEQ = encodeURIComponent(name) + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) === ' ')
+                    c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0)
+                    return decodeURIComponent(c.substring(nameEQ.length, c.length));
+            }
+            return null;
+        },
+        setCollection(collection) {
+            collection = collection
+                .map(function (e,i) {
+                    return parseInt(e) ?? 0;
+                })
+                .filter(function (e,i) {
+                    return !Number.isNaN(e) && $('.numerical-fields input#max-input').attr('max') > e && $('.numerical-fields input#size-input').attr('max') > i;
+                });
+
+            this.createCookie('collection', JSON.stringify(collection))
+            $('.collection-input')[0].value =  collection ?? '';
+
+            return collection;
+        },
+        setNumericalInputEvent (inputName) {
+            let that = this, val;
+
+            $('.numerical-fields input#'+inputName+'-input').on('change',function ($e) {
+                val = $e.currentTarget.value;
+                that.createCookie(inputName, $e.currentTarget.value)
+            });
+
+            return val;
         }
     }
 });

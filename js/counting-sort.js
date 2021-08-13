@@ -5,7 +5,7 @@ define(['helper'], function (helper) {
 		counter = {},
 		sorted = {},
 		stepDone = 1,
-		animationSpeed = 100,
+		animationSpeed = 200,
 		interval;
 
 	function sortIteration() {
@@ -31,7 +31,7 @@ define(['helper'], function (helper) {
 						helper.getStepButton().on('click', sortIteration);
 					}
 				});
-			}, animationSpeed * 3);
+			}, animationSpeed * 1.5);
 
 			return;
 		}
@@ -44,16 +44,15 @@ define(['helper'], function (helper) {
 			helper.changeCodeHighlight([12,13]);
 			i = 0;
 			interval = setInterval(function() {
-				$('.counter-bars #'+i+'.bar-block').css('border-bottom','1px solid red')
-				i++;
 				$('.sorted #'+i+' .bar').removeClass('invisible');
 				helper.darkenBars($('.counter-bars #'+i+'.bar-block'));
-				if(i > maxValue){
+				$('.counter-bars #'+i+'.bar-block').css('border-bottom','1px solid red')
+				if(i++ > maxValue){
 					clearInterval(interval);
 					stepDone = 3;
 					helper.getStepButton().on('click', sortIteration);
 				}
-			}, animationSpeed * 5);
+			}, animationSpeed * 1.75);
 
 			return;
 		}
@@ -79,7 +78,7 @@ define(['helper'], function (helper) {
 						helper.getStepButton().on('click', sortIteration);
 					}
 				},true);
-			}, animationSpeed * 3);
+			}, animationSpeed * 1.5);
 		}
 	}
 
@@ -236,6 +235,9 @@ define(['helper'], function (helper) {
 			}
 
 			return this;
+		},
+		getAnimationSpeed: function () {
+			return animationSpeed;
 		}
 	};
 });
