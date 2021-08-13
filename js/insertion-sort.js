@@ -1,6 +1,6 @@
 define(['helper'], function (helper) {
 	var collection = {},
-		animationSpeed = 500,
+		animationSpeed = 1000,
 		i = 1,
 		key,
 		j;
@@ -120,6 +120,9 @@ define(['helper'], function (helper) {
 
 			return this;
 		},
+		sortIteration: function () {
+			return sortIteration()
+		},
 		setAnimationSpeed: function (newAnimationSpeed) {
 			if (newAnimationSpeed > animationSpeed) {
 				animationSpeed = newAnimationSpeed;
@@ -127,8 +130,8 @@ define(['helper'], function (helper) {
 
 			return this;
 		},
-		sortIteration: function () {
-			return sortIteration()
+		getAnimationSpeed: function () {
+			return animationSpeed;
 		}
 	};
 });

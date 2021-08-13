@@ -117,11 +117,22 @@
     margin-top: 20px;
 }
 
+
 #control-panel.modal {
-    top: 60%;
-    left: 35%;
     opacity: 0.8;
     display: block;
+    z-index: 100;
+}
+
+#control-panel.modal .modal-dialog {
+    bottom: -310px;
+    right: 25px;
+    position: absolute;
+    transition: 0.5s;
+}
+
+#control-panel.modal .modal-dialog.expand {
+    bottom: -5px;
 }
 
 #control-panel.modal .modal-button {
@@ -143,13 +154,21 @@
 #control-panel.modal .modal-button:hover {
     color: #93faff;
     border-color: #93faff;
-    background: #73a3ab;
+    background: #75c8cc1a;
 }
 
 #control-panel.modal .modal-content {
     border-radius: 0;
     border: 3px solid rgb(147 250 255);
     background: #000;
+}
+
+#control-panel.modal .modal-content .modal-expand {
+    height: 20px;
+    transition: 0.5s;
+}
+#control-panel.modal .modal-content .modal-expand:hover {
+    background: #75c8cc1a;
 }
 
 #control-panel.modal textarea {
@@ -208,6 +227,7 @@
     text-align: center;
 }
 #control-panel.modal .generate-buttons {
+    flex-wrap: wrap;
     justify-content: space-between;
 }
 
@@ -237,6 +257,7 @@ body#override{
     background: #000000;
     position: relative;
     padding: 0!important;
+    overflow: hidden;
 }
 .row {
     margin-right: 0;
@@ -255,6 +276,7 @@ p {
     float:left;
     position: relative;
     padding: 0;
+    z-index: 200;
 }
 .navbar-toggle {
     position: absolute;

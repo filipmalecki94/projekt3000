@@ -7,7 +7,9 @@ require(['helper',
         collectionSize = helper.readCookie('size') ?? $('.numerical-fields input#size-input')[0].value ?? 25,
         animationSpeed = helper.readCookie('speed') ?? $('.numerical-fields input#speed-input')[0].value ?? 1000,
         preCollection = helper.readCookie('preCollection') ?? 'random',
-        barOptions = {}, playInterval;
+        barOptions = {},
+        playInterval,
+        sort;
 
     window.onhashchange = function () {
         $('.main-menu a').removeClass('current');
@@ -15,69 +17,37 @@ require(['helper',
         changeSortPage(true);
     };
 
-    $("#control-panel").draggable({
-        handle: ".modal-header"
-    });
+    $('.modal-expand').on('click', function (e) {
+        $(this).closest('.modal-dialog').toggleClass('expand')
+    })
 
-    $('.control-buttons #play').on('click',function (){
+    $('.control-buttons #play').on('click',function (e){
         playInterval = setInterval(function (){
             helper.getStepButton().trigger('click');
-        }, 1000)
+        }, sort.getAnimationSpeed())
     })
-    $('.control-buttons #stop').on('click',function (){
+    $('.control-buttons #stop').on('click',function (e){
         clearInterval(playInterval);
     })
 
-    $('.numerical-fields input#size-input').on('change',function ($e) {
-        collectionSize = $e.currentTarget.value;
-        helper.createCookie('size', $e.currentTarget.value)
-    });
-    $('.numerical-fields input#max-input').on('change',function ($e) {
-        maxValue = $e.currentTarget.value;
-        helper.createCookie('max', $e.currentTarget.value)
-    });
-    $('.numerical-fields input#speed-input').on('change',function ($e) {
-        animationSpeed = $e.currentTarget.value;
-        helper.createCookie('speed', $e.currentTarget.value)
-    });
-
-    function setCollection(collection) {
-        collection = helper.setCollection(collection)
-
-        collectionSize = collection.length
-        maxValue = collection.length > 0 ? Math.max(...collection) : 0
-    }
-
-    $('.collection-field .generate-collection').on('click',function () {
-        preCollection = 'collection';
-        helper.createCookie('preCollection', 'collection')
-        setCollection($('.collection-input')[0].value.trim().split(/[\s,]+/))
-        changeSortPage();
-    });
-    $('.generate-buttons #random').on('click',function () {
-        preCollection = 'random';
-        helper.createCookie('preCollection', 'random')
-        changeSortPage();
-        setCollection($('.collection-input')[0].value.trim().split(/[\s,]+/))
-    });
-    $('.generate-buttons #ascending').on('click',function () {
-        preCollection = 'ascending';
-        collectionSize = maxValue;
-        helper.createCookie('preCollection', 'ascending')
-        changeSortPage();
-    });
-    $('.generate-buttons #descending').on('click',function () {
-        preCollection = 'descending';
-        collectionSize = maxValue;
-        helper.createCookie('preCollection', 'descending')
-        changeSortPage();
-    });
-
     $(document).ready(function () {
+        $('.numerical-fields input#size-input').on('change',function ($e) {
+            collectionSize = $e.currentTarget.value;
+            helper.createCookie('size', $e.currentTarget.value)
+        });
+        $('.numerical-fields input#max-input').on('change',function ($e) {
+            maxValue = $e.currentTarget.value;
+            helper.createCookie('max', $e.currentTarget.value)
+        });
+        $('.numerical-fields input#speed-input').on('change',function ($e) {
+            animationSpeed = $e.currentTarget.value;
+            helper.createCookie('speed', $e.currentTarget.value)
+        });
         $('.numerical-fields input#size-input')[0].value = collectionSize;
         $('.numerical-fields input#max-input')[0].value = maxValue;
         $('.numerical-fields input#speed-input')[0].value = animationSpeed;
-        $('.collection-input')[0].value = JSON.parse(helper.readCookie('collection'))
+        $('.collection-input')[0].value = JSON.parse(helper.readCookie('collection') ?? '{}')
+        setGenerateButtonsEvents();
         changeSortPage();
     });
 
@@ -87,9 +57,47 @@ require(['helper',
         $('.slot').css('width',helper.getBarWidth())
     });
 
-    function changeSortPage(loadFromCookie = false) {
-        var hash = location.hash.toString(),
-            sort;
+    function generateEventFunc(type, withSetCollection = false, maxValueSize = false) {
+        preCollection = type;
+        helper.createCookie('preCollection', type)
+
+        maxValue = $('.numerical-fields input#max-input')[0].value;
+        if(maxValueSize) {
+            collectionSize = maxValue;
+        } else {
+            collectionSize = $('.numerical-fields input#size-input')[0].value;
+        }
+        if(withSetCollection) {
+            setCollection($('.collection-input')[0].value.trim().split(/[\s,]+/));
+        }
+        changeSortPage(true);
+    }
+
+    function setGenerateButtonsEvents() {
+        let obj = {
+                'collection':{'withSetCollection':true, 'maxSizeValue':false},
+                'random':{'withSetCollection':false, 'maxSizeValue':false},
+                'unique-random':{'withSetCollection':false, 'maxSizeValue':true},
+                'ascending':{'withSetCollection':false, 'maxSizeValue':true},
+                'descending':{'withSetCollection':false, 'maxSizeValue':true}
+            };
+
+        Object.keys(obj).forEach(function(type) {
+            $('.modal-body #'+type).on('click',function () {
+               generateEventFunc(type, obj[type]['withSetCollection'], obj[type]['maxValueSize']);
+            });
+        });
+    }
+
+    function setCollection(collection) {
+        collection = helper.setCollection(collection)
+        collectionSize = collection.length
+        // maxValue = collection.length > 0 ? Math.max(...collection) : 0
+        helper.createCookie('max',maxValue = collection.length > 0 ? Math.max(...collection) : 0)
+    }
+
+    function changeSortPage(preload = false) {
+        var hash = location.hash.toString();
 
         barOptions = null;
         clearInterval(playInterval);
@@ -126,9 +134,8 @@ require(['helper',
                 console.log('homepage')
                 return;
         }
-
-            sort.init(helper.initCollection(collectionSize, maxValue, barOptions,loadFromCookie ? 'collection' : preCollection))
-                .setAnimationSpeed(animationSpeed);
+        sort.init(helper.initCollection(collectionSize, maxValue, barOptions,preload ? preCollection : 'collection'))
+            .setAnimationSpeed(animationSpeed);
 
     }
 });

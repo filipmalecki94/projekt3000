@@ -203,6 +203,9 @@ define(['helper'], function (helper) {
 			}
 
 			return this;
+		},
+		getAnimationSpeed: function () {
+			return animationSpeed;
 		}
 	};
 });

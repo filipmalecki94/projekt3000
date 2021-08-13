@@ -34,9 +34,9 @@
 						<li><a id="quicksort" href="#quicksort">Quick sort</a></li>
 						<li><a id="mergesort" href="#mergesort">Merge sort</a></li>
 					</ul>
-					<ul class="position-relative" style="right:0">
-						<li><a class="menu-control-panel" href="#control-panel" data-backdrop="false" data-toggle="modal">Control panel</a></li>
-					</ul>
+<!--					<ul class="position-relative" style="right:0">-->
+<!--						<li><a class="menu-control-panel" href="#control-panel" data-backdrop="false" data-toggle="modal">Control panel</a></li>-->
+<!--					</ul>-->
 				</nav>
 			</div>
 		</div>
@@ -59,19 +59,26 @@
 			<div id="control-panel" class="modal fade show">
 				<div class="modal-dialog modal-sm">
 					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<div class="modal-expand">
 						</div>
-						<div class="modal-body ">
-							<label class="mb-2">
-								<span>collection</span>
-								<div class="collection-field">
-									<textarea class="collection-input"></textarea>
-									<button class="modal-button mt-2 col-12 generate-collection">set</button>
+						<div class="modal-body">
+							<label class="mb-3">
+								<span>control panel</span>
+								<div class="control-buttons d-flex">
+									<button class="modal-button col-4 next" id="step">step</button>
+									<button class="modal-button col-4" id="play">play</button>
+									<button class="modal-button col-4" id="stop">stop</button>
 								</div>
 							</label>
-							<label class="mb-2">
-								<span>generate</span>
+							<label class="mb-3">
+								<span>preload collection</span>
+								<div class="collection-field">
+									<textarea class="collection-input"></textarea>
+									<button class="modal-button mt-2 col-12 generate-collection" id="collection">set</button>
+								</div>
+							</label>
+							<label>
+								<span>generate collection</span>
 								<div class="generate-field d-flex ">
 									<div class="numerical-fields col-12 d-flex">
 										<div class="numerical-field col-4 d-flex">
@@ -88,18 +95,11 @@
 										</div>
 									</div>
 									<div class="generate-buttons d-flex">
-										<button class="modal-button py-0 generate-random" id="random">random</button>
-										<button class="modal-button py-0 generate-random" id="ascending">ascending</button>
-										<button class="modal-button py-0 generate-random" id="descending">descending</button>
+										<button class="modal-button py-0 generate-random col-6" id="random">random</button>
+										<button class="modal-button py-0 generate-random col-6" id="unique-random">unique random</button>
+										<button class="modal-button py-0 generate-random col-6" id="ascending">ascending</button>
+										<button class="modal-button py-0 generate-random col-6" id="descending">descending</button>
 									</div>
-								</div>
-							</label>
-							<label>
-								<span>control</span>
-								<div class="control-buttons d-flex">
-									<button type="button" class="next modal-button col-4" id="step">step</button>
-									<button type="button" class="modal-button col-4" id="play">play</button>
-									<button type="button" class="modal-button col-4" id="stop">stop</button>
 								</div>
 							</label>
 						</div>

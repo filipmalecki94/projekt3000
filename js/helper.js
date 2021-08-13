@@ -20,7 +20,7 @@ define([], function () {
                 $graph = $('.graph');
 
             size = collectionSize > 300 ? 300 : collectionSize;
-            max = maxValue;
+            max = preCollection !== 'collection' ? this.readCookie('max') : maxValue;
             $.each(this.getCollectionArr(size, maxValue, preCollection), function (index, value){
                 $graph.append(that.createBar(index, value,$.extend(barOptions,{'isOversize': size < 31})));
             });
@@ -41,22 +41,19 @@ define([], function () {
         getCollectionArr: function (collectionSize, maxValue, preCollection = 'random') {
             var collection = [];
 
-
             if(preCollection === 'collection') {
-                JSON.parse(this.readCookie('collection')).forEach(function (e,id){
+                JSON.parse(this.readCookie('collection') ?? '{}').forEach(function (e,id){
                     collection.push(parseInt(e))
                 });
             } else if(preCollection === 'descending') {
-                for(var i=maxValue; i > 0; i--) {
+                for(var i = maxValue; i > 0; i--) {
                     collection.push(i);
                 }
             } else {
-                var maxCollection = preCollection === 'ascending' ? maxValue : collectionSize;
-
-
+                var maxCollection = preCollection === 'random' ? collectionSize : maxValue;
 
                 for(var i=1; i <= maxCollection; i++){
-                    if(preCollection === 'uniqueRandom') {
+                    if(preCollection === 'unique-random') {
                         collection.push(this.getUniqueRandom(collection, maxValue));
                     }
                     if(preCollection === 'random') {
@@ -145,20 +142,6 @@ define([], function () {
         darkenBars: function($object, callback = null, brightenBars = false) {
             $object.animate({opacity: brightenBars ? 1 : 0.2}, 100, callback);
         },
-        swapDivs: function($div1, $div2, justClone = false) {
-            div1 = $div1;
-            div2 = $div2;
-
-            tdiv1 = div1.clone();
-            tdiv2 = div2.clone();
-
-            if(!div2.is(':empty')){
-                div1.replaceWith(tdiv2);
-                if(!justClone) {
-                    div2.replaceWith(tdiv1);
-                }
-            }
-        },
         createCookie(name, value, days) {
             var expires;
 
@@ -183,9 +166,6 @@ define([], function () {
             }
             return null;
         },
-        eraseCookie(name) {
-            this.createCookie(name, "", -1);
-        },
         setCollection(collection) {
             collection = collection
                 .map(function (e,i) {
@@ -195,15 +175,20 @@ define([], function () {
                     return !Number.isNaN(e) && $('.numerical-fields input#max-input').attr('max') > e && $('.numerical-fields input#size-input').attr('max') > i;
                 });
 
-            this.createCookie('size', collection.length)
-            this.createCookie('max', Math.max(...collection) ?? 0)
             this.createCookie('collection', JSON.stringify(collection))
-
-            $('.numerical-fields input#size-input')[0].value = collection.length
-            $('.numerical-fields input#max-input')[0].value =  Math.max(...collection) ?? 0
             $('.collection-input')[0].value =  collection ?? '';
 
             return collection;
+        },
+        setNumericalInputEvent (inputName) {
+            let that = this, val;
+
+            $('.numerical-fields input#'+inputName+'-input').on('change',function ($e) {
+                val = $e.currentTarget.value;
+                that.createCookie(inputName, $e.currentTarget.value)
+            });
+
+            return val;
         }
     }
 });

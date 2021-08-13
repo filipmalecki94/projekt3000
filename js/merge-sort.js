@@ -7,7 +7,6 @@ define(['helper'], function (helper) {
     function sortIteration() {
         helper.getStepButton().off('click', sortIteration)
 
-
         $('.graph #' + (C * 2) + '.buffer-container').addClass('merged')
         $('.graph #' + (C * 2 + 1) + '.buffer-container').addClass('merged')
         loop(masterI,masterJ,masterL).then(function (res) {
@@ -55,7 +54,7 @@ define(['helper'], function (helper) {
                         $('.graph .buffer-container').removeClass('border border-buffer')
                         helper.getStepButton().off('click',sortIteration);
                     }
-                },animationSpeed * 2);
+                },animationSpeed);
             } else {
                 helper.getStepButton().on('click',sortIteration)
             }
@@ -330,6 +329,9 @@ define(['helper'], function (helper) {
             }
 
             return this;
+        },
+        getAnimationSpeed: function () {
+            return animationSpeed;
         }
     };
 });
