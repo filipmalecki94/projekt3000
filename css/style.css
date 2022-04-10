@@ -178,13 +178,12 @@
     width: 100%;
 }
 
-#control-panel.modal label {
+#control-panel.modal .label {
     margin: 0;
     color: #93faff;
     font-size: 12px;
     width: 100%;
 }
-
 
 #control-panel.modal .modal-header {
     border: 0;
@@ -213,18 +212,21 @@
     margin: 10px 0;
 }
 #control-panel.modal .numerical-field {
-    padding: 5px;
+    flex-direction: column;
+    padding: 0;
 }
 #control-panel.modal .numerical-field label {
+    width: 100%;
     align-self: center;
-    text-align: center;
+    text-align: left;
+    margin: 0;
 }
 #control-panel.modal .numerical-field input {
-    max-width: 50px;
+    width: 85%;
     background: black;
     border: 1px solid #93faff;
     color: #93faff;
-    text-align: center;
+    text-align: right;
 }
 #control-panel.modal .generate-buttons {
     flex-wrap: wrap;
