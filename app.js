@@ -6,6 +6,7 @@ requirejs.config({
         counting: 'counting-sort',
         quicksort: 'quick-sort',
         mergesort: 'merge-sort',
+        heapsort: 'heap-sort',
         helper: 'helper'
     }
 });
