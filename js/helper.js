@@ -10,69 +10,80 @@ define([], function () {
                         'class': 'step ' + index,
                         'text': value.line
                     }).css({
-                        'margin-left': value.tab * 10
+                        'margin-left': (value.tab * 10) + 'px'
                     })
                 )
             });
         },
         initCollection: function (collectionSize, maxValue, barOptions = {}, preCollection = 'random', isTree = false) {
-            let that = this,
-                $graph = $('.graph'),
-                level,
-                nodes = [];
+            let $graph = $('.graph'),
+                collectionArr;
 
             size = collectionSize > 300 ? 300 : collectionSize;
             max = preCollection !== 'collection' ? this.readCookie('max') : maxValue;
-            level = 0;
 
-            $graph.css('flex-direction', isTree ? 'column' : 'row');
+            collectionArr = this.getCollectionArr(size, $.inArray(preCollection, ['random', 'collection']) ? collectionSize : maxValue, preCollection, isTree);
+
             if (isTree) {
-                let collectionArr = this.getCollectionArr(size, $.inArray(preCollection, ['random', 'collection']) ? collectionSize : maxValue, preCollection, isTree);
+                let $tree = $('<div/>',{'class':'graph tree d-flex'});
 
-                for (let i = 0; i < size; i++) {
-                    let $level = that.createLevel(level);
-
-                    for (let j = 0; (j < Math.pow(2, i)) && (j + Math.pow(2, i) <= size); j++) {
-                        if (collectionArr[j + Math.pow(2, i) - 1]) {
-                            let tempNode = that.createNode(j + Math.pow(2, i) - 1, collectionArr[j + Math.pow(2, i) - 1], {}, size);
-
-                            nodes[j + Math.pow(2, i) - 1] = tempNode;
-                            $level.append(tempNode)
-                        }
-                    }
-                    if (!$level.is(':empty')) {
-                        level++;
-                        $graph.append($level);
-                    }
-                }
-                let $lastLevel = $graph.children().last(),
-                    countInLastLevel = $lastLevel.children().length;
-
-                for (let i = 0; i < Math.pow(2, level - 1) - countInLastLevel; i++) {
-                    $lastLevel.append(that.createNode(i, null, {}, size))
-                }
-
-                for (let i = 0; i < size; i++) {
-                    for (let j = 0; (j < Math.pow(2, i)) && (j + Math.pow(2, i) <= size); j++) {
-                        if (typeof nodes[Math.floor((j + Math.pow(2, i) - 2) / 2)] != 'undefined') {
-                            let line = this.createLine(i, j);
-
-                            $graph.append(line);
-                            this.adjustLine(
-                                nodes[j + Math.pow(2, i) - 1],
-                                nodes[Math.floor((j + Math.pow(2, i) - 2) / 2)],
-                                $graph.find('#line-' + (j + Math.pow(2, i) - 1))
-                            );
-                        }
-                    }
-                }
-            } else {
-                $.each(this.getCollectionArr(size, maxValue, preCollection), function (index, value) {
-                    $graph.append(that.createBar(index, value, $.extend(barOptions, {'isOversize': size < 31})));
-                });
+                $graph.parent().prepend($tree);
+                this.createTree($tree, collectionArr);
             }
 
+            this.createBars($graph, collectionArr, barOptions);
+
             return $graph;
+        },
+        createTree: function ($tree, collectionArr) {
+            let that = this,
+                level,
+                nodes = [];
+
+            level = 0;
+            for (let i = 0; i < size; i++) {
+                let $level = that.createLevel(level);
+
+                for (let j = 0; (j < Math.pow(2, i)) && (j + Math.pow(2, i) <= size); j++) {
+                    if (collectionArr[j + Math.pow(2, i) - 1]) {
+                        let tempNode = that.createNode(j + Math.pow(2, i) - 1, collectionArr[j + Math.pow(2, i) - 1], {}, size);
+
+                        nodes[j + Math.pow(2, i) - 1] = tempNode;
+                        $level.append(tempNode)
+                    }
+                }
+                if (!$level.is(':empty')) {
+                    level++;
+                    $tree.append($level);
+                }
+            }
+            let $lastLevel = $tree.children().last(),
+                countInLastLevel = $lastLevel.children().length;
+
+            for (let i = 0; i < Math.pow(2, level - 1) - countInLastLevel; i++) {
+                $lastLevel.append(that.createNode(-1, null, {}, size))
+            }
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; (j < Math.pow(2, i)) && (j + Math.pow(2, i) <= size); j++) {
+                    if (typeof nodes[Math.floor((j + Math.pow(2, i) - 2) / 2)] != 'undefined' && typeof nodes[j + Math.pow(2, i) - 1] !== 'undefined') {
+                        let line = this.createLine(i, j, nodes[Math.floor((j + Math.pow(2, i) - 2) / 2)].text());
+
+                        $tree.append(line);
+                        this.adjustLine(
+                            nodes[j + Math.pow(2, i) - 1],
+                            nodes[Math.floor((j + Math.pow(2, i) - 2) / 2)],
+                            $tree.find('#line-' + (j + Math.pow(2, i) - 1))
+                        );
+                    }
+                }
+            }
+        },
+        createBars: function ($barsContainer, collectionArr, barOptions) {
+            let that = this;
+
+            $.each(collectionArr, function (index, value) {
+                $barsContainer.append(that.createBar(index, value, $.extend(barOptions, {'isOversize': size < 31})));
+            });
         },
         getUniqueRandom: function (collection, maxValue) {
             let random = Math.ceil(Math.random() * maxValue);
@@ -139,7 +150,6 @@ define([], function () {
                 'background-color': options.backgroundColor ?? this.getHslValue(100 * value / this.getMaxValue(), 100, 350),
                 'width': options.barWidth ?? this.getBarWidth(),
                 'top': options.glueToTop ? '25px' : 'unset',
-
             });
 
             if (options.onlyBar) {
@@ -185,17 +195,17 @@ define([], function () {
 
             $node = $('<div/>', {
                 'class': 'node ' + options.customBarClasses,
-                'text': value ?? ''
+                'text': value ?? '',
+                'node-id': index
             }).css({
                 'height': '30px',
                 'width': '30px',
                 'border': '2px solid',
-                'border-color': this.getHslValue(100 * Math.floor((index + 1) / 2), 100, 350),
-                'color': 'white',
+                'border-color': this.getHslValue(100 * value / this.getMaxValue(), 100, 350),
+                'color': this.getHslValue(100 * value / this.getMaxValue(), 100, 350),
                 'display': 'flex',
                 'justify-content': 'center',
                 'align-items': 'center',
-                'background': 'black',
                 'z-index': 1
             });
 
@@ -205,12 +215,12 @@ define([], function () {
 
             return $node;
         },
-        createLine: function (i, j) {
-            return $('<div/>', {'id': 'line-' + (j + Math.pow(2, i) - 1)})
+        createLine: function (i, j, value) {
+            return $('<div/>', {'id': 'line-' + (j + Math.pow(2, i) - 1),'class':'line'})
                 .css({
                     'position': 'absolute',
                     'width': '2px',
-                    'background-color': this.getHslValue(100 * Math.floor((j + Math.pow(2, i)) / 2), 100, 350)
+                    'background-color': value ? this.getHslValue(100 * value / this.getMaxValue(), 100, 350) : '#93faff'
                 });
         },
         getMaxValue: function () {
@@ -330,16 +340,24 @@ define([], function () {
             top -= ($graphicalSection.offset().top + parseInt($('.graph-block').css('margin-top')));
             left -= $graphicalSection.offset().left
 
-            line.css({
-                '-webkit-transform': 'rotate(' + ANG + 'deg)',
-                '-moz-transform': 'rotate(' + ANG + 'deg)',
-                '-ms-transform': 'rotate(' + ANG + 'deg)',
-                '-o-transform': 'rotate(' + ANG + 'deg)',
-                '-transform': 'rotate(' + ANG + 'deg)',
-                'top': top + 'px',
-                'left': left + 'px',
-                'height': H + 'px'
-            });
+            line.attr('line-id', to.attr('node-id'))
+                .css({
+                    '-webkit-transform': 'rotate(' + ANG + 'deg)',
+                    '-moz-transform': 'rotate(' + ANG + 'deg)',
+                    '-ms-transform': 'rotate(' + ANG + 'deg)',
+                    '-o-transform': 'rotate(' + ANG + 'deg)',
+                    '-transform': 'rotate(' + ANG + 'deg)',
+                    'top': top + 'px',
+                    'left': left + 'px',
+                    'height': H + 'px'
+                });
+        },
+        colorElement: function (element, border, background, font) {
+            element && border && element.css('border', '2px solid ' + border);
+            element && background && element.css('background-color', background)
+            element && font && element.css('color', font)
+
+            return this;
         }
     }
 });
