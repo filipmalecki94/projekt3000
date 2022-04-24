@@ -2,8 +2,7 @@ require(['helper',
     'insertion',
     'counting',
     'quicksort',
-    'mergesort',
-    'heapsort'], function (helper, insertion, counting, quicksort, mergesort, heapsort) {
+    'mergesort'], function (helper, insertion, counting, quicksort, mergesort) {
     var maxValue = helper.readCookie('max') ?? $('.numerical-fields input#max-input')[0].value ?? 25,
         collectionSize = helper.readCookie('size') ?? $('.numerical-fields input#size-input')[0].value ?? 25,
         animationSpeed = helper.readCookie('speed') ?? $('.numerical-fields input#speed-input')[0].value ?? 1000,
@@ -98,7 +97,7 @@ require(['helper',
     }
 
     function changeSortPage(preload = false) {
-        var hash = location.hash.toString(), isTree = false;
+        var hash = location.hash.toString();
 
         barOptions = null;
         clearInterval(playInterval);
@@ -112,7 +111,6 @@ require(['helper',
         $('.graph-block .sorted').remove();
         $('.partition').remove();
         $('body').attr('class','').addClass(hash.replace('#',''))
-
         switch (hash){
             case '#insertion-sort':
                 sort = insertion;
@@ -132,24 +130,11 @@ require(['helper',
                     'customBarBlockClasses': 'border-buffer'
                 }
                 break;
-            case '#heapsort':
-                sort = heapsort;
-                isTree = true;
-                break;
             default:
                 console.log('homepage')
                 return;
         }
-        sort
-            .init(
-                helper.initCollection(
-                    collectionSize,
-                    maxValue,
-                    barOptions,
-                    preload ? preCollection : 'collection',
-                    isTree
-                )
-            )
+        sort.init(helper.initCollection(collectionSize, maxValue, barOptions,preload ? preCollection : 'collection'))
             .setAnimationSpeed(animationSpeed);
 
     }
