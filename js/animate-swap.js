@@ -6,12 +6,12 @@
  * Version: 1 (09-JULY-2010)
  */
 
-var swapping = false;
-
 (function($) {
     $.fn.extend({
         animateSwap: function(options) {
+            let timestamp = new Date($.now());
 
+            window['swapping' + timestamp] = false;
             var defaults = {
                 target: "",
                 speed: 1000,
@@ -24,9 +24,9 @@ var swapping = false;
 
                 var obj = $(this);
 
-                if (options.target!="" && !swapping) {
+                if (options.target!="" && !window['swapping' + timestamp]) {
 
-                    swapping = true;
+                    window['swapping' + timestamp] = true;
 
                     // set primary and secondary elements to relative if not already specified a positon CSS attribute
                     var current_primary_pos = obj.css("position");
@@ -94,17 +94,13 @@ var swapping = false;
                             $(options.target).animate({
                                 opacity: "1"
                             }, 100, function() {
-                                swapping = false; // call the callback and apply the scope:
+                                window['swapping' + timestamp] = false; // call the callback and apply the scope:
                                 options.callback.call(this);
                             });
                         });
                     });
-
                 }
-
             });
-
-
         }
     });
 })(jQuery);

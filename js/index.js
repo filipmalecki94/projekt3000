@@ -111,6 +111,7 @@ require(['helper',
         $('.buffer').remove();
         $('.graph-block .sorted').remove();
         $('.partition').remove();
+        $('.graph.tree').remove();
         $('body').attr('class','').addClass(hash.replace('#',''))
 
         switch (hash){
