@@ -15,6 +15,9 @@
 .graph.tree {
     flex-direction: column;
     justify-content: space-around;
+}
+
+.graph.tree .node {
     background: black;
 }
 
