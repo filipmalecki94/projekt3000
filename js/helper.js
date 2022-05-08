@@ -170,7 +170,7 @@ define([], function () {
                     'digit-id': that.getMaxValue(null).toString().split('').map(Number).length - i - 1,
                     'value': e
                 }).css({
-                    'height': options.height ?? (e == 0 ? 4 : (0.85 * 100 * e / (options.multidigit ? 10 : that.getMaxValue(options.forceMaxValue)))) + '%',
+                    'height': options.height ?? (e == 0 ? 1 : (0.85 * 100 * e / (options.multidigit ? 10 : that.getMaxValue(options.forceMaxValue)))) + '%',
                     'background-color': options.backgroundColor ?? that.getHslValue(100 * e / (options.multidigit ? 10 : that.getMaxValue(options.forceMaxValue)), 100, 350),
                     'width': options.barWidth ?? that.getBarWidth(),
                     'top': options.glueToTop ? '25px' : 'unset',
@@ -199,14 +199,7 @@ define([], function () {
             });
 
             if (options.multidigit) {
-                $barBlock.append($('<div/>')
-                    .css({
-                        'height': '100%',
-                        'display': 'flex',
-                        'flex-direction': 'row',
-                        'align-items': 'flex-end',
-                        'border': '1px solid #3c5f4447',
-                    }).append(bars));
+                $barBlock.append($('<div/>',{'class':'multidigit-container'}).append(bars));
             } else {
                 $barBlock.append(bars);
             }
@@ -224,12 +217,6 @@ define([], function () {
             return $('<div/>', {
                 'class': 'level',
                 'level-id': level
-            }).css({
-                'width': '100%',
-                'height': '60px',
-                'display': 'flex',
-                'position': 'relative',
-                'justify-content': 'space-around',
             });
         },
         createNode: function (index, value, customOptions, size = 1) {
@@ -245,8 +232,9 @@ define([], function () {
                 'text': value ?? '',
                 'node-id': index
             }).css({
-                'height': '30px',
-                'width': '30px',
+                'padding': '2px 4px',
+                'height': size > 50 ? '20px' : '30px',
+                'width': size > 50 ? 'auto' : '30px',
                 'border': '1px solid',
                 'border-color': this.getHslValue(100 * value / this.getMaxValue(), 100, 350),
                 'color': this.getHslValue(100 * value / this.getMaxValue(), 100, 350),
