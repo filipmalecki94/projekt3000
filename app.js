@@ -7,6 +7,7 @@ requirejs.config({
         quicksort: 'quick-sort',
         mergesort: 'merge-sort',
         heapsort: 'heap-sort',
+        radixsort: 'radix-sort',
         helper: 'helper'
     }
 });

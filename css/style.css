@@ -1,5 +1,7 @@
-.graphical-section {
-	height: 500px;
+.graphical-section.row {
+    height: auto;
+    min-height: 500px;
+    margin-left: 10px;
 }
 
 .graph {
@@ -33,6 +35,11 @@
     height: 35%;
 }
 
+.radixsort .graph,
+.radixsort .sorted {
+    height: 35%;
+}
+
 .mergesort .graph,
 .mergesort .buffer {
     height: 50%;
@@ -47,13 +54,10 @@
     height: 20%;
 }
 
-.counter-bars .bar-block {
+.counter-bars .bar {
     border-top: 1px solid black;
 }
 
-.sorted .bar-block {
-    border-top: 1px solid black;
-}
 
 .counter-labels {
 	height: 35%;
@@ -63,20 +67,18 @@
     bottom: 0;
 }
 
+.graph-block .bar-block:not(.part) {
+    border: 1px solid black;
+}
+
 .bar-block {
 	position: relative;
     width: 100%;
     height: 100%;
 }
 
-.bar-block.merged {
-    visibility: hidden;
-    /*order: unset;*/
-}
-
 .bar-block.sorted {
     background: #212121;
-    border: 1px solid #212121;
 }
 
 .counter-block {
@@ -119,17 +121,16 @@
     position: fixed;
 }
 
-
 .border-black {
-    border: 2px solid black;
+    border: 1px solid black;
 }
 
-.border-buffer {
-    border: 2px solid #3c5f4447;
+.graph-block .border-buffer {
+    border: 1px solid #3c5f4447;
 }
 
-.border-buffer.merged {
-    border: 2px solid #909090;
+.graph-block .border-buffer.merged {
+    border: 1px solid #909090;
 }
 
 .graph-block {
@@ -138,7 +139,6 @@
 .code-block {
     margin-top: 20px;
 }
-
 
 #control-panel.modal {
     opacity: 0.8;
@@ -319,7 +319,7 @@ p {
     color: #fff;
     font-weight:300;
     font-size: 18px;
-    margin: 0 1rem;
+    margin: 1rem;
 }
 .navbar-brand:hover,
 .navbar-brand:focus {
@@ -344,7 +344,7 @@ p {
 .header ul li a:hover,
 .header ul li .current{
     color: #93FAFF;
-    border-bottom: 2px solid #93FAFF;
+    border-bottom: 1px solid #93FAFF;
 }
 .header.scroll .navbar-brand {
     font-size: 18px;
