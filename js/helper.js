@@ -8,7 +8,7 @@ define([], function () {
                 $codeField.append(
                     $('<div/>', {
                         'class': 'step ' + index,
-                        'text': value.line
+                        'html': value.line
                     }).css({
                         'margin-left': (value.tab * 10) + 'px'
                     })
@@ -22,15 +22,18 @@ define([], function () {
             size = collectionSize > 300 ? 300 : collectionSize;
             max = preCollection !== 'collection' ? this.readCookie('max') : maxValue;
 
+            if (!size) {
+                return $graph;
+            }
+
             collectionArr = this.getCollectionArr(size, $.inArray(preCollection, ['random', 'collection']) ? collectionSize : maxValue, preCollection, isTree);
 
             if (isTree) {
-                let $tree = $('<div/>',{'class':'graph tree d-flex'});
+                let $tree = $('<div/>', {'class': 'graph tree d-flex'});
 
                 $graph.parent().prepend($tree);
                 this.createTree($tree, collectionArr);
             }
-
             this.createBars($graph, collectionArr, barOptions);
 
             return $graph;
@@ -79,11 +82,16 @@ define([], function () {
             }
         },
         createBars: function ($barsContainer, collectionArr, barOptions) {
-            let that = this;
+            let that = this, extendOptions = {};
 
             $.each(collectionArr, function (index, value) {
-                $barsContainer.append(that.createBar(index, value, $.extend(barOptions, {'isOversize': size < 31})));
+                if (barOptions != null && (typeof barOptions.isOversize !== 'undefined' || !barOptions.isOversize)) {
+                    extendOptions = {'isOversize': size > 50};
+                }
+                $barsContainer.append(that.createBar(index, value, $.extend(barOptions, extendOptions)));
             });
+
+            return $barsContainer;
         },
         getUniqueRandom: function (collection, maxValue) {
             let random = Math.ceil(Math.random() * maxValue);
@@ -127,7 +135,7 @@ define([], function () {
             return this.setCollection(collection);
         },
         createBar: function (index, value, customOptions = {}) {
-            let $bar,
+            let $bar, bars = [], that = this, valuePrepared, $barBlock, barBlockColor,
                 options = {
                     'withNumbers': null,
                     'glueToTop': false,
@@ -140,31 +148,70 @@ define([], function () {
                     'backgroundColor': null,
                     'noBorder': null,
                     'isOversize': false,
-                    'noOrder': index
+                    'noOrder': index,
+                    'multidigit': false,
+                    'forceMaxValue': false,
+                    'fillWithZeros': false,
                 };
+
             options = $.extend(options, customOptions);
-            $bar = $('<div/>', {
-                'class': 'bar ' + options.customBarClasses,
-            }).css({
-                'height': options.height ?? (0.85 * 100 * value / this.getMaxValue()) + '%',
-                'background-color': options.backgroundColor ?? this.getHslValue(100 * value / this.getMaxValue(), 100, 350),
-                'width': options.barWidth ?? this.getBarWidth(),
-                'top': options.glueToTop ? '25px' : 'unset',
+
+            valuePrepared = options.multidigit ? value.toString().split('').map(Number) : [value];
+
+            if (options.fillWithZeros) {
+                for (let i = 0; i < (that.getMaxValue(null) !== null && that.getMaxValue(null).toString().split('').map(Number).length - value.toString().split('').map(Number).length); i++) {
+                    valuePrepared.unshift(0)
+                }
+            }
+
+            $.each(valuePrepared, function (i, e) {
+                $bar = $('<div/>', {
+                    'class': 'bar ' + options.customBarClasses,
+                    'digit-id': that.getMaxValue(null).toString().split('').map(Number).length - i - 1,
+                    'value': e
+                }).css({
+                    'height': options.height ?? (e == 0 ? 4 : (0.85 * 100 * e / (options.multidigit ? 10 : that.getMaxValue(options.forceMaxValue)))) + '%',
+                    'background-color': options.backgroundColor ?? that.getHslValue(100 * e / (options.multidigit ? 10 : that.getMaxValue(options.forceMaxValue)), 100, 350),
+                    'width': options.barWidth ?? that.getBarWidth(),
+                    'top': options.glueToTop ? '25px' : 'unset',
+                    'position': options.multidigit ? 'relative' : 'absolute',
+                    'margin': options.multidigit ? '0 2px' : ''
+                });
+
+                bars.push($bar)
             });
 
             if (options.onlyBar) {
                 return $bar;
             }
 
-            return $('<div/>', {
+            barBlockColor = that.getHslValue(100 * value / (that.getMaxValue(options.forceMaxValue)), 100, 350);
+            $barBlock = $('<div/>', {
                 'id': options.barBlockId ?? (value !== null ? value : 'empty'),
                 'class': 'bar-block d-flex justify-content-center ' + (options.noBorder ? '' : 'border-black ') + options.customBarBlockClasses,
-                'text': (options.withNumbers ?? false) || options.isOversize ? value : '',
+                'html': $('<span/>', {'html': ((options.withNumbers ?? false) && !options.isOversize) ? value : ''}),
                 'data-index': index
             }).css({
-                'color': this.getHslValue(100 * value / this.getMaxValue(), 100, 350),
-                'order': options.noOrder ? null : index
-            }).append($bar);
+                'color': barBlockColor,
+                'order': options.noOrder ? null : index,
+                'align-items': options.multidigit ? 'center' : '',
+                'flex-direction': options.multidigit ? 'column' : '',
+            });
+
+            if (options.multidigit) {
+                $barBlock.append($('<div/>')
+                    .css({
+                        'height': '100%',
+                        'display': 'flex',
+                        'flex-direction': 'row',
+                        'align-items': 'flex-end',
+                        'border': '1px solid #3c5f4447',
+                    }).append(bars));
+            } else {
+                $barBlock.append(bars);
+            }
+
+            return $barBlock;
         },
         getBarWidth: function () {
             let $graphContainer = $('.graph'),
@@ -200,7 +247,7 @@ define([], function () {
             }).css({
                 'height': '30px',
                 'width': '30px',
-                'border': '2px solid',
+                'border': '1px solid',
                 'border-color': this.getHslValue(100 * value / this.getMaxValue(), 100, 350),
                 'color': this.getHslValue(100 * value / this.getMaxValue(), 100, 350),
                 'display': 'flex',
@@ -216,15 +263,15 @@ define([], function () {
             return $node;
         },
         createLine: function (i, j, value) {
-            return $('<div/>', {'id': 'line-' + (j + Math.pow(2, i) - 1),'class':'line'})
+            return $('<div/>', {'id': 'line-' + (j + Math.pow(2, i) - 1), 'class': 'line'})
                 .css({
                     'position': 'absolute',
                     'width': '2px',
                     'background-color': value ? this.getHslValue(100 * value / this.getMaxValue(), 100, 350) : '#93faff'
                 });
         },
-        getMaxValue: function () {
-            return max;
+        getMaxValue: function (forceMaxValue) {
+            return forceMaxValue ? forceMaxValue : max;
         },
         getStepButton: function () {
             return $('.next');
@@ -233,6 +280,9 @@ define([], function () {
             return $.extend(true, {}, obj);
         },
         getHslValue: function (percent, start, end) {
+            if (percent == 0) {
+                return 'white';
+            }
             let a = percent / 100,
                 b = (end - start) * a,
                 c = b + start;
@@ -248,7 +298,9 @@ define([], function () {
             }, time);
         },
         darkenBars: function ($object, callback = null, brightenBars = false) {
-            $object.animate({opacity: brightenBars ? 1 : 0.2}, 100, callback);
+            $object.animate({opacity: brightenBars ? 1 : 0.1}, 100, callback);
+
+            return $object;
         },
         createCookie: function (name, value, days) {
             let expires;
@@ -286,7 +338,7 @@ define([], function () {
                     return parseInt(e) ?? 0;
                 })
                 .filter(function (e, i) {
-                    return !Number.isNaN(e) && $('.numerical-fields input#max-input').attr('max') > e && $('.numerical-fields input#size-input').attr('max') > i;
+                    return !Number.isNaN(e) && $('.numerical-fields input#size-input').attr('max') >= i;
                 });
 
             this.createCookie('collection', JSON.stringify(collection))
@@ -353,11 +405,14 @@ define([], function () {
                 });
         },
         colorElement: function (element, border, background, font) {
-            element && border && element.css('border', '2px solid ' + border);
+            element && border && element.css('border', '1px solid ' + border);
             element && background && element.css('background-color', background)
             element && font && element.css('color', font)
 
             return this;
+        },
+        getXDigit: function (number, X) {
+            return number.toString().split('').reverse().map(Number)[X] ? number.toString().split('').reverse().map(Number)[X] : 0;
         }
     }
 });

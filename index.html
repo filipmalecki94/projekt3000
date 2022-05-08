@@ -22,89 +22,82 @@
 	<body id="override">
 	<!-- sort nav start -->
 	<div class="header">
-		<div class="container">
-			<div class="navbar-header">
-				<a class="navbar-brand" href="#">Sorting algorithms</a>
-				<nav class="main-menu d-flex position-relative">
-					<ul>
-						<li><a id="insertion-sort" href="#insertion-sort">Insertion sort</a></li>
-						<li><a id="counting-sort" href="#counting-sort">Counting sort</a></li>
-						<li><a id="quicksort" href="#quicksort">Quick sort</a></li>
-						<li><a id="mergesort" href="#mergesort">Merge sort</a></li>
-						<li><a id="heapsort" href="#heapsort">Heap sort</a></li>
-					</ul>
-				</nav>
-			</div>
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#">Sorting algorithms</a>
+			<nav class="main-menu d-flex position-relative">
+				<ul>
+					<li><a id="insertion-sort" href="#insertion-sort">Insertion sort</a></li>
+					<li><a id="counting-sort" href="#counting-sort">Counting sort</a></li>
+					<li><a id="quicksort" href="#quicksort">Quick sort</a></li>
+					<li><a id="mergesort" href="#mergesort">Merge sort</a></li>
+					<li><a id="heapsort" href="#heapsort">Heap sort</a></li>
+					<li><a id="radixsort" href="#radixsort">Radix sort</a></li>
+				</ul>
+			</nav>
 		</div>
 	</div>
 	<!-- sort nav end -->
-	<div class="container">
-		<!-- graphical section start -->
-		<div class="graphical-section row">
-			<div class="graph-block col-8">
-				<div class="graph d-flex">
-				</div>
-			</div>
-			<div class="code-block col-4">
+	<!-- graphical section start -->
+	<div class="graphical-section row">
+		<div class="graph-block col-lg-9 col-sm-8">
+			<div class="graph d-flex">
 			</div>
 		</div>
+		<div class="code-block col-lg-3 col-sm-4">
+		</div>
 	</div>
-		<!-- grapghical section end -->
-		<!-- algorithm nav start -->
-			<div id="control-panel" class="modal fade show">
-				<div class="modal-dialog modal-sm">
-					<div class="modal-content">
-						<div class="modal-expand">
+	<!-- graphical section end -->
+	<!-- algorithm nav start -->
+	<div id="control-panel" class="modal fade show">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-expand">
+				</div>
+				<div class="modal-body">
+					<div class="label mb-3">
+						<span>control panel</span>
+						<div class="control-buttons d-flex">
+							<button class="modal-button col-4 next" id="step">step</button>
+							<button class="modal-button col-4" id="play">play</button>
+							<button class="modal-button col-4" id="stop">stop</button>
 						</div>
-						<div class="modal-body">
-							<div class="label mb-3">
-								<span>control panel</span>
-								<div class="control-buttons d-flex">
-									<button class="modal-button col-4 next" id="step">step</button>
-									<button class="modal-button col-4" id="play">play</button>
-									<button class="modal-button col-4" id="stop">stop</button>
+					</div>
+					<div class="label mb-3">
+						<span>preload collection</span>
+						<div class="collection-field">
+							<textarea class="collection-input"></textarea>
+							<button class="modal-button mt-2 col-12 generate-collection" id="collection">set</button>
+						</div>
+					</div>
+					<div class="label">
+						<span>generate collection</span>
+						<div class="generate-buttons d-flex">
+							<button class="modal-button py-0 generate-random col-6" id="random">random</button>
+							<button class="modal-button py-0 generate-random col-6" id="unique-random">unique random</button>
+							<button class="modal-button py-0 generate-random col-6" id="ascending">ascending</button>
+							<button class="modal-button py-0 generate-random col-6" id="descending">descending</button>
+						</div>
+						<div class="generate-field d-flex ">
+							<div class="numerical-fields col-12 d-flex">
+								<div class="numerical-field col-4 d-flex">
+									<label for="size-input" class="form-label">size</label>
+									<input type="number" value="8" min="1" max="200" id="size-input">
 								</div>
-							</div>
-							<div class="label mb-3">
-								<span>preload collection</span>
-								<div class="collection-field">
-									<textarea class="collection-input"></textarea>
-									<button class="modal-button mt-2 col-12 generate-collection" id="collection">set</button>
+								<div class="numerical-field col-4 d-flex">
+									<label for="max-input" class="form-label">max</label>
+									<input type="number" value="8" min="0" id="max-input">
 								</div>
-							</div>
-							<div class="label">
-								<span>generate collection</span>
-								<div class="generate-buttons d-flex">
-									<button class="modal-button py-0 generate-random col-6" id="random">random</button>
-									<button class="modal-button py-0 generate-random col-6" id="unique-random">unique random</button>
-									<button class="modal-button py-0 generate-random col-6" id="ascending">ascending</button>
-									<button class="modal-button py-0 generate-random col-6" id="descending">descending</button>
-								</div>
-								<div class="generate-field d-flex ">
-									<div class="numerical-fields col-12 d-flex">
-										<div class="numerical-field col-4 d-flex">
-											<label for="size-input" class="form-label">size</label>
-											<input type="number" value="25" min="1" max="200" id="size-input">
-										</div>
-										<div class="numerical-field col-4 d-flex">
-											<label for="max-input" class="form-label">max</label>
-											<input type="number" value="25" min="0" max="100" id="max-input">
-										</div>
-										<div class="numerical-field col-4 d-flex">
-											<label for="speed-input" class="form-label">speed</label>
-											<input type="number" value="1000" min="50" max="5000" id="speed-input">
-										</div>
-									</div>
+								<div class="numerical-field col-4 d-flex">
+									<label for="speed-input" class="form-label">speed</label>
+									<input type="number" value="1000" min="50" max="5000" id="speed-input">
 								</div>
 							</div>
 						</div>
 					</div>
-					<!-- /.modal-content -->
 				</div>
-				<!-- /.modal-dialog -->
 			</div>
-			<!-- /.modal -->
-		<!-- algorithm nav end -->
-<!--	</div>-->
+		</div>
+	</div>
+	<!-- algorithm nav end -->
 	</body>
 </html>
