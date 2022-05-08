@@ -1,103 +1,100 @@
 <html lang="en-EN">
-	<head>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-		<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600&display=swap" rel="stylesheet">
-		<link rel="stylesheet" href="css/style.css" type="text/css" />
-		<link
-			rel="stylesheet"
-			href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-			integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-			crossorigin="anonymous"
-			>
-		<script
-		src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-		integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-		crossorigin="anonymous"
-		></script>
-		<script src="js/jquery-swapsies.js" type="text/javascript"></script>
-		<script src="js/animate-swap.js" type="text/javascript"></script>
-		<script data-main="app" src="js/require.js"></script>
-		<title>projekt3000</title>
-	</head>
-	<body id="override">
-	<!-- sort nav start -->
-	<div class="header">
-		<div class="navbar-header">
-			<a class="navbar-brand" href="#">Sorting algorithms</a>
-			<nav class="main-menu d-flex position-relative">
-				<ul>
-					<li><a id="insertion-sort" href="#insertion-sort">Insertion sort</a></li>
-					<li><a id="counting-sort" href="#counting-sort">Counting sort</a></li>
-					<li><a id="quicksort" href="#quicksort">Quick sort</a></li>
-					<li><a id="mergesort" href="#mergesort">Merge sort</a></li>
-					<li><a id="heapsort" href="#heapsort">Heap sort</a></li>
-					<li><a id="radixsort" href="#radixsort">Radix sort</a></li>
-				</ul>
-			</nav>
-		</div>
-	</div>
-	<!-- sort nav end -->
-	<!-- graphical section start -->
-	<div class="graphical-section row">
-		<div class="graph-block col-lg-9 col-sm-8">
-			<div class="graph d-flex">
-			</div>
-		</div>
-		<div class="code-block col-lg-3 col-sm-4">
-		</div>
-	</div>
-	<!-- graphical section end -->
-	<!-- algorithm nav start -->
-	<div id="control-panel" class="modal fade show">
-		<div class="modal-dialog modal-sm">
-			<div class="modal-content">
-				<div class="modal-expand">
-				</div>
-				<div class="modal-body">
-					<div class="label mb-3">
-						<span>control panel</span>
-						<div class="control-buttons d-flex">
-							<button class="modal-button col-4 next" id="step">step</button>
-							<button class="modal-button col-4" id="play">play</button>
-							<button class="modal-button col-4" id="stop">stop</button>
-						</div>
-					</div>
-					<div class="label mb-3">
-						<span>preload collection</span>
-						<div class="collection-field">
-							<textarea class="collection-input"></textarea>
-							<button class="modal-button mt-2 col-12 generate-collection" id="collection">set</button>
-						</div>
-					</div>
-					<div class="label">
-						<span>generate collection</span>
-						<div class="generate-buttons d-flex">
-							<button class="modal-button py-0 generate-random col-6" id="random">random</button>
-							<button class="modal-button py-0 generate-random col-6" id="unique-random">unique random</button>
-							<button class="modal-button py-0 generate-random col-6" id="ascending">ascending</button>
-							<button class="modal-button py-0 generate-random col-6" id="descending">descending</button>
-						</div>
-						<div class="generate-field d-flex ">
-							<div class="numerical-fields col-12 d-flex">
-								<div class="numerical-field col-4 d-flex">
-									<label for="size-input" class="form-label">size</label>
-									<input type="number" value="8" min="1" max="200" id="size-input">
-								</div>
-								<div class="numerical-field col-4 d-flex">
-									<label for="max-input" class="form-label">max</label>
-									<input type="number" value="8" min="0" id="max-input">
-								</div>
-								<div class="numerical-field col-4 d-flex">
-									<label for="speed-input" class="form-label">speed</label>
-									<input type="number" value="1000" min="50" max="5000" id="speed-input">
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- algorithm nav end -->
-	</body>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="css/style.css" type="text/css"/>
+        <link rel="stylesheet"
+                href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+                integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+                crossorigin="anonymous"
+        >
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+                integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+                crossorigin="anonymous"
+        ></script>
+        <script src="js/jquery-swapsies.js" type="text/javascript"></script>
+        <script src="js/animate-swap.js" type="text/javascript"></script>
+        <script data-main="app" src="js/require.js"></script>
+        <title>projekt3000</title>
+    </head>
+    <body id="override">
+    <!-- sort nav start -->
+    <div class="header">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Sorting algorithms</a>
+            <nav class="main-menu d-flex position-relative">
+                <ul>
+                    <li><a id="insertion-sort" href="#insertion-sort">Insertion sort</a></li>
+                    <li><a id="counting-sort" href="#counting-sort">Counting sort</a></li>
+                    <li><a id="quicksort" href="#quicksort">Quick sort</a></li>
+                    <li><a id="mergesort" href="#mergesort">Merge sort</a></li>
+                    <li><a id="heapsort" href="#heapsort">Heap sort</a></li>
+                    <li><a id="radixsort" href="#radixsort">Radix sort</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <!-- sort nav end -->
+    <!-- graphical section start -->
+    <div class="graphical-section row">
+        <div class="graph-block col-lg-9 col-sm-8">
+            <div class="graph d-flex">
+            </div>
+        </div>
+        <div class="code-block col-lg-3 col-sm-4">
+        </div>
+    </div>
+    <!-- graphical section end -->
+    <!-- algorithm nav start -->
+    <div id="control-panel" class="modal fade show">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-expand"></div>
+                <div class="modal-body">
+                    <div class="label mb-3">
+                        <span>control panel</span>
+                        <div class="control-buttons d-flex">
+                            <button class="modal-button col-4 next" id="step">step</button>
+                            <button class="modal-button col-4" id="play">play</button>
+                            <button class="modal-button col-4" id="stop">stop</button>
+                        </div>
+                    </div>
+                    <div class="label mb-3">
+                        <span>preload collection</span>
+                        <div class="collection-field">
+                            <textarea class="collection-input"></textarea>
+                            <button class="modal-button mt-2 col-12 generate-collection" id="collection">set</button>
+                        </div>
+                    </div>
+                    <div class="label">
+                        <span>generate collection</span>
+                        <div class="generate-buttons d-flex">
+                            <button class="modal-button py-0 generate-random col-6" id="random">random</button>
+                            <button class="modal-button py-0 generate-random col-6" id="unique-random">unique random</button>
+                            <button class="modal-button py-0 generate-random col-6" id="ascending">ascending</button>
+                            <button class="modal-button py-0 generate-random col-6" id="descending">descending</button>
+                        </div>
+                        <div class="generate-field d-flex ">
+                            <div class="numerical-fields col-12 d-flex">
+                                <div class="numerical-field col-4 d-flex">
+                                    <label for="size-input" class="form-label">size</label>
+                                    <input type="number" value="8" min="1" max="200" id="size-input">
+                                </div>
+                                <div class="numerical-field col-4 d-flex">
+                                    <label for="max-input" class="form-label">max</label>
+                                    <input type="number" value="8" min="0" id="max-input">
+                                </div>
+                                <div class="numerical-field col-4 d-flex">
+                                    <label for="speed-input" class="form-label">speed</label>
+                                    <input type="number" value="1000" min="50" max="5000" id="speed-input">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- algorithm nav end -->
+    </body>
 </html>

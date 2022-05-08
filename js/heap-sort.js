@@ -6,7 +6,7 @@ define(['helper'], function (helper) {
 
         if (n === 0) {
             $('.graph.tree').remove()
-            $.each(collection, function (i,e) {
+            $.each(collection, function (i, e) {
                 e.el.removeClass('sorted')
             })
             return;
@@ -67,11 +67,11 @@ define(['helper'], function (helper) {
         if (x) {
             let kk = 2 * i + 2;
 
-            t[i] && helper.colorElement(t[i].elNode, '#93faff',  '#93faff','black')
+            t[i] && helper.colorElement(t[i].elNode, '#93faff', '#93faff', 'black')
             t[i] && helper.colorElement(t[i].el, '#93faff')
-            t[kk] && !t[kk].elNode.hasClass('sorted') && helper.colorElement(t[kk].elNode, '#93faff',  '#93faff','black')
+            t[kk] && !t[kk].elNode.hasClass('sorted') && helper.colorElement(t[kk].elNode, '#93faff', '#93faff', 'black')
             t[kk] && !t[kk].el.hasClass('sorted') && helper.colorElement(t[kk].el, '#93faff')
-            t[kk - 1] && !t[kk - 1].elNode.hasClass('sorted') && helper.colorElement(t[kk - 1].elNode, '#93faff',  '#93faff','black')
+            t[kk - 1] && !t[kk - 1].elNode.hasClass('sorted') && helper.colorElement(t[kk - 1].elNode, '#93faff', '#93faff', 'black')
             t[kk - 1] && !t[kk - 1].el.hasClass('sorted') && helper.colorElement(t[kk - 1].el, '#93faff')
             helper.colorElement($('.line[line-id="' + i + '"]'), null, '#93faff');
         }
@@ -122,7 +122,7 @@ define(['helper'], function (helper) {
                                 t[kk] && helper.colorElement(t[kk].elNode, t[kk].el.css('color'), 'black', t[kk].el.css('color'))
                                 t[kk - 1] && helper.colorElement(t[kk - 1].elNode, t[kk - 1].el.css('color'), 'black', t[kk - 1].el.css('color'))
                                 t[i] && helper.colorElement(t[i].el, 'black')
-                                t[kk] && helper.colorElement(t[kk].el,'black')
+                                t[kk] && helper.colorElement(t[kk].el, 'black')
                                 t[kk - 1] && helper.colorElement(t[kk - 1].el, 'black')
                                 helper.colorElement($('.line[line-id="' + i + '"]'), null, x.elNode.css('border-color'));
 

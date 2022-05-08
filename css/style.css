@@ -23,6 +23,23 @@
     background: black;
 }
 
+.graph.tree .level {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    position: relative;
+    justify-content: space-around;
+}
+
+.graph .multidigit-container {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    border: 1px solid #3c5f4447;
+}
+
+
 .sorted .slot {
     position: relative;
     width: 10px;
