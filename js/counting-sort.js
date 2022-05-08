@@ -1,5 +1,5 @@
 define(['helper'], function (helper) {
-	var init = {},
+	let init = {},
 		n=0,
 		maxValue=0,
 		counter = {},
@@ -9,7 +9,7 @@ define(['helper'], function (helper) {
 		interval;
 
 	function sortIteration() {
-		var i = 0;
+		let i = 0;
 
 		helper.getStepButton().off('click',sortIteration);
 		if(stepDone === 1) {
@@ -49,6 +49,7 @@ define(['helper'], function (helper) {
 				$('.counter-bars #'+i+'.bar-block').css('border-bottom','1px solid red')
 				if(i++ > maxValue){
 					clearInterval(interval);
+					helper.darkenBars($('.graph .bar-block'),null, true);
 					stepDone = 3;
 					helper.getStepButton().on('click', sortIteration);
 				}
@@ -60,30 +61,53 @@ define(['helper'], function (helper) {
 			helper.changeCodeHighlight([15,16]);
 			i = n-1;
 			interval = setInterval(function() {
-				var e = --counter[init[i].val].count;
+				let e = --counter[init[i].val].count, values = [];
 
 				sorted[e].val = init[i].val;
 				sorted[e].div = init[i].div;
-				helper.darkenBars(sorted[e].div,function() {
+
+				helper.darkenBars(init[i].div,function() {
 					$('.sorted .bar-block[data-index="'+e+'"] .bar')
 						.replaceWith(helper.createBar(e,sorted[e].val,
 							{
+								'withNumbers' : true,
 								'onlyBar':true,
-								'isOversize': n < 31
+								'isOversize': n < 50
 							}))
 					if(i-- === 0) {
 						clearInterval(interval);
+						$.each(sorted,function(index,sor) {
+							values.push(sor.val)
+						});
+						$('.graph').empty();
+						$('.sorted').remove();
+						$('.counter-container').remove();
+						setTimeout(function () {
+							$.each(helper.createBars($('.graph'), values,
+								{
+									'withNumbers' : true
+								}
+							).find('.bar-block'),function(index,$div) {
+								init[index] = {
+									div:$($div),
+									val:parseInt($(this).attr('id')),
+								}
+								sorted[index] = {div:'',val:0}
+							});
+
+							initSortedContainer();
+							initCounters();
+						},100)
 						stepDone = 4;
-						helper.darkenBars($('.graph .bar-block .bar'),null);
 						helper.getStepButton().on('click', sortIteration);
 					}
-				},true);
+				});
 			}, animationSpeed * 1.5);
 		}
 	}
 
 	function initCountingSortCode() {
-		var $codeField = $('<div/>',{'class': 'code m-1'}),
+		let $codeField = $('<div/>',{'class': 'code m-1'}),
 			codeStructure = [
 				{'line' : 'int k=max(arr);', 'tab' : 0},
 				{'line' : 'int n=count(arr);', 'tab' : 0},
@@ -110,17 +134,17 @@ define(['helper'], function (helper) {
 
 	function initCounters () {
 		$('.graph-block').append(function () {
-			var $counterLabelContainer = $('<div/>', {
+			let $counterLabelContainer = $('<div/>', {
 					'class': 'counter-labels d-flex justify-content-around'
 				}),
 				$counterBarContainer = $('<div/>', {
 					'class': 'counter-bars d-flex justify-content-around'
 				});
-			for(var i = 0; i <= maxValue; i++) {
-				var $counterLabelBlock = helper.createBar(i, i,
+			for(let i = 0; i <= maxValue; i++) {
+				let $counterLabelBlock = helper.createBar(i, i,
 					{
-						'withNumbers': false,
-						'isOversize': maxValue <= 20,
+						'withNumbers': true,
+						'isOversize': maxValue >= 20,
 						'glueToTop': true
 					}),
 					$counterBarBlock = $('<div/>',{
@@ -150,8 +174,8 @@ define(['helper'], function (helper) {
 		$('.graph-block')
 			.append($('<div/>',{'class':'sorted preset d-flex justify-content-around'})
 				.append(function (){
-					var slots = [];
-					for (var i = 0; i < n; i++){
+					let slots = [];
+					for (let i = 0; i < n; i++){
 						slots.push(helper.createBar(i,i,{
 								'barWidth':'100%',
 								'noBorder':false,
@@ -165,7 +189,7 @@ define(['helper'], function (helper) {
 	}
 
 	function getPreCountedInit() {
-		var tempCounter = {};
+		let tempCounter = {};
 
 		$.each(init,function (key,value){
 			tempCounter[value.val] ? tempCounter[value.val] += 1 : tempCounter[value.val] = 1;
@@ -175,7 +199,7 @@ define(['helper'], function (helper) {
 	}
 
 	function getVerticalBarsOrder() {
-		var i=1,
+		let i=1,
 			x = counter[i - 1].count,
 			verticalBarsOrder = [],
 			barCustomOptions = {
