@@ -1,6 +1,6 @@
 define(['helper'], function (helper) {
-	var collection = {},
-		animationSpeed = 1000,
+	let collection = {},
+		animationSpeed = 100,
 		i = 1,
 		key,
 		j;
@@ -56,34 +56,35 @@ define(['helper'], function (helper) {
 		return new Promise(function (resolve) {
 			helper.changeCodeHighlight(4)
 			$(collection[value].div).addClass('border border-primary');
-			setTimeout(function () {
+			// setTimeout(function () {
 				if (value >= 0 && collection[value].val > key.val) {
 					helper.changeCodeHighlight(5)
-					setTimeout(function () {
+					// setTimeout(function () {
+
 						$(collection[value].div).animateSwap({
 							target: collection[value + 1].div,
 							speed: animationSpeed,
 							callback: function () {
-								setTimeout(function () {
+								collection[value + 1] = collection[value];
+								collection[value] = key;
+								// setTimeout(function () {
 									helper.changeCodeHighlight(6)
-									collection[value + 1] = collection[value];
-									collection[value] = key;
 									resolve(value - 1);
 									helper.getStepButton().off('click', sortIteration)
-								}, animationSpeed)
+								// }, animationSpeed)
 							}
-						}, animationSpeed * 3);
+						// }, animationSpeed * 3);
 					});
 				} else {
 					resolve(value);
 					helper.getStepButton().on('click', sortIteration)
 				}
-			}, animationSpeed * 2);
+			// }, animationSpeed * 2);
 		});
 	}
 
 	function initInsertionSortCode() {
-		var $codeField = $('<div/>',{'class': 'code m-1'}),
+		let $codeField = $('<div/>',{'class': 'code m-1'}),
 			codeStructure = [
 				{'line' : 'int <span style="color: red">i</span>,<span style="color: green">key</span>,<span style="color: blue">j</span>;','tab':0},
 				{'line' : 'for(i = 1; i < n; i++) {', 'tab' : 0},
