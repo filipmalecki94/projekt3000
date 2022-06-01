@@ -6,107 +6,173 @@ define(['helper'], function (helper) {
         helper.getStepButton().off('click', sortIteration);
         if (level === 0) {
             appendPartitionLevel(0, N);
-            quicksort = quick(0, N);
+            helper.setVariableValue('quick_sort', 'low', -1)
+            helper.setVariableValue('quick_sort', 'high', N)
+            quicksort = quick(-1, N);
         }
         quicksort.next()
     }
 
     function* quick(i, j) {
         if (i + 1 === N - 1 && j === N) {
-            $('.partition .partition-level').remove()
+            $('.graph-block .partition .partition-level').remove()
             return;
         }
-        if (i + 1 < j) {
+        helper.increaseComparisonCounter()
+        if (1 < j - i) {
             yield* partition(i, j);
             yield k;
-            appendPartitionLevel(i, k);
+            helper.setVariableValue('quick_sort', 'low', i)
+            helper.setVariableValue('quick_sort', 'high', k)
+            appendPartitionLevel(i+1, k);
             yield* quick(i, k);
             removePartitionLevelG();
-            appendPartitionLevel(k, j);
+            helper.setVariableValue('quick_sort', 'low', k)
+            helper.setVariableValue('quick_sort', 'high', j)
+            appendPartitionLevel(k+1, j);
             yield* quick(k, j);
             removePartitionLevelG();
         }
     }
 
     function* partition(i, j) {
-        let mid = Math.floor((i + j) / 2),
+        let mid = Math.ceil((i + j) / 2),
             x = +collection[mid].val;
 
-        if (i + 1 === j || mid === N - 1) {
-            return;
-        }
-        loop(i - 1, j, mid, x).then(function (result) {
-            $('.bar-block').css('background', 'unset')
-            k = result.i
-            helper.getStepButton().on('click', sortIteration);
-        });
+        helper.changeCodeHighlight(0, function () {
+            if (i + 1 === j || mid === N - 1) {
+                return;
+            }
+            helper.setVariableValue('partition','low',i)
+            helper.setVariableValue('partition','high',j)
+            helper.changeCodeHighlight(1,function (){
+                markPivot(Math.ceil((i + j) / 2))
+                helper.changeCodeHighlight(0, function () {
+                    helper.changeCodeHighlight(1, function () {
+                        loop(i, j, mid, x).then(function (result) {
+                            if(result) {
+                                k = result.i
+                            }
+                            helper.getStepButton().on('click', sortIteration);
+                        });
+                    }, animationSpeed, 'partition');
+                }, animationSpeed, 'partition');
+            },animationSpeed,'quick_sort')
+        }, animationSpeed, 'quick_sort');
     }
 
     function loop(i, j, mid, x) {
-        return loopCode(i, j, mid, x).then(function (result) {
-            let i = result.i, j = result.j, mid = result.mid, x = result.x;
+        return helper.changeCodeHighlight(1,function (){
+            helper.setVariableValue('partition','low',i+1)
+            collection[i] && collection[i].div.css('background', 'unset')
+            collection[i+1].div.css('background', 'red')
+            helper.changeCodeHighlight(2, function () {
+                return loopCode(i, j, mid, x).then(function (result) {
+                    let i = result.i, j = result.j, mid = result.mid, x = result.x;
 
-            return new Promise(function (resolve) {
-                if (i < j) {
-                    collection[i].div.css('background', 'unset')
-                    collection[j].div.css('background', 'unset')
-                    return $(collection[i].div).animateSwap({
-                        target: collection[j].div,
-                        speed: animationSpeed,
-                        opacity: "1",
-                        callback: function () {
-                            let y = collection[i];
-                            collection[i] = collection[j];
-                            collection[j] = y;
+                    return new Promise(function (resolve) {
+                        helper.changeCodeHighlight(8, function () {
+                            if (i < j) {
+                                helper.changeCodeHighlight(9, function () {}, null,'partition');
+                                return $(collection[i].div).animateSwap({
+                                    target: collection[j].div,
+                                    speed: animationSpeed,
+                                    opacity: "1",
+                                    callback: function () {
+                                        let y = collection[i];
+                                        collection[i] = collection[j];
+                                        collection[j] = y;
 
-                            if (i === mid || j == mid) {
-                                mid = i + j - mid;
+                                        collection[j].div.css('background','blue')
+                                        collection[i].div.css('background','red')
+
+                                        if (i === mid || j == mid) {
+                                            mid = i + j - mid;
+                                        }
+
+                                        return resolve(loop(i, j, mid, x));
+                                    }
+
+                                }, animationSpeed, 'partition')
+                            } else {
+                                helper.setVariableValue('quick_sort','q',i)
+                                helper.changeCodeHighlight(10, function () {
+                                    resolve({'i': i, 'j': j, 'mid': mid, 'x': x})
+                                }, animationSpeed, 'partition')
                             }
-
-                            return resolve(loop(i, j, mid, x));
-                        }
+                        }, animationSpeed, 'partition')
                     });
-                } else {
-                    resolve({'i': i, 'j': j, 'mid': mid, 'x': x})
-                }
-            });
-        });
+                });
+            },animationSpeed, 'partition')
+        },animationSpeed, 'partition')
     }
 
     function loopCode(i, j, mid, x) {
         return new Promise(function (resolve) {
-            i++;
-            j--;
-            collection[i].div.css('background', 'red')
-            collection[j].div.css('background', 'blue')
-            let intrvl = setInterval(function () {
-                if (i > j) {
-                    clearInterval(intrvl)
-                }
-                if (collection[i].val >= x && collection[j].val <= x) {
-                    clearInterval(intrvl)
-                    return resolve({'i': i, 'j': j, 'mid': mid, 'x': x})
-                } else {
-                    if (+collection[i].val < x) {
-                        collection[i].div.css('background', 'unset')
-                        collection[++i].div.css('background', 'red')
-                    }
-                    if (+collection[j].val > x) {
-                        collection[j].div.css('background', 'unset')
-                        collection[--j].div.css('background', 'blue')
-                    }
-                }
-            }, animationSpeed)
+            return helper.changeCodeHighlight(2, function () {
+                let dupa = true;
+
+                i++;
+
+                let intrvl = setInterval(function () {
+                    helper.changeCodeHighlight(3, function () {
+                        if (i > j) {
+                            clearInterval(intrvl)
+                            helper.setVariableValue('partition', 'low', i)
+                            helper.setVariableValue('partition', 'high', j)
+
+                            collection[i-1] && collection[i-1].div.css('background', 'unset')
+                            collection[j+1] && collection[j+1].div.css('background', 'unset')
+                            resolve({'i': i, 'j': j, 'mid': mid, 'x': x})
+                        } else if (+collection[i].val >= x &&  +collection[j].val <= x) {
+                            clearInterval(intrvl)
+                            helper.setVariableValue('partition', 'low', i)
+                            helper.setVariableValue('partition', 'high', j)
+                            collection[j+1] && collection[j+1].div.css('background', i >= j ? 'red' : 'unset')
+                            collection[j].div.css('background', 'blue')
+                            return helper.changeCodeHighlight(5, function () {
+                                helper.changeCodeHighlight(6, function () {
+                                    resolve({'i': i, 'j': j, 'mid': mid, 'x': x})
+                                }, animationSpeed, 'partition')
+                            }, animationSpeed, 'partition')
+                        } else if (+collection[i].val >= x) {
+                            helper.setVariableValue('partition', 'high', j-1)
+                            collection[j] && collection[j].div.css('background', i >= j ? 'red' : 'unset')
+                            collection[--j].div.css('background', 'blue')
+                            helper.changeCodeHighlight(5, function () {
+                                helper.changeCodeHighlight(6, function () {
+                                    // dupa = false
+                                }, animationSpeed, 'partition')
+                            }, animationSpeed, 'partition')
+                        } else {
+                            if (+collection[i].val < x) {
+                                let I = i;
+                                if(+collection[i+1].val >= x) {
+                                    j--;
+                                    dupa = false;
+                                }
+                                helper.setVariableValue('partition', 'low', i+1)
+                                collection[i] && collection[i].div.css('background', 'unset')
+                                collection[++i].div.css('background', 'red')
+
+                                return helper.changeCodeHighlight(2, function () {
+                                    // ++i
+                                }, animationSpeed, 'partition')
+                            }
+                        }
+                    }, dupa ? animationSpeed : null, 'partition')
+                }, animationSpeed * 3)
+            }, null, 'partition')
         });
     }
 
     function appendPartitionLevel(i, j) {
-        $('.partition').append(createPartitionLevel(level, i, j))
+        $('.graph-block .partition').append(createPartitionLevel(level, i, j))
         enablePartitionRangeField(level++, i, j)
     }
 
     function removePartitionLevelG() {
-        return $('.partition .partition-level[data-level=' + (--level) + ']').remove();
+        return $('.graph-block .partition .partition-level[data-level=' + (--level) + ']').remove();
     }
 
     function createPartition() {
@@ -130,7 +196,6 @@ define(['helper'], function (helper) {
                     .css('visibility', 'hidden')
             );
         }
-        markPivot(Math.floor((i + j) / 2))
 
         return $partitionLevel;
     }
@@ -144,38 +209,50 @@ define(['helper'], function (helper) {
     }
 
     function markPivot(pivot) {
-        $('.graph .bar-block').removeClass('border border-danger')
-        collection[pivot].div.addClass('border border-danger')
+        $('.graph .bar-block').removeClass('border border-success')
+        collection[pivot].div.addClass('border border-success')
+        helper.setVariableValue('partition','x', collection[pivot].val)
     }
 
     function initQuicksortCode() {
-        var $codeFieldSort = $('<div/>', {'class': 'code m-1 h-50'}),
-            $codeFieldPartition = $('<div/>', {'class': 'code m-1 h-50'}),
+        var $codeBlockSort = $('<div/>', {'class': 'code-block'}),
+            $codeBlockPartition = $('<div/>', {'class': 'code-block'}),
             codeStructureSort = [
-                {'line': 'if(low < high) {', 'tab': 0},
-                {'line': 'int pi = partition(arr, low, high);', 'tab': 1},
+                {'line': 'IF (1 < HIGH - LOW) {', 'tab': 0},
+                {'line': 'Q = PARTITION(ARR, LOW, HIGH);', 'tab': 1},
                 {'line': '&nbsp;', 'tab': 1},
-                {'line': 'quickSort(arr, pi + 1, high);', 'tab': 1},
-                {'line': 'quickSort(arr, low, pi - 1);', 'tab': 1},
+                {'line': 'QUICKSORT(ARR, LOW, Q);', 'tab': 1},
+                {'line': 'QUICKSORT(ARR, Q - 1, HIGH);', 'tab': 1},
                 {'line': '}', 'tab': 0},
             ],
+            codeVariables = {
+                0: {'color': 'green', 'label': 'Q'},
+                1: {'color': 'red', 'label': 'LOW'},
+                2: {'color': 'blue', 'label': 'HIGH'}
+            },
             codeStructurePartition = [
-                {'line': 'int partition (double t[], int n)', 'tab': 0},
-                {'line': '{', 'tab': 0},
-                {'line': 'int k = -1;', 'tab': 1},
-                {'line': 'double x = t[n / 2];', 'tab': 1},
-                {'line': 'while() {', 'tab': 1},
-                {'line': 'do ++k; while (t[k] < x);', 'tab': 2},
-                {'line': 'do --n; while (t[n] > x);', 'tab': 2},
-                {'line': 'if (k < n) std::swap(t[k],t[n]);', 'tab': 2},
-                {'line': 'else       return k;', 'tab': 2},
-                {'line': '}', 'tab': 1},
+                {'line': 'X = ARR[N / 2];', 'tab': 0},
+                {'line': 'WHILE ( ) {', 'tab': 0},
+                {'line': 'DO ++LOW', 'tab': 1},
+                {'line': 'WHILE (ARR[LOW] < X);', 'tab': 1},
+                {'line': '&nbsp;', 'tab': 1},
+                {'line': 'DO --HIGH', 'tab': 1},
+                {'line': 'WHILE (ARR[HIGH] > X);', 'tab': 1},
+                {'line': '&nbsp;', 'tab': 1},
+                {'line': 'IF (LOW < HIGH)', 'tab': 1},
+                {'line': 'SWAP(ARR[LOW], ARR[HIGH]);', 'tab': 2},
+                {'line': 'ELSE       RETURN LOW;', 'tab': 1},
                 {'line': '}', 'tab': 0},
-            ];
+            ],
+            partitionVariables = {
+                0: {'color': 'green', 'label': 'X'},
+                1: {'color': 'red', 'label': 'LOW'},
+                2: {'color': 'blue', 'label': 'HIGH'}
+            };
 
-        helper.initCode(codeStructureSort, $codeFieldSort);
-        helper.initCode(codeStructurePartition, $codeFieldPartition);
-        $('.code-block').append($codeFieldPartition).append($codeFieldSort)
+        helper.initCode(codeStructureSort, $codeBlockSort, 'quick sort',codeVariables);
+        helper.initCode(codeStructurePartition, $codeBlockPartition , 'partition', partitionVariables);
+        $('.code-container').append($codeBlockSort).append($codeBlockPartition)
     }
 
     return {
@@ -185,7 +262,7 @@ define(['helper'], function (helper) {
             level = 0;
             k = null;
             N = graphContainer.find('.bar-block').length;
-            $('.graph-block').prepend(createPartition());
+            $('.graph').before(createPartition());
             graphContainer.find('.bar-block').each(function (index, $div) {
                 collection[index] = {
                     div: $($div),
