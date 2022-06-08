@@ -19,18 +19,17 @@ define(['helper'], function (helper) {
             return;
         }
         helper.increaseComparisonCounter()
-        if (1 < j - i) {
+        if (2 < Math.abs(j - i)) {
+            console.log(collection)
+            // collection[i] && collection[i].div.css('background', 'red')
+            // collection[j] && collection[j].div.css('background', 'blue')
             yield* partition(i, j);
             yield k;
-            helper.setVariableValue('quick_sort', 'low', i)
-            helper.setVariableValue('quick_sort', 'high', k)
-            appendPartitionLevel(i+1, k);
+            appendPartitionLevel(i, k);
             yield* quick(i, k);
             removePartitionLevelG();
-            helper.setVariableValue('quick_sort', 'low', k)
-            helper.setVariableValue('quick_sort', 'high', j)
-            appendPartitionLevel(k+1, j);
-            yield* quick(k, j);
+            appendPartitionLevel(k, j);
+            yield* quick(k-1, j);
             removePartitionLevelG();
         }
     }
@@ -39,130 +38,103 @@ define(['helper'], function (helper) {
         let mid = Math.ceil((i + j) / 2),
             x = +collection[mid].val;
 
-        helper.changeCodeHighlight(0, function () {
-            if (i + 1 === j || mid === N - 1) {
-                return;
+        if (i + 1 === j || mid === N - 1) {
+            return;
+        }
+        markPivot(Math.ceil((i + j) / 2))
+        // collection[i] && collection[i].div.css('background', 'unset')
+        // collection[i + 1] && collection[i + 1].div.css('background', 'red')
+        loop(i, j, mid, x, 'start').then(function (result) {
+            console.log(result.i);
+            if (result.i + 1 >= result.j) {
+                // collection[result.i + 1] && collection[result.i + 1].div.css('background', result.i + 1 === result.j ? 'red' : 'unset')
             }
-            helper.setVariableValue('partition','low',i)
-            helper.setVariableValue('partition','high',j)
-            helper.changeCodeHighlight(1,function (){
-                markPivot(Math.ceil((i + j) / 2))
-                helper.changeCodeHighlight(0, function () {
-                    helper.changeCodeHighlight(1, function () {
-                        loop(i, j, mid, x).then(function (result) {
-                            if(result) {
-                                k = result.i
-                            }
-                            helper.getStepButton().on('click', sortIteration);
-                        });
-                    }, animationSpeed, 'partition');
-                }, animationSpeed, 'partition');
-            },animationSpeed,'quick_sort')
-        }, animationSpeed, 'quick_sort');
+            if (result.j >= 0) {
+                // collection[result.j].div.css('background', 'unset')
+            }
+            if (result) {
+                k = result.i
+            }
+            helper.getStepButton().on('click', sortIteration);
+        });
     }
 
-    function loop(i, j, mid, x) {
-        return helper.changeCodeHighlight(1,function (){
-            helper.setVariableValue('partition','low',i+1)
-            collection[i] && collection[i].div.css('background', 'unset')
-            collection[i+1].div.css('background', 'red')
-            helper.changeCodeHighlight(2, function () {
-                return loopCode(i, j, mid, x).then(function (result) {
-                    let i = result.i, j = result.j, mid = result.mid, x = result.x;
+    function loop(i, j, mid, x, switchLoop) {
+        console.log(i,j)
+        let flag = 'red';
 
-                    return new Promise(function (resolve) {
-                        helper.changeCodeHighlight(8, function () {
-                            if (i < j) {
-                                helper.changeCodeHighlight(9, function () {}, null,'partition');
-                                return $(collection[i].div).animateSwap({
-                                    target: collection[j].div,
-                                    speed: animationSpeed,
-                                    opacity: "1",
-                                    callback: function () {
-                                        let y = collection[i];
-                                        collection[i] = collection[j];
-                                        collection[j] = y;
+        if (+collection[i] && +collection[i].val <= x && +collection[j] && +collection[j].val > x) {
+            if (+collection[i].val > x) {
+                flag = 'blue';
+                // collection[j] && collection[j].div.css('background', 'unset')
+                // collection[j - 1] && collection[j - 1].div.css('background', 'blue')
+            }
+        } else if (collection[i] && +collection[i].val >= x && collection[j - 1]) {
+            flag = 'blue';
+            // collection[j] && collection[j].div.css('background', j - 1 === i ? 'red' : 'unset')
+            // collection[j - 1] && collection[j - 1].div.css('background', 'blue')
+        } else if (collection[i + 1] && collection[i] && +collection[i].val < x) {
+            flag = 'red';
+            // collection[i] && collection[i].div.css('background', 'unset')
+            // collection[i + 1] && collection[i + 1].div.css('background', 'red')
+        }
+        return loopCode((switchLoop === 'Start' || switchLoop === 'start' || flag === 'red') ? i + 1 : i, switchLoop !== 'Start' && flag === 'blue' ? j - 1 : j, mid, x, switchLoop).then(function (result) {
+            let i = result.i, j = result.j, mid = result.mid, x = result.x, end = result.end;
 
-                                        collection[j].div.css('background','blue')
-                                        collection[i].div.css('background','red')
+            return new Promise(function (resolve) {
+                if (end === true) {
+                    if (i < j) {
+                        return $(collection[i].div).animateSwap({
+                            target: collection[j].div,
+                            speed: animationSpeed,
+                            opacity: "1",
+                            callback: function () {
+                                let y = collection[i];
+                                collection[i] = collection[j];
+                                collection[j] = y;
 
-                                        if (i === mid || j == mid) {
-                                            mid = i + j - mid;
-                                        }
+                                // collection[j].div.css('background', 'blue')
+                                // collection[i].div.css('background', 'red')
 
-                                        return resolve(loop(i, j, mid, x));
-                                    }
-
-                                }, animationSpeed, 'partition')
-                            } else {
-                                helper.setVariableValue('quick_sort','q',i)
-                                helper.changeCodeHighlight(10, function () {
-                                    resolve({'i': i, 'j': j, 'mid': mid, 'x': x})
-                                }, animationSpeed, 'partition')
-                            }
-                        }, animationSpeed, 'partition')
-                    });
-                });
-            },animationSpeed, 'partition')
-        },animationSpeed, 'partition')
-    }
-
-    function loopCode(i, j, mid, x) {
-        return new Promise(function (resolve) {
-            return helper.changeCodeHighlight(2, function () {
-                let dupa = true;
-
-                i++;
-
-                let intrvl = setInterval(function () {
-                    helper.changeCodeHighlight(3, function () {
-                        if (i > j) {
-                            clearInterval(intrvl)
-                            helper.setVariableValue('partition', 'low', i)
-                            helper.setVariableValue('partition', 'high', j)
-
-                            collection[i-1] && collection[i-1].div.css('background', 'unset')
-                            collection[j+1] && collection[j+1].div.css('background', 'unset')
-                            resolve({'i': i, 'j': j, 'mid': mid, 'x': x})
-                        } else if (+collection[i].val >= x &&  +collection[j].val <= x) {
-                            clearInterval(intrvl)
-                            helper.setVariableValue('partition', 'low', i)
-                            helper.setVariableValue('partition', 'high', j)
-                            collection[j+1] && collection[j+1].div.css('background', i >= j ? 'red' : 'unset')
-                            collection[j].div.css('background', 'blue')
-                            return helper.changeCodeHighlight(5, function () {
-                                helper.changeCodeHighlight(6, function () {
-                                    resolve({'i': i, 'j': j, 'mid': mid, 'x': x})
-                                }, animationSpeed, 'partition')
-                            }, animationSpeed, 'partition')
-                        } else if (+collection[i].val >= x) {
-                            helper.setVariableValue('partition', 'high', j-1)
-                            collection[j] && collection[j].div.css('background', i >= j ? 'red' : 'unset')
-                            collection[--j].div.css('background', 'blue')
-                            helper.changeCodeHighlight(5, function () {
-                                helper.changeCodeHighlight(6, function () {
-                                    // dupa = false
-                                }, animationSpeed, 'partition')
-                            }, animationSpeed, 'partition')
-                        } else {
-                            if (+collection[i].val < x) {
-                                let I = i;
-                                if(+collection[i+1].val >= x) {
-                                    j--;
-                                    dupa = false;
+                                if (i === mid || j === mid) {
+                                    mid = i + j - mid;
                                 }
-                                helper.setVariableValue('partition', 'low', i+1)
-                                collection[i] && collection[i].div.css('background', 'unset')
-                                collection[++i].div.css('background', 'red')
 
-                                return helper.changeCodeHighlight(2, function () {
-                                    // ++i
-                                }, animationSpeed, 'partition')
+                                return resolve(loop(i, j, mid, x, 'Start'));
                             }
-                        }
-                    }, dupa ? animationSpeed : null, 'partition')
-                }, animationSpeed * 3)
-            }, null, 'partition')
+
+                        })
+                    } else {
+                        resolve({'i':i, 'j': j, 'mid': mid, 'x': x})
+                    }
+                } else if (typeof end === 'undefined') {
+                    return resolve(loop(i - 1, j, mid, x));
+                } else if (end === 'XD') {
+                    return resolve(loop(i, j + 1, mid, x, true));
+                } else if (end === 'nic') {
+                    return resolve(loop(i, j + 1, mid, x,false));
+                } else {
+                    return resolve(loop(i - 1, j, mid, x));
+                }
+            });
+        });
+    }
+
+    function loopCode(i, j, mid, x, switchLoop) {
+        return new Promise(function (resolve) {
+            if (i >= j) {
+                resolve({'i': i, 'j': j, 'mid': mid, 'x': x, 'end': true})
+            } else if (+collection[i].val >= x && (typeof switchLoop !== 'undefined' && switchLoop !== 'start' && switchLoop !== 'Start') && collection[j] && +collection[j].val <= x) {
+                resolve({'i': i, 'j': j, 'mid': mid, 'x': x, 'end': true})
+            } else if (+collection[i].val >= x) {
+                if (switchLoop === true) {
+                    resolve({'i': i, 'j': j - 1, 'mid': mid, 'x': x, 'end': 'nic'})
+                } else {
+                    resolve({'i': i, 'j': j - 1, 'mid': mid, 'x': x, 'end': 'XD'})
+                }
+            } else {
+                resolve({'i': i+1, 'j': j, 'mid': mid, 'x': x})
+            }
         });
     }
 
@@ -190,10 +162,9 @@ define(['helper'], function (helper) {
                     'height': '100%',
                     'noBorder': true,
                     'barWidth': '100%',
-                    'backgroundColor': 'rgb(0,255,0)',
+                    'backgroundColor': '#ffc800',
                     'customBarBlockClasses': 'part',
-                })
-                    .css('visibility', 'hidden')
+                }).css('visibility', 'hidden')
             );
         }
 
@@ -211,7 +182,7 @@ define(['helper'], function (helper) {
     function markPivot(pivot) {
         $('.graph .bar-block').removeClass('border border-success')
         collection[pivot].div.addClass('border border-success')
-        helper.setVariableValue('partition','x', collection[pivot].val)
+        helper.setVariableValue('partition', 'x', collection[pivot].val)
     }
 
     function initQuicksortCode() {
@@ -250,8 +221,8 @@ define(['helper'], function (helper) {
                 2: {'color': 'blue', 'label': 'HIGH'}
             };
 
-        helper.initCode(codeStructureSort, $codeBlockSort, 'quick sort',codeVariables);
-        helper.initCode(codeStructurePartition, $codeBlockPartition , 'partition', partitionVariables);
+        helper.initCode(codeStructureSort, $codeBlockSort, 'quick sort', codeVariables);
+        helper.initCode(codeStructurePartition, $codeBlockPartition, 'partition', partitionVariables);
         $('.code-container').append($codeBlockSort).append($codeBlockPartition)
     }
 
