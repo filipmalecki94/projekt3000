@@ -20,12 +20,9 @@ define(['helper'], function (helper) {
         }
         helper.increaseComparisonCounter()
         if (2 < Math.abs(j - i)) {
-            console.log(collection)
-            // collection[i] && collection[i].div.css('background', 'red')
-            // collection[j] && collection[j].div.css('background', 'blue')
             yield* partition(i, j);
             yield k;
-            appendPartitionLevel(i, k);
+            appendPartitionLevel(i+1, k);
             yield* quick(i, k);
             removePartitionLevelG();
             appendPartitionLevel(k, j);
@@ -42,16 +39,7 @@ define(['helper'], function (helper) {
             return;
         }
         markPivot(Math.ceil((i + j) / 2))
-        // collection[i] && collection[i].div.css('background', 'unset')
-        // collection[i + 1] && collection[i + 1].div.css('background', 'red')
-        loop(i, j, mid, x, 'start').then(function (result) {
-            console.log(result.i);
-            if (result.i + 1 >= result.j) {
-                // collection[result.i + 1] && collection[result.i + 1].div.css('background', result.i + 1 === result.j ? 'red' : 'unset')
-            }
-            if (result.j >= 0) {
-                // collection[result.j].div.css('background', 'unset')
-            }
+        loop(i, j, mid, x, 'low').then(function (result) {
             if (result) {
                 k = result.i
             }
@@ -59,30 +47,12 @@ define(['helper'], function (helper) {
         });
     }
 
-    function loop(i, j, mid, x, switchLoop) {
-        console.log(i,j)
-        let flag = 'red';
-
-        if (+collection[i] && +collection[i].val <= x && +collection[j] && +collection[j].val > x) {
-            if (+collection[i].val > x) {
-                flag = 'blue';
-                // collection[j] && collection[j].div.css('background', 'unset')
-                // collection[j - 1] && collection[j - 1].div.css('background', 'blue')
-            }
-        } else if (collection[i] && +collection[i].val >= x && collection[j - 1]) {
-            flag = 'blue';
-            // collection[j] && collection[j].div.css('background', j - 1 === i ? 'red' : 'unset')
-            // collection[j - 1] && collection[j - 1].div.css('background', 'blue')
-        } else if (collection[i + 1] && collection[i] && +collection[i].val < x) {
-            flag = 'red';
-            // collection[i] && collection[i].div.css('background', 'unset')
-            // collection[i + 1] && collection[i + 1].div.css('background', 'red')
-        }
-        return loopCode((switchLoop === 'Start' || switchLoop === 'start' || flag === 'red') ? i + 1 : i, switchLoop !== 'Start' && flag === 'blue' ? j - 1 : j, mid, x, switchLoop).then(function (result) {
-            let i = result.i, j = result.j, mid = result.mid, x = result.x, end = result.end;
+    function loop(i, j, mid, x, loopFlag) {
+        return loopCode(i, j, mid, x, loopFlag).then(function (result) {
+            let i = result.i, j = result.j, mid = result.mid, x = result.x, loopFlag = result.loopFlag;
 
             return new Promise(function (resolve) {
-                if (end === true) {
+                if(loopFlag === 'swap') {
                     if (i < j) {
                         return $(collection[i].div).animateSwap({
                             target: collection[j].div,
@@ -93,47 +63,46 @@ define(['helper'], function (helper) {
                                 collection[i] = collection[j];
                                 collection[j] = y;
 
-                                // collection[j].div.css('background', 'blue')
-                                // collection[i].div.css('background', 'red')
-
                                 if (i === mid || j === mid) {
                                     mid = i + j - mid;
                                 }
 
-                                return resolve(loop(i, j, mid, x, 'Start'));
+                                return resolve(loop(i, j, mid, x, 'low'));
                             }
-
                         })
                     } else {
                         resolve({'i':i, 'j': j, 'mid': mid, 'x': x})
                     }
-                } else if (typeof end === 'undefined') {
-                    return resolve(loop(i - 1, j, mid, x));
-                } else if (end === 'XD') {
-                    return resolve(loop(i, j + 1, mid, x, true));
-                } else if (end === 'nic') {
-                    return resolve(loop(i, j + 1, mid, x,false));
                 } else {
-                    return resolve(loop(i - 1, j, mid, x));
+                    if(loopFlag === 'low' && +collection[i].val < x) {
+                        return resolve(loop(i, j, mid, x, 'low'));
+                    }
+                    if(loopFlag === 'low' && +collection[i].val >= x) {
+                        return resolve(loop(i, j, mid, x, 'high'));
+                    }
+                    if(loopFlag === 'high' && +collection[j].val > x) {
+                        return resolve(loop(i, j, mid, x, 'high'));
+                    }
+                    if(loopFlag === 'high' && +collection[i].val >= x && +collection[j].val <= x) {
+                        return resolve(loop(i, j, mid, x, 'swap'));
+                    }
                 }
             });
         });
     }
 
-    function loopCode(i, j, mid, x, switchLoop) {
+    function loopCode(i, j, mid, x, loopFlag) {
         return new Promise(function (resolve) {
-            if (i >= j) {
-                resolve({'i': i, 'j': j, 'mid': mid, 'x': x, 'end': true})
-            } else if (+collection[i].val >= x && (typeof switchLoop !== 'undefined' && switchLoop !== 'start' && switchLoop !== 'Start') && collection[j] && +collection[j].val <= x) {
-                resolve({'i': i, 'j': j, 'mid': mid, 'x': x, 'end': true})
-            } else if (+collection[i].val >= x) {
-                if (switchLoop === true) {
-                    resolve({'i': i, 'j': j - 1, 'mid': mid, 'x': x, 'end': 'nic'})
-                } else {
-                    resolve({'i': i, 'j': j - 1, 'mid': mid, 'x': x, 'end': 'XD'})
-                }
+            if (loopFlag === 'low') {
+                resolve({'i': i+1, 'j': j, 'mid': mid, 'x': x,'loopFlag': 'low'})
+            } else if(loopFlag === 'high') {
+                resolve({'i': i, 'j': j-1, 'mid': mid, 'x': x,'loopFlag': 'high'})
             } else {
-                resolve({'i': i+1, 'j': j, 'mid': mid, 'x': x})
+                if (i >= j) {
+                    resolve({'i': i, 'j': j, 'mid': mid, 'x': x, 'loopFlag': 'swap'})
+                } else {
+                    resolve({'i': i, 'j': j, 'mid': mid, 'x': x, 'loopFlag': 'swap'})
+                }
             }
         });
     }
