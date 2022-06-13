@@ -1,11 +1,17 @@
 define([], function () {
     let size = 0,
-        max = 0;
+        max = 0,
+        comparisonCounter = 0;
 
     return {
-        initCode: function (codeStructure, $codeField) {
+        initCode: function (codeStructure, $codeBlock, title, variables) {
+            let $code = $('<div/>',{'class':'code'}),
+                $variables = $('<div/>',{'class':'variables '});
+
+            $codeBlock.addClass(title.split(' ')[0].toLowerCase())
+            $codeBlock.append($('<div/>',{'class':'label','html':'<span>'+title+'</span>'}))
             $.each(codeStructure, function (index, value) {
-                $codeField.append(
+                $code.append(
                     $('<div/>', {
                         'class': 'step ' + index,
                         'html': value.line
@@ -14,6 +20,17 @@ define([], function () {
                     })
                 )
             });
+
+            $.each(variables, function (index, value) {
+               $variables.append(
+                   $('<div/>',{
+                       'class': 'variable ' + value.label.toLowerCase(),
+                       'html': value.label + ' : <span class="value"></span>'
+                   }).css('background',value.color)
+               );
+            });
+
+            $codeBlock.append($code).append($variables);
         },
         initCollection: function (collectionSize, maxValue, barOptions = {}, preCollection = 'random', isTree = false) {
             let $graph = $('.graph'),
@@ -31,7 +48,7 @@ define([], function () {
             if (isTree) {
                 let $tree = $('<div/>', {'class': 'graph tree d-flex'});
 
-                $graph.parent().prepend($tree);
+                $graph.before($tree);
                 this.createTree($tree, collectionArr);
             }
             this.createBars($graph, collectionArr, barOptions);
@@ -113,7 +130,7 @@ define([], function () {
                     collection.push(parseInt(e))
                 });
             } else if (preCollection === 'descending') {
-                for (var i = maxValue; i > 0; i--) {
+                for (let i = maxValue; i > 0; i--) {
                     collection.push(i);
                 }
             } else {
@@ -152,6 +169,7 @@ define([], function () {
                     'multidigit': false,
                     'forceMaxValue': false,
                     'fillWithZeros': false,
+                    'hideBarBlock': false,
                 };
 
             options = $.extend(options, customOptions);
@@ -188,7 +206,7 @@ define([], function () {
             barBlockColor = that.getHslValue(100 * value / (that.getMaxValue(options.forceMaxValue)), 100, 350);
             $barBlock = $('<div/>', {
                 'id': options.barBlockId ?? (value !== null ? value : 'empty'),
-                'class': 'bar-block d-flex justify-content-center ' + (options.noBorder ? '' : 'border-black ') + options.customBarBlockClasses,
+                'class': 'bar-block justify-content-center ' + (options.noBorder ? '' : 'border-black ') + options.customBarBlockClasses + (options.hideBarBlock ? ' d-none' : ' d-flex'),
                 'html': $('<span/>', {'html': ((options.withNumbers ?? false) && !options.isOversize) ? value : ''}),
                 'data-index': index
             }).css({
@@ -210,6 +228,10 @@ define([], function () {
             let $graphContainer = $('.graph'),
                 graphContainerWidth = $graphContainer.innerWidth(),
                 barWidthInContainer = graphContainerWidth / size;
+
+            if(barWidthInContainer <= 10) {
+                $graphContainer.find('.bar').addClass('low-width')
+            }
 
             return barWidthInContainer > 10 ? 10 : barWidthInContainer - barWidthInContainer * 0.85;
         },
@@ -277,13 +299,35 @@ define([], function () {
 
             return 'hsl(' + c + ', 100%, 50%)';
         },
-        changeCodeHighlight: function (ids, time) {
-            setTimeout(function () {
-                $('.code .highlight').removeClass('highlight');
-                $.each(Array.isArray(ids) ? ids : [ids], function (index, value) {
-                    $('.step.' + value).addClass('highlight');
+        changeCodeHighlight: function (ids, callback, time, ns) {
+            let x = ' .code .highlight';
+
+            if (typeof ns !== 'undefined') {
+                x = '.' + ns + x;
+            }
+            $(x).removeClass('highlight');
+            $.each(Array.isArray(ids) ? ids : [ids], function (index, value) {
+                let x = ' .step.' + value;
+
+                if (typeof ns !== 'undefined') {
+                    x = '.' + ns + ' .step.' + value;
+                }
+                $(x).addClass('highlight');
+            });
+            if (time) {
+                return new Promise(function(resolve) {
+                    setTimeout(function () {
+                        return callback && resolve(callback());
+                    }, time);
                 });
-            }, time);
+            } else {
+                return new Promise(function(resolve) {
+                    return callback && resolve(callback());
+                });
+            }
+        },
+        setVariableValue: function (namespace, variableName, value) {
+            $('#' + $('body').attr('id') + ' .' + namespace + ' .variable.' + variableName + ' .value').text(value ?? '');
         },
         darkenBars: function ($object, callback = null, brightenBars = false) {
             $object.animate({opacity: brightenBars ? 1 : 0.1}, 100, callback);
@@ -345,15 +389,15 @@ define([], function () {
             return val;
         },
         adjustLine: function (from, to, line) {
-            let fromTop = from.offset().top + from.width() / 2,
-                toTop = to.offset().top + to.height() / 2,
-                fromLeft = from.offset().left + from.width() / 2,
-                toLeft = to.offset().left + to.width() / 2,
+            let fromTop = from.offset().top + from.outerHeight() / 2,
+                toTop = to.offset().top + to.outerHeight() / 2,
+                fromLeft = from.offset().left + from.outerWidth() / 2,
+                toLeft = to.offset().left + to.outerWidth() / 2,
                 toFromTop = Math.abs(toTop - fromTop),
                 toFromLeft = Math.abs(toLeft - fromLeft),
                 H = Math.sqrt(toFromTop * toFromTop + toFromLeft * toFromLeft),
                 ANG = 180 / Math.PI * Math.acos(toFromTop / H),
-                $graphicalSection = $('.graphical-section'),
+                $graphicalSection = $('.graph-block'),
                 top, left;
 
             if (toTop > fromTop) {
@@ -377,7 +421,7 @@ define([], function () {
             }
 
             top -= H / 2;
-            top -= ($graphicalSection.offset().top + parseInt($('.graph-block').css('margin-top')));
+            top -= $graphicalSection.offset().top;
             left -= $graphicalSection.offset().left
 
             line.attr('line-id', to.attr('node-id'))
@@ -401,6 +445,13 @@ define([], function () {
         },
         getXDigit: function (number, X) {
             return number.toString().split('').reverse().map(Number)[X] ? number.toString().split('').reverse().map(Number)[X] : 0;
+        },
+        increaseComparisonCounter: function () {
+            return $('.counters .comparison .counter').html(++comparisonCounter);
+        },
+        setComparisonCounter: function (counter) {
+            comparisonCounter = counter ?? 0;
+            $('.counters .comparison .counter').html(counter ?? 0)
         }
     }
 });

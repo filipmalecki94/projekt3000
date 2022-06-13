@@ -8,98 +8,124 @@ define(['helper'], function (helper) {
     function sortIteration() {
         helper.getStepButton().off('click', sortIteration);
 
-        helper.changeCodeHighlight(2)
-        key = helper.copyObj(collection[i]);
+        helper.setVariableValue('insertion_sort','i', i)
+        $(collection[i].div).addClass('border border-danger');
+        helper.changeCodeHighlight(1, function () {
+            key = helper.copyObj(collection[i]);
+            $(key.div).removeClass('border border-danger');
+            $(key.div).addClass('border border-danger');
+            $(collection[i - 1].div).addClass('border border-primary');
 
-        $(key.div).removeClass('border border-danger');
-        $(key.div).addClass('border border-success');
-        $(collection[i - 1].div).addClass('border border-primary');
+            helper.setVariableValue('insertion_sort','j', i - 1)
+            helper.changeCodeHighlight(2, function () {
 
-        helper.changeCodeHighlight(3)
-        j = i - 1;
+                j = i - 1;
+                helper.getStepButton().off('click', sortIteration);
 
-        helper.getStepButton().off('click', sortIteration);
+                loop(j).then(function (res) {
+                    $(collection[res + 1].div).addClass('sorted');
+                    collection[res + 1] = key;
+                    $(key.div).removeClass('border border-danger');
 
-        loop(j).then(function (res) {
-            $(collection[res + 1].div).addClass('sorted');
-            collection[res + 1] = key;
-            $(key.div).removeClass('border border-success');
+                    if (typeof collection[++i] === 'undefined') {
+                        helper.increaseComparisonCounter()
+                        helper.changeCodeHighlight([])
+                        $.each(collection, function (index, object) {
+                            $(object.div).removeClass('sorted')
+                        });
+                        return;
+                    }
 
-            if (typeof collection[++i] === 'undefined') {
-                $.each(collection, function (index, object) {
-                    $(object.div).removeClass('sorted')
+                    $(collection[i].div).addClass('border border-danger');
+                    helper.setVariableValue('insertion_sort','i', i)
+                    helper.setVariableValue('insertion_sort','j', null)
+                    helper.changeCodeHighlight(1)
+                    helper.getStepButton().on('click', sortIteration);
                 });
-                return;
-            }
-
-            $(collection[i].div).addClass('border border-danger');
-            helper.changeCodeHighlight(1)
-            helper.getStepButton().on('click', sortIteration);
-        });
-        helper.getStepButton().off('click', sortIteration);
+                helper.getStepButton().off('click', sortIteration);
+            }, animationSpeed)
+        }, animationSpeed)
     }
 
     function loop(value) {
+        helper.setVariableValue('insertion_sort','j', value)
+        $(collection[value].div).addClass('border border-primary')
         return loopCode(value).then(function (result) {
-            $('.border.border-primary').removeClass('border border-primary');
+            helper.setVariableValue('insertion_sort','j', result)
+            $('.border.border-primary:not(#'+result+')').removeClass('border border-primary');
             if (result >= 0 && collection[result].val > key.val) {
-                helper.changeCodeHighlight(5)
                 $(collection[result].div).addClass('border border-primary')
-                return loop(result);
+                return helper.changeCodeHighlight(5, function () {
+                    return helper.changeCodeHighlight(3, function () {
+                        return loop(result);
+                    }, animationSpeed)
+                }, animationSpeed)
+            } else {
+                collection[result] && $(collection[result].div).addClass('border border-primary')
+                return helper.changeCodeHighlight(result >= 0 || collection[result+2].val < key.val ? 3 : 5, function () {
+                    $('.border.border-primary:not(#'+result+')').removeClass('border border-primary');
+                    return helper.changeCodeHighlight(3, function () {
+                        $(key.div).removeClass('border border-danger');
+                        return result;
+                    }, animationSpeed)
+                }, animationSpeed)
             }
-            helper.changeCodeHighlight(8)
-            return result;
         });
     }
 
     function loopCode(value) {
         return new Promise(function (resolve) {
-            helper.changeCodeHighlight(4)
-            $(collection[value].div).addClass('border border-primary');
-            // setTimeout(function () {
-            if (value >= 0 && collection[value].val > key.val) {
-                helper.changeCodeHighlight(5)
-                // setTimeout(function () {
-
-                $(collection[value].div).animateSwap({
-                    target: collection[value + 1].div,
-                    speed: animationSpeed,
-                    callback: function () {
-                        collection[value + 1] = collection[value];
-                        collection[value] = key;
-                        // setTimeout(function () {
-                        helper.changeCodeHighlight(6)
-                        resolve(value - 1);
-                        helper.getStepButton().off('click', sortIteration)
-                        // }, animationSpeed)
-                    }
-                    // }, animationSpeed * 3);
-                });
-            } else {
-                resolve(value);
-                helper.getStepButton().on('click', sortIteration)
-            }
-            // }, animationSpeed * 2);
+            $(collection[value].div).addClass('border border-primary')
+            helper.changeCodeHighlight(3, function () {
+                $(collection[value].div).addClass('border border-primary');
+                if (value >= 0) {
+                    helper.increaseComparisonCounter()
+                }
+                if (value >= 0 && collection[value].val > key.val) {
+                    helper.changeCodeHighlight(4, function () {
+                        $(collection[value].div).animateSwap({
+                            target: collection[value + 1].div,
+                            speed: animationSpeed,
+                            callback: function () {
+                                collection[value + 1] = collection[value];
+                                collection[value] = key;
+                                resolve(value - 1);
+                                helper.getStepButton().off('click', sortIteration)
+                            }
+                        });
+                    });
+                } else {
+                    resolve(value);
+                }
+            }, animationSpeed)
         });
     }
 
     function initInsertionSortCode() {
-        let $codeField = $('<div/>', {'class': 'code m-1'}),
+        let $codeBlock = $('<div/>', {'class': 'code-block insertion_sort'}),
             codeStructure = [
-                {'line': 'int <span style="color: red">i</span>,<span style="color: green">key</span>,<span style="color: blue">j</span>;', 'tab': 0},
-                {'line': 'for(i = 1; i < n; i++) {', 'tab': 0},
-                {'line': 'key = arr[i];', 'tab': 1},
-                {'line': 'j = i - 1;', 'tab': 1},
-                {'line': 'while(j >= 0 && arr[j] > key) {', 'tab': 1},
-                {'line': 'arr[j + 1] = arr[j];', 'tab': 2},
-                {'line': 'j = j - 1;', 'tab': 2},
+                {'line': 'FOR (I = 1; I < N; I++) {', 'tab': 0},
+                {'line': 'KEY = ARR[I];', 'tab': 1},
+                {'line': 'J = I - 1;', 'tab': 1},
+                {'line': 'WHILE (J >= 0 && ARR[J] > KEY) {', 'tab': 1},
+                {'line': 'SWAP(ARR[J + 1], ARR[J]);', 'tab': 2},
+                {'line': 'J = J - 1;', 'tab': 2},
                 {'line': '}', 'tab': 1},
-                {'line': 'arr[j + 1] = key;', 'tab': 1},
                 {'line': '}', 'tab': 0},
-            ];
+            ],
+            variables = {
+                0: {
+                    'color': 'red',
+                    'label': 'I'
+                },
+                1: {
+                    'color': 'blue',
+                    'label': 'J'
+                }
+            };
 
-        helper.initCode(codeStructure, $codeField);
-        $('.code-block').append($codeField);
+        helper.initCode(codeStructure, $codeBlock, 'insertion sort', variables);
+        $('.code-container').append($codeBlock);
     }
 
     return {
@@ -114,8 +140,8 @@ define(['helper'], function (helper) {
                     val: parseInt($(this).attr('id')),
                 };
             });
-            helper.changeCodeHighlight(1)
-            $(collection[i].div).addClass('border border-danger');
+            helper.changeCodeHighlight(0)
+            helper.setVariableValue('insertion_sort','i', i)
             $(collection[0].div).addClass('sorted')
             helper.getStepButton().on('click', sortIteration);
 

@@ -5,9 +5,9 @@ require(['helper',
     'mergesort',
     'heapsort',
     'radixsort'], function (helper, insertion, counting, quicksort, mergesort, heapsort, radixsort) {
-    let maxValue = helper.readCookie('max') ?? $('.numerical-fields input#max-input')[0].value ?? 8,
-        collectionSize = helper.readCookie('size') ?? $('.numerical-fields input#size-input')[0].value ?? 8,
-        animationSpeed = helper.readCookie('speed') ?? $('.numerical-fields input#speed-input')[0].value ?? 1000,
+    let maxValue = helper.readCookie('max') != null ? helper.readCookie('max') : 7,
+        collectionSize = helper.readCookie('size') != null ? helper.readCookie('size') : 7,
+        animationSpeed = helper.readCookie('speed') != null ? helper.readCookie('speed') : 500,
         preCollection = helper.readCookie('preCollection') ?? 'random',
         barOptions = {},
         playInterval,
@@ -15,41 +15,60 @@ require(['helper',
 
     window.onhashchange = function () {
         clearInterval(playInterval);
-        $('.main-menu a').removeClass('current');
-        $(location.hash.toString()).addClass('current');
+        $('.header ul li').removeClass('current');
+        $(location.hash.toString()).closest('li').addClass('current');
         changeSortPage(true);
     };
 
-    $('.modal-expand').on('click', function (e) {
-        $(this).closest('.modal-dialog').toggleClass('expand')
-    })
-
-    $('.control-buttons #play').on('click', function (e) {
-        playInterval = setInterval(function () {
-            helper.getStepButton().trigger('click');
-        }, sort.getAnimationSpeed())
-    })
-    $('.control-buttons #stop').on('click', function (e) {
-        clearInterval(playInterval);
-    })
-
     $(document).ready(function () {
-        changeSortPage();
-        setGenerateButtonsEvents();
-
+        $('.numerical-fields input#size-input').val(collectionSize)
         $('.numerical-fields input#size-input').on('change', function ($e) {
             collectionSize = $e.currentTarget.value;
             helper.createCookie('size', $e.currentTarget.value)
-        });
+        }).trigger('change');
+        $('.numerical-fields input#max-input').val(maxValue)
         $('.numerical-fields input#max-input').on('change', function ($e) {
             maxValue = $e.currentTarget.value;
             helper.createCookie('max', $e.currentTarget.value)
-        });
+        }).trigger('change');
+        $('.numerical-fields input#speed-input').val(animationSpeed)
         $('.numerical-fields input#speed-input').on('change', function ($e) {
             animationSpeed = $e.currentTarget.value;
             helper.createCookie('speed', $e.currentTarget.value)
-            sort.setAnimationSpeed($e.currentTarget.value)
+            sort && sort.setAnimationSpeed($e.currentTarget.value)
+        }).trigger('change');
+
+        $('.control-buttons #play').on('click', function () {
+            playInterval = setInterval(function () {
+                helper.getStepButton().trigger('click');
+            }, sort.getAnimationSpeed());
         });
+
+        $('.control-buttons #stop').on('click', function (e) {
+            clearInterval(playInterval);
+        })
+
+        $('#control-panel .modal-header .shrink-modal').on('click', function () {
+            $(this).hide();
+            $('#control-panel .modal-body').hide();
+            $('#control-panel .modal-header .expand-modal').show();
+        })
+
+        $('#control-panel .modal-header .expand-modal').on('click', function () {
+            $(this).hide();
+            $('#control-panel .modal-body').show();
+            $('#control-panel .modal-header .shrink-modal').show();
+        })
+
+        $('.header ul li').removeClass('current');
+        $(location.hash.toString()).closest('li').addClass('current');
+
+        $(".modal").draggable({
+            handle: ".modal-header"
+        });
+
+        changeSortPage(true);
+        setGenerateButtonsEvents();
 
         $('.numerical-fields input#size-input')[0].value = collectionSize;
         $('.numerical-fields input#max-input')[0].value = maxValue;
@@ -86,9 +105,19 @@ require(['helper',
         preCollection = type;
         helper.createCookie('preCollection', type)
 
-        maxValue = $('.numerical-fields input#max-input')[0].value;
         if (maxValueSize) {
-            collectionSize = maxValue;
+            if (type == 'collection') {
+                let collectionInput = $('.collection-input')[0].value.trim().split(/[\s,]+/);
+
+                maxValue = Math.max(...collectionInput.map(function (x) {
+                    return parseInt(x, 10);
+                }))
+                collectionSize = collectionInput.length;
+            } else {
+                collectionSize = maxValue = $('.numerical-fields input#size-input')[0].value;
+            }
+            $('.numerical-fields input#size-input').val(collectionSize)
+            $('.numerical-fields input#max-input').val(maxValue)
         } else {
             collectionSize = $('.numerical-fields input#size-input')[0].value;
         }
@@ -100,9 +129,9 @@ require(['helper',
 
     function setGenerateButtonsEvents() {
         let obj = {
-            'collection': {'withSetCollection': true, 'maxSizeValue': false},
+            'collection': {'withSetCollection': true, 'maxSizeValue': true},
             'random': {'withSetCollection': true, 'maxSizeValue': false},
-            'unique-random': {'withSetCollection': false, 'maxSizeValue': true},
+            'unique-random': {'withSetCollection': true, 'maxSizeValue': true},
             'ascending': {'withSetCollection': false, 'maxSizeValue': true},
             'descending': {'withSetCollection': false, 'maxSizeValue': true}
         };
@@ -124,9 +153,10 @@ require(['helper',
             cookieCollectionSize = JSON.parse(helper.readCookie('collection') ?? '{}').length;
 
         clearInterval(playInterval);
+        helper.setComparisonCounter(0);
         $('.numerical-fields input#speed-input').value = animationSpeed
         $(hash).addClass('current');
-        $('.code-block').empty();
+        $('.code-container').empty();
         $('.graph').empty();
         $('.next').unbind();
         $('.counter-container').remove();
@@ -134,7 +164,7 @@ require(['helper',
         $('.graph-block .sorted').remove();
         $('.partition').remove();
         $('.graph.tree').remove();
-        $('body').attr('class', '').addClass(hash.replace('#', ''))
+        $('body').attr('id', '').attr('id', hash.replace('#', ''))
 
         $('.numerical-fields input#max-input').trigger('change')
         $('.numerical-fields input#size-input').trigger('change')

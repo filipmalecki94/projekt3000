@@ -116,7 +116,7 @@ define(['helper'], function (helper) {
     }
 
     function initCountingSortCode() {
-        let $codeField = $('<div/>', {'class': 'code m-1'}),
+        let $codeBlock = $('<div/>', {'class': 'code-block'}),
             codeStructure = [
                 {'line': 'int k=max(arr);', 'tab': 0},
                 {'line': 'int n=count(arr);', 'tab': 0},
@@ -137,8 +137,8 @@ define(['helper'], function (helper) {
                 {'line': 'sorted[--counter[arr[i]]] = arr[i];', 'tab': 1},
             ];
 
-        helper.initCode(codeStructure, $codeField);
-        $('.code-block').append($codeField);
+        helper.initCode(codeStructure, $codeBlock, 'radix sort');
+        $('.code-container').append($codeBlock);
     }
 
     function initCounters() {
