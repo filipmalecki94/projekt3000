@@ -145,8 +145,8 @@ define(['helper'], function (helper) {
     }
 
     function initHeapsortCode() {
-        let $codeFieldSort = $('<div/>', {'class': 'code m-1 h-25'}),
-            $codeFieldPartition = $('<div/>', {'class': 'code mt-4 h-50'}),
+        let $codeBlockSort = $('<div/>', {'class': 'code-block'}),
+            $codeBlockPartition = $('<div/>', {'class': 'code-block'}),
             codeStructureSort = [
                 {'line': 'heap_sort (double t[], int n) {', 'tab': 0},
                 {'line': 'for (int i=n/2-1; i>=0; i--)', 'tab': 1},
@@ -168,9 +168,9 @@ define(['helper'], function (helper) {
                 {'line': '}', 'tab': 0},
             ];
 
-        helper.initCode(codeStructureSort, $codeFieldSort);
-        helper.initCode(codeStructurePartition, $codeFieldPartition);
-        $('.code-block').append($codeFieldSort).append($codeFieldPartition)
+        helper.initCode(codeStructureSort, $codeBlockSort, 'heap sort');
+        helper.initCode(codeStructurePartition, $codeBlockPartition, 'shift down');
+        $('.code-container').append($codeBlockSort).append($codeBlockPartition)
     }
 
     return {

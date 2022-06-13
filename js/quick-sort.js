@@ -14,12 +14,17 @@ define(['helper'], function (helper) {
     }
 
     function* quick(i, j) {
+        helper.setVariableValue('quick_sort', 'low', i)
+        helper.setVariableValue('quick_sort', 'high', j)
+        $('.graph .bar-block').css('background', 'unset');
         if (i + 1 === N - 1 && j === N) {
             $('.graph-block .partition .partition-level').remove()
             return;
         }
         helper.increaseComparisonCounter()
         if (2 < Math.abs(j - i)) {
+            collection[i] && collection[i].div.css('background','red')
+            collection[j] && collection[j].div.css('background','blue')
             yield* partition(i, j);
             yield k;
             appendPartitionLevel(i+1, k);
@@ -35,16 +40,27 @@ define(['helper'], function (helper) {
         let mid = Math.ceil((i + j) / 2),
             x = +collection[mid].val;
 
-        if (i + 1 === j || mid === N - 1) {
-            return;
-        }
-        markPivot(Math.ceil((i + j) / 2))
-        loop(i, j, mid, x, 'low').then(function (result) {
-            if (result) {
-                k = result.i
+        helper.changeCodeHighlight(0, function () {
+            if (i + 1 === j || mid === N - 1) {
+                return;
             }
-            helper.getStepButton().on('click', sortIteration);
-        });
+            helper.changeCodeHighlight(1, function () {
+                markPivot(Math.ceil((i + j) / 2))
+                helper.setVariableValue('partition', 'low', i)
+                helper.setVariableValue('partition', 'high', j)
+                helper.changeCodeHighlight(0, function () {
+                    helper.changeCodeHighlight(1, function () {
+                        loop(i, j, mid, x, 'low').then(function (result) {
+                            if (result) {
+                                helper.setVariableValue('quick_sort', 'q', result.i)
+                                k = result.i
+                            }
+                            helper.getStepButton().on('click', sortIteration);
+                        });
+                    }, animationSpeed, 'partition');
+                }, animationSpeed, 'partition');
+            }, animationSpeed, 'quick_sort');
+        }, animationSpeed, 'quick_sort');
     }
 
     function loop(i, j, mid, x, loopFlag) {
@@ -52,39 +68,59 @@ define(['helper'], function (helper) {
             let i = result.i, j = result.j, mid = result.mid, x = result.x, loopFlag = result.loopFlag;
 
             return new Promise(function (resolve) {
-                if(loopFlag === 'swap') {
-                    if (i < j) {
-                        return $(collection[i].div).animateSwap({
-                            target: collection[j].div,
-                            speed: animationSpeed,
-                            opacity: "1",
-                            callback: function () {
-                                let y = collection[i];
-                                collection[i] = collection[j];
-                                collection[j] = y;
+                if (loopFlag === 'swap') {
+                    helper.changeCodeHighlight(8, function () {
+                        if (i < j) {
+                            helper.changeCodeHighlight(9, function () {
+                                return $(collection[i].div).animateSwap({
+                                    target: collection[j].div,
+                                    speed: animationSpeed,
+                                    opacity: "1",
+                                    callback: function () {
+                                        let y = collection[i];
+                                        collection[i] = collection[j];
+                                        collection[j] = y;
 
-                                if (i === mid || j === mid) {
-                                    mid = i + j - mid;
-                                }
+                                        collection[i].div.css('background', 'red')
+                                        collection[j].div.css('background', 'blue')
 
-                                return resolve(loop(i, j, mid, x, 'low'));
-                            }
-                        })
-                    } else {
-                        resolve({'i':i, 'j': j, 'mid': mid, 'x': x})
-                    }
+                                        if (i === mid || j === mid) {
+                                            mid = i + j - mid;
+                                        }
+                                        return helper.changeCodeHighlight(1, function () {
+                                            return resolve(loop(i, j, mid, x, 'low'));
+                                        }, animationSpeed, 'partition');
+                                    }
+                                })
+                            }, animationSpeed, 'partition');
+                        } else {
+                            helper.changeCodeHighlight(10, function () {
+                                helper.changeCodeHighlight(11, function () {
+                                    resolve({'i': i, 'j': j, 'mid': mid, 'x': x})
+                                }, animationSpeed, 'partition');
+                            }, animationSpeed, 'partition');
+                        }
+                    }, animationSpeed, 'partition');
                 } else {
-                    if(loopFlag === 'low' && +collection[i].val < x) {
-                        return resolve(loop(i, j, mid, x, 'low'));
+                    if (loopFlag === 'low' && +collection[i].val < x) {
+                        return helper.changeCodeHighlight(3, function () {
+                            return resolve(loop(i, j, mid, x, 'low'));
+                        }, animationSpeed, 'partition');
                     }
-                    if(loopFlag === 'low' && +collection[i].val >= x) {
-                        return resolve(loop(i, j, mid, x, 'high'));
+                    if (loopFlag === 'low' && +collection[i].val >= x) {
+                        return helper.changeCodeHighlight(3, function () {
+                            return resolve(loop(i, j, mid, x, 'high'));
+                        }, animationSpeed, 'partition');
                     }
-                    if(loopFlag === 'high' && +collection[j].val > x) {
-                        return resolve(loop(i, j, mid, x, 'high'));
+                    if (loopFlag === 'high' && +collection[j].val > x) {
+                        return helper.changeCodeHighlight(6, function () {
+                            return resolve(loop(i, j, mid, x, 'high'));
+                        }, animationSpeed, 'partition');
                     }
-                    if(loopFlag === 'high' && +collection[i].val >= x && +collection[j].val <= x) {
-                        return resolve(loop(i, j, mid, x, 'swap'));
+                    if (loopFlag === 'high' && +collection[i].val >= x && +collection[j].val <= x) {
+                        return helper.changeCodeHighlight(6, function () {
+                            return resolve(loop(i, j, mid, x, 'swap'));
+                        }, animationSpeed, 'partition');
                     }
                 }
             });
@@ -94,9 +130,19 @@ define(['helper'], function (helper) {
     function loopCode(i, j, mid, x, loopFlag) {
         return new Promise(function (resolve) {
             if (loopFlag === 'low') {
-                resolve({'i': i+1, 'j': j, 'mid': mid, 'x': x,'loopFlag': 'low'})
+                helper.setVariableValue('partition', 'low', i + 1)
+                collection[i] && collection[i].div.css('background', j <= i ? 'blue' : 'unset')
+                collection[i + 1] && collection[i + 1].div.css('background', j === i+1 ? 'linear-gradient(45deg, rgba(0,0,255,1) 50%, rgba(255,0,0,1) 50%)' : 'red')
+                helper.changeCodeHighlight(2, function () {
+                    resolve({'i': i + 1, 'j': j, 'mid': mid, 'x': x, 'loopFlag': 'low'})
+                }, animationSpeed, 'partition');
             } else if(loopFlag === 'high') {
-                resolve({'i': i, 'j': j-1, 'mid': mid, 'x': x,'loopFlag': 'high'})
+                helper.setVariableValue('partition', 'high', j - 1)
+                collection[j] && collection[j].div.css('background', j === i ? 'red' : 'unset')
+                collection[j - 1] && collection[j - 1].div.css('background', j-1 === i ? 'linear-gradient(45deg, rgba(0,0,255,1) 50%, rgba(255,0,0,1) 50%)': 'blue')
+                helper.changeCodeHighlight(5, function () {
+                    resolve({'i': i, 'j': j - 1, 'mid': mid, 'x': x, 'loopFlag': 'high'})
+                }, animationSpeed, 'partition');
             } else {
                 if (i >= j) {
                     resolve({'i': i, 'j': j, 'mid': mid, 'x': x, 'loopFlag': 'swap'})
@@ -155,14 +201,14 @@ define(['helper'], function (helper) {
     }
 
     function initQuicksortCode() {
-        var $codeBlockSort = $('<div/>', {'class': 'code-block'}),
+        let $codeBlockSort = $('<div/>', {'class': 'code-block'}),
             $codeBlockPartition = $('<div/>', {'class': 'code-block'}),
             codeStructureSort = [
                 {'line': 'IF (1 < HIGH - LOW) {', 'tab': 0},
-                {'line': 'Q = PARTITION(ARR, LOW, HIGH);', 'tab': 1},
+                {'line': '  Q = PARTITION(ARR, LOW, HIGH);', 'tab': 1},
                 {'line': '&nbsp;', 'tab': 1},
-                {'line': 'QUICKSORT(ARR, LOW, Q);', 'tab': 1},
-                {'line': 'QUICKSORT(ARR, Q - 1, HIGH);', 'tab': 1},
+                {'line': '  QUICKSORT(ARR, LOW, Q);', 'tab': 1},
+                {'line': '  QUICKSORT(ARR, Q - 1, HIGH);', 'tab': 1},
                 {'line': '}', 'tab': 0},
             ],
             codeVariables = {
@@ -173,15 +219,16 @@ define(['helper'], function (helper) {
             codeStructurePartition = [
                 {'line': 'X = ARR[N / 2];', 'tab': 0},
                 {'line': 'WHILE ( ) {', 'tab': 0},
-                {'line': 'DO ++LOW', 'tab': 1},
-                {'line': 'WHILE (ARR[LOW] < X);', 'tab': 1},
+                {'line': '  DO ++LOW', 'tab': 1},
+                {'line': '  WHILE (ARR[LOW] < X);', 'tab': 1},
                 {'line': '&nbsp;', 'tab': 1},
-                {'line': 'DO --HIGH', 'tab': 1},
-                {'line': 'WHILE (ARR[HIGH] > X);', 'tab': 1},
+                {'line': '  DO --HIGH', 'tab': 1},
+                {'line': '  WHILE (ARR[HIGH] > X);', 'tab': 1},
                 {'line': '&nbsp;', 'tab': 1},
-                {'line': 'IF (LOW < HIGH)', 'tab': 1},
-                {'line': 'SWAP(ARR[LOW], ARR[HIGH]);', 'tab': 2},
-                {'line': 'ELSE       RETURN LOW;', 'tab': 1},
+                {'line': '  IF (LOW < HIGH)', 'tab': 1},
+                {'line': '      SWAP(ARR[LOW], ARR[HIGH]);', 'tab': 2},
+                {'line': '  ELSE', 'tab': 1},
+                {'line': '      RETURN LOW;', 'tab': 2},
                 {'line': '}', 'tab': 0},
             ],
             partitionVariables = {
