@@ -55,7 +55,7 @@ define(['helper'], function (helper) {
                                 helper.getStepButton().on('click', sortIteration);
                             }
                         });
-                    }, animationSpeed)
+                    }, animationSpeed, 'counting_sort')
                 }, animationSpeed * 1.5);
 
             return;
@@ -85,7 +85,7 @@ define(['helper'], function (helper) {
                             helper.getStepButton().on('click', sortIteration);
                         }
                     });
-                }, animationSpeed);
+                }, animationSpeed,'counting_sort');
             }, animationSpeed * 1.75);
 
             return;
@@ -166,13 +166,10 @@ define(['helper'], function (helper) {
                 {'line': 'SORTED[--COUNTER[ARR[I]]] = ARR[I];', 'tab': 1},
             ],
             variables = {
-                0: {
-                    'color': 'black',
-                    'label': 'i'
-                }
+                0: {'color': 'black', 'label': 'i'}
             };
 
-        helper.initCode(codeStructure, $codeBlock, 'counting sort', variables);
+        helper.initCode(codeStructure, $codeBlock, 'counting_sort', variables);
         $('.code-container').append($codeBlock);
     }
 
