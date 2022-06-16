@@ -65,7 +65,8 @@ body {
     justify-content: space-around;
 }
 
-.graph .multidigit-container {
+.graph .multidigit-container,
+.sorted .multidigit-container {
     height: 100%;
     display: flex;
     flex-direction: row;
@@ -135,12 +136,14 @@ body {
 	width: 100%;
 	opacity: 0;
 }
-
 .bar {
-	position: absolute;
-	bottom: 0;
-	width: 10px;
-	background: red;
+    position: absolute;
+    bottom: 0;
+    width: 10px;
+    background: red;
+}
+
+body:not(#radixsort) .bar {
     border-top: 2px solid black;
     border-right: 2px solid black;
     border-left: 2px solid black;
