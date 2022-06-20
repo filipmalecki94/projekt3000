@@ -191,8 +191,8 @@ body:not(#radixsort) .graph .bar {
     border: 1px solid black;
 }
 
-.counter-container .counter-bars .border-bottom-red {
-    border-bottom: 1px solid red;
+.border-bottom-red {
+    border-top: 1px solid red !important;
 }
 
 .graph-block .border-buffer,
