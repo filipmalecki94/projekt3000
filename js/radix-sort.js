@@ -176,7 +176,7 @@ define(['helper'], function (helper) {
                 1: {'color': 'grey', 'label': 'DIGIT'}
             };
 
-        helper.initCode(countingSortStructure, $codeBlock, 'counting_sort', variables);
+        helper.initCode(countingSortStructure, $codeBlock, 'COUNTING_SORT', variables);
         $('.code-container').append($codeBlock);
     }
 
@@ -188,6 +188,7 @@ define(['helper'], function (helper) {
                 $counterBarContainer = $('<div/>', {
                     'class': 'counter-bars d-flex justify-content-around'
                 });
+
             for (let i = 0; i < 10; i++) {
                 let $counterLabelBlock = helper.createBar(i, i,
                         {
@@ -226,6 +227,7 @@ define(['helper'], function (helper) {
             .append($('<div/>', {'class': 'sorted preset d-flex justify-content-around'})
                 .append(function () {
                     let slots = [];
+
                     for (let i = 0; i < n; i++) {
                         slots.push(helper.createBar(i, i, {
                                 'barWidth': '100%',
