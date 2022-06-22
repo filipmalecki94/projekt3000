@@ -329,8 +329,8 @@ define([], function () {
         setVariableValue: function (namespace, variableName, value) {
             $('#' + $('body').attr('id') + ' .' + namespace + ' .variable.' + variableName + ' .value').text(value ?? '');
         },
-        darkenBars: function ($object, callback = null, brightenBars = false) {
-            $object.animate({opacity: brightenBars ? 1 : 0.1}, 100, callback);
+        darkenBars: function ($object, callback = null, brightenBars = false, time, opacity) {
+            $object.animate({opacity: brightenBars ? 1 : (opacity || 0.1)}, time ?? 100, callback);
 
             return $object;
         },

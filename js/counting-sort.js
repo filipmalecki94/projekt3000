@@ -5,151 +5,146 @@ define(['helper'], function (helper) {
         counter = {},
         sorted = {},
         stepDone = 0,
-        animationSpeed = 200,
-        interval;
+        animationSpeed = 100,
+        i = 0;
 
     function sortIteration() {
-        let i = 0;
-
         helper.getStepButton().off('click', sortIteration);
 
         if (stepDone === 0) {
-            interval = setInterval(function () {
-                helper.setVariableValue('counting_sort','i', i)
-                helper.changeCodeHighlight(5, function () {
-                    helper.darkenBars(counter[i].div, function () {
-                        helper.changeCodeHighlight(6)
-                        if (i++ >= maxValue) {
-                            clearInterval(interval);
-                            stepDone = 1;
-                            helper.setVariableValue('counting_sort','i', 0)
-                            helper.changeCodeHighlight(8)
-                            helper.getStepButton().on('click', sortIteration);
-                        }
-                    }, true);
-                }, animationSpeed)
-            }, animationSpeed * 1.5);
-
-            return;
-        }
-        if (stepDone === 1) {
-                interval = setInterval(function () {
-                    helper.setVariableValue('counting_sort','i', i)
-                    helper.changeCodeHighlight(8, function () {
-                        ++counter[init[i].val].count;
-                        helper.darkenBars(init[i].div, function () {
-                            helper.changeCodeHighlight(9)
-                            $('#' + init[i].val + '.bar-block-container').append(helper.createBar(0, init[i].val, {
-                                'withNumbers': false,
-                                'height': 50 / Math.max(...Object.values(getPreCountedInit())) + 'px',
-                                'onlyBar': true,
-                                'barWidth': '10px',
-                                'customBarClasses': 'position-relative'
-                            }));
-                            if (++i >= n) {
-                                clearInterval(interval);
-                                stepDone = 2;
-                                helper.darkenBars($('.graph .bar-block .bar'), null, true);
-                                helper.setVariableValue('counting_sort','i', 1)
-                                helper.changeCodeHighlight(11)
+            helper.darkenBars(counter[i].div, function () {
+                helper.changeCodeHighlight(4, function () {
+                    if (i++ >= maxValue) {
+                        helper.setVariableValue('counting_sort', 'i', i);
+                        helper.changeCodeHighlight(3, function () {
+                            helper.setVariableValue('counting_sort', 'i', 0);
+                            helper.changeCodeHighlight(6, function () {
+                                stepDone = 1;
+                                i = 0
                                 helper.getStepButton().on('click', sortIteration);
-                            }
-                        });
-                    }, animationSpeed)
-                }, animationSpeed * 1.5);
+                            }, animationSpeed);
+                        }, animationSpeed);
+                    } else {
+                        helper.setVariableValue('counting_sort', 'i', i);
+                        helper.changeCodeHighlight(3, function () {
+                            helper.getStepButton().on('click', sortIteration);
+                        }, animationSpeed);
+                    }
+                }, animationSpeed);
+            }, true, animationSpeed);
 
             return;
         }
+
+        if (stepDone === 1) {
+            helper.darkenBars(init[i].div, function () {
+                $('#' + init[i].val + '.bar-block-container').append(
+                    helper.createBar(0, init[i].val, {
+                        'withNumbers': false,
+                        'height': 50 / Math.max(...Object.values(getPreCountedInit())) + 'px',
+                        'onlyBar': true,
+                        'barWidth': '10px',
+                        'customBarClasses': 'position-relative'
+                    })
+                );
+                ++counter[init[i].val].count;
+                helper.changeCodeHighlight(7, function () {
+                    if (++i < n) {
+                        helper.setVariableValue('counting_sort', 'i', i);
+                        helper.changeCodeHighlight(6, function () {
+                            helper.getStepButton().on('click', sortIteration);
+                        }, animationSpeed);
+                    } else {
+                        helper.setVariableValue('counting_sort', 'i', i);
+                        helper.changeCodeHighlight(6, function () {
+                            helper.setVariableValue('counting_sort', 'i', 1);
+                            $('.counter-container .counter-labels .bar-block[data-index="0"]').addClass('border-bottom-red');
+                            $('.sorted').empty().removeClass('preset').append(getVerticalBarsOrder());
+                            helper.changeCodeHighlight(9, function () {
+                                stepDone = 2;
+                                i = 1;
+                                helper.darkenBars($('.graph .bar-block .bar'), null, true, animationSpeed);
+                                helper.getStepButton().on('click', sortIteration);
+                            }, animationSpeed);
+                        }, animationSpeed);
+                    }
+                }, animationSpeed);
+
+            }, false, animationSpeed);
+            return;
+        }
+
         if (stepDone === 2) {
-            i = 1;
-            for (; i <= maxValue; i++) {
-                counter[i].count += counter[i - 1].count;
-            }
-            $('.sorted').empty().removeClass('preset').append(getVerticalBarsOrder());
-            i = 1;
-            interval = setInterval(function () {
-                let $counterBarBlock = $('.counter-bars #' + i + '.bar-block');
-
-                helper.setVariableValue('counting_sort','i', i)
-                helper.changeCodeHighlight(11, function () {
-                    $('.sorted #' + i + ' .bar').removeClass('invisible');
-                    helper.darkenBars($counterBarBlock, function () {
-                        helper.changeCodeHighlight(12)
-                        $counterBarBlock.addClass('border-bottom-red')
-                        if (++i > maxValue) {
-                            clearInterval(interval);
-                            helper.darkenBars($('.graph .bar-block'), null, true);
-                            helper.setVariableValue('counting_sort','i', n-1)
-                            helper.changeCodeHighlight(14)
-                            stepDone = 3;
+            helper.darkenBars($('.counter-container .counter-bars .bar-block[data-index="' + i + '"]'), function () {
+                $('.sorted #' + i + ' .bar').removeClass('invisible');
+                $('.counter-container .counter-labels .bar-block[data-index="' + i + '"]').addClass('border-bottom-red');
+                helper.changeCodeHighlight(10, function () {
+                    if (++i <= maxValue) {
+                        helper.setVariableValue('counting_sort', 'i', i);
+                        helper.changeCodeHighlight(9, function () {
                             helper.getStepButton().on('click', sortIteration);
-                        }
-                    });
+                        }, animationSpeed);
+                    } else {
+                        helper.changeCodeHighlight(9, function () {
+                            helper.setVariableValue('counting_sort', 'i', i);
+                            helper.changeCodeHighlight(12, function () {
+                                stepDone = 3;
+                                i = n - 1;
+                                helper.setVariableValue('counting_sort', 'i', n - 1);
+                                helper.darkenBars($('.graph .bar-block'), null, true, animationSpeed);
+                                helper.getStepButton().on('click', sortIteration);
+                            }, animationSpeed);
+                        }, animationSpeed);
+                    }
                 }, animationSpeed);
-            }, animationSpeed * 1.75);
+            },false, animationSpeed);
 
             return;
         }
+
         if (stepDone === 3) {
-            helper.changeCodeHighlight([15, 16]);
-            i = n - 1;
-            interval = setInterval(function () {
-                let e = --counter[init[i].val].count, values = [];
+            let e = --counter[init[i].val].count;
 
-                helper.setVariableValue('counting_sort','i', i)
-                helper.changeCodeHighlight(14, function () {
-                    sorted[e].val = init[i].val;
-                    sorted[e].div = init[i].div;
+            helper.darkenBars(init[i].div, function () {
+                sorted[e].val = init[i].val;
+                sorted[e].div = init[i].div;
+                $('.sorted .bar-block[data-index="' + e + '"]').replaceWith(helper.createBar(e, sorted[e].val,
+                    {
+                        'withNumbers': true,
+                        'isOversize': n > 50
+                    }));
+                helper.changeCodeHighlight(13, function () {
+                    if (i-- === 0) {
+                        stepDone = 4;
 
-                    helper.darkenBars(init[i].div, function () {
-                        helper.changeCodeHighlight(15)
-                        $('.sorted .bar-block[data-index="' + e + '"] .bar')
-                            .replaceWith(helper.createBar(e, sorted[e].val,
-                                {
-                                    'withNumbers': true,
-                                    'onlyBar': true,
-                                    'isOversize': n < 50
-                                }))
-                        if (i-- === 0) {
-                            clearInterval(interval);
-                            $.each(sorted, function (index, sor) {
-                                values.push(sor.val)
+                        $('.counter-container').remove();
+
+                        helper.setVariableValue('counting_sort', 'i', null);
+                        helper.changeCodeHighlight(12, function () {
+                            $('.graph').empty().animateSwap({
+                                target: $('.sorted'),
+                                speed: 1500,
+                                opacity: "1",
+                                callback: function () {
+                                    $('.graph').removeAttr('style');
+                                    helper.changeCodeHighlight([]);
+                                }
                             });
-                            $('.graph').empty();
-                            $('.sorted').remove();
-                            $('.counter-container').remove();
-                            helper.setVariableValue('counting_sort','i', null)
-                            helper.changeCodeHighlight([])
-                            setTimeout(function () {
-                                $.each(helper.createBars($('.graph'), values,
-                                    {
-                                        'withNumbers': true
-                                    }
-                                ).find('.bar-block'), function (index, $div) {
-                                    init[index] = {
-                                        div: $($div),
-                                        val: parseInt($(this).attr('id')),
-                                    }
-                                    sorted[index] = {div: '', val: 0}
-                                });
-
-                                initSortedContainer();
-                                initCounters();
-                            }, 100)
-                            stepDone = 4;
+                        }, animationSpeed);
+                    } else {
+                        helper.setVariableValue('counting_sort', 'i', i);
+                        helper.changeCodeHighlight(12, function () {
                             helper.getStepButton().on('click', sortIteration);
-                        }
-                    });
+                        });
+                    }
                 }, animationSpeed);
-            }, animationSpeed * 1.5);
+            }, false, animationSpeed);
         }
     }
 
     function initCountingSortCode() {
         let $codeBlock = $('<div/>', {'class': 'code-block'}),
             codeStructure = [
-                {'line': 'J = MAX(ARR);', 'tab': 0},
-                {'line': 'N = COUNT(ARR);', 'tab': 0},
                 {'line': 'COUNTER[K + 1];', 'tab': 0},
                 {'line': 'SORTED[K + 1];', 'tab': 0},
                 {'line': '&nbsp;', 'tab': 0},
@@ -166,13 +161,11 @@ define(['helper'], function (helper) {
                 {'line': 'SORTED[--COUNTER[ARR[I]]] = ARR[I];', 'tab': 1},
             ],
             variables = {
-                0: {
-                    'color': 'black',
-                    'label': 'i'
-                }
+                0: {'color': 'black', 'label': 'I'},
+                1: {'color': 'gray', 'label': 'K'}
             };
 
-        helper.initCode(codeStructure, $codeBlock, 'counting sort', variables);
+        helper.initCode(codeStructure, $codeBlock, 'COUNTING_SORT', variables);
         $('.code-container').append($codeBlock);
     }
 
@@ -184,6 +177,7 @@ define(['helper'], function (helper) {
                 $counterBarContainer = $('<div/>', {
                     'class': 'counter-bars d-flex justify-content-around'
                 });
+
             for (let i = 0; i <= maxValue; i++) {
                 let $counterLabelBlock = helper.createBar(i, i,
                         {
@@ -194,6 +188,7 @@ define(['helper'], function (helper) {
                     $counterBarBlock = $('<div/>', {
                         'class': 'bar-block d-flex justify-content-center flex-column align-items-center',
                         'id': i,
+                        'data-index': i,
                         'html': $('<div/>', {
                             'class': 'bar-block-container position-absolute',
                             'id': i
@@ -201,7 +196,7 @@ define(['helper'], function (helper) {
                     });
 
                 counter[i] = {
-                    div: $($counterLabelBlock).css('opacity',0),
+                    div: $($counterLabelBlock).css('opacity', 0),
                     count: 0
                 };
                 $counterLabelContainer.append($counterLabelBlock);
@@ -216,9 +211,10 @@ define(['helper'], function (helper) {
 
     function initSortedContainer(n) {
         $('.graph-block')
-            .append($('<div/>', {'class': 'sorted preset d-flex justify-content-around'})
-                .append(function () {
+            .append(
+                $('<div/>', {'class': 'sorted preset d-flex justify-content-around'}).append(function () {
                     let slots = [];
+
                     for (let i = 0; i < n; i++) {
                         slots.push(helper.createBar(i, i, {
                                 'barWidth': '100%',
@@ -226,25 +222,27 @@ define(['helper'], function (helper) {
                                 'height': '10px',
                                 'customBarClasses': 'invisible'
                             }
-                        ))
+                        ));
                     }
+
                     return slots;
-                }));
+                })
+            );
     }
 
     function getPreCountedInit() {
         let tempCounter = {};
 
-        $.each(init, function (key, value) {
-            tempCounter[value.val] ? tempCounter[value.val] += 1 : tempCounter[value.val] = 1;
+        $.each(init, function (key, object) {
+            tempCounter[object.val] ? tempCounter[object.val] += 1 : tempCounter[object.val] = 1;
         });
 
         return tempCounter;
     }
 
     function getVerticalBarsOrder() {
-        let i = 1,
-            x = counter[i - 1].count,
+        let ii = 1,
+            x = counter[ii - 1].count,
             verticalBarsOrder = [],
             barCustomOptions = {
                 'barWidth': '100%',
@@ -254,13 +252,18 @@ define(['helper'], function (helper) {
                 'customBarClasses': 'invisible'
             };
 
-        for (; i < maxValue; i++) {
-            for (; x < counter[i].count; x++) {
-                verticalBarsOrder.push(helper.createBar(x, i, barCustomOptions));
+        for (let index = 1; index <= maxValue; index++) {
+            counter[index].count += counter[index - 1].count;
+        }
+
+        for (; ii < maxValue; ii++) {
+            for (; x < counter[ii].count; x++) {
+                verticalBarsOrder.push(helper.createBar(x, ii, barCustomOptions));
             }
         }
+
         for (; x < n; x++) {
-            verticalBarsOrder.push(helper.createBar(x, i, barCustomOptions));
+            verticalBarsOrder.push(helper.createBar(x, ii, barCustomOptions));
         }
 
         return verticalBarsOrder
@@ -269,20 +272,18 @@ define(['helper'], function (helper) {
     return {
         init: function (graphContainer) {
             init = {};
-            n = 0;
             maxValue = 0;
             counter = {};
             sorted = {};
             stepDone = 0;
-            clearInterval(interval);
-
-            initCountingSortCode();
-            maxValue = Math.max(...graphContainer.find('.bar-block')
-                .map(function () {
-                    return parseInt(this.id);
-                })
-                .get());
+            i = 0;
+            maxValue = Math.max(...
+                graphContainer.find('.bar-block')
+                    .map(function () {
+                        return parseInt(this.id);
+                    }).get());
             n = graphContainer.find('.bar-block').length;
+
             graphContainer.find('.bar-block').each(function (index, $div) {
                 init[index] = {
                     div: $($div),
@@ -290,14 +291,20 @@ define(['helper'], function (helper) {
                 };
                 sorted[index] = {div: '', val: 0}
             });
+
+            initCountingSortCode();
             initSortedContainer(n);
             initCounters();
+
+            helper.changeCodeHighlight(3);
+            helper.setVariableValue('counting_sort', 'i', 0);
+            helper.setVariableValue('counting_sort', 'k', maxValue);
             helper.getStepButton().on('click', sortIteration);
 
             return this;
         },
         sortIteration: function () {
-            return sortIteration()
+            return sortIteration();
         },
         setAnimationSpeed: function (newAnimationSpeed) {
             if (newAnimationSpeed > animationSpeed) {

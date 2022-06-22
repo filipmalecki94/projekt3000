@@ -7,72 +7,77 @@ define(['helper'], function (helper) {
     function sortIteration() {
         helper.getStepButton().off('click', sortIteration)
 
-        $('.graph #' + (C * 2) + '.buffer-container').addClass('merged')
-        $('.graph #' + (C * 2 + 1) + '.buffer-container').addClass('merged')
-        helper.setVariableValue('mergesort', 'k', k)
-        helper.setVariableValue('mergesort', 'n', n)
+        $('.graph #' + (C * 2) + '.buffer-container').addClass('merged');
+        $('.graph #' + (C * 2 + 1) + '.buffer-container').addClass('merged');
+
+        helper.setVariableValue('mergesort', 'k', k);
+        helper.setVariableValue('mergesort', 'n', n);
+
         return helper.changeCodeHighlight(6, function () {
-            helper.setVariableValue('merge', 'i', masterI)
-            helper.setVariableValue('merge', 'j', masterJ)
-            helper.setVariableValue('merge', 'l', masterL)
-            $('.graph .bar-block[data-index="'+masterI+'"]').css('background','red')
-            $('.graph .bar-block[data-index="'+masterJ+'"]').css('background','blue')
-            $('.buffer .bar-block[data-index="'+masterL+'"]').css('border','1px solid green')
+            helper.setVariableValue('merge', 'i', masterI);
+            helper.setVariableValue('merge', 'j', masterJ);
+            helper.setVariableValue('merge', 'l', masterL);
+
+            $('.graph .bar-block[data-index="' + masterI + '"]').css('background', '#DC3545');
+            $('.graph .bar-block[data-index="' + masterJ + '"]').css('background', '#007BFF');
+            $('.buffer .bar-block[data-index="' + masterL + '"]').css('border', '1px solid green');
 
             helper.changeCodeHighlight(4, function () {
                 loop(masterI, masterJ, masterL, 'first').then(function (res) {
                     let I = res['i'], J = res['j'], L = res['l'];
 
-                    $('.graph #' + (C * 2) + '.buffer-container').addClass('border-black')
-                    $('.graph #' + (C * 2) + '.buffer-container').removeClass('merged border-buffer')
-                    $('.graph #' + (C * 2 + 1) + '.buffer-container').addClass('border-black')
-                    $('.graph #' + (C * 2 + 1) + '.buffer-container').removeClass('merged border-buffer')
+                    $('.graph #' + (C * 2) + '.buffer-container').addClass('border-black');
+                    $('.graph #' + (C * 2) + '.buffer-container').removeClass('merged border-buffer');
+                    $('.graph #' + (C * 2 + 1) + '.buffer-container').addClass('border-black');
+                    $('.graph #' + (C * 2 + 1) + '.buffer-container').removeClass('merged border-buffer');
+
                     C++;
                     n = (C + 1) * itemsInBufferContainer;
                     k = n / 2 + (C) * itemsInBufferContainer / 2;
                     masterI = (C) * itemsInBufferContainer;
                     masterJ = k;
-                    masterL = L
+                    masterL = L;
 
-                    helper.changeCodeHighlight(-1, function () {
+                    helper.changeCodeHighlight([], function () {
                         if (C >= Math.ceil(N / itemsInBufferContainer)) { // loopFlag = end
                             for (let x = J; x < N; x++ && L++) {
                                 if (init[L]) {
-                                    buffer[x].val = init[L].val
-                                    $('.graph').find('.bar-block[data-index="' + L + '"]').css('visibility', 'hidden')
+                                    buffer[x].val = init[L].val;
+                                    $('.graph').find('.bar-block[data-index="' + L + '"]').css('visibility', 'hidden');
                                 }
                             }
 
                             helper.changeCodeHighlight([8, 9], function () {
                                 init = buffer;
-                                $('.graph').html($('.buffer').html())
-                                $('.buffer').remove()
+
+                                $('.graph').html($('.buffer').html());
+                                $('.buffer').remove();
                                 buffer = {};
 
                                 level++;
 
-                                initBuffer(itemsInBufferContainer)
-                                C = 0
-                                itemsInBufferContainer = itemsInBufferContainer * 2
-                                n = itemsInBufferContainer
+                                initBuffer(itemsInBufferContainer);
+                                C = 0;
+                                itemsInBufferContainer = itemsInBufferContainer * 2;
+                                n = itemsInBufferContainer;
                                 k = n / 2 + C;
                                 masterI = 0;
                                 masterJ = k;
                                 masterL = 0;
 
-                                helper.changeCodeHighlight(-1, function () {
-                                    helper.getStepButton().on('click', sortIteration)
+                                helper.changeCodeHighlight([], function () {
+                                    helper.getStepButton().on('click', sortIteration);
                                     if (k >= N) {
-                                        $('.buffer').remove()
-                                        $('.graph .buffer-container').removeClass('border border-buffer')
+                                        $('.buffer').remove();
+                                        $('.graph .buffer-container').removeClass('border border-buffer');
                                         helper.getStepButton().off('click', sortIteration);
                                     }
-                                }, animationSpeed, 'mergesort')
-                            }, animationSpeed, 'mergesort')
+                                }, animationSpeed, 'mergesort');
+                            }, animationSpeed, 'mergesort');
                         } else {
-                            helper.getStepButton().on('click', sortIteration)
+                            helper.getStepButton().on('click', sortIteration);
                         }
-                    }, animationSpeed, 'merge')
+                    }, animationSpeed, 'merge');
                 });
             }, animationSpeed, 'merge');
         }, animationSpeed, 'mergesort');
@@ -84,18 +89,19 @@ define(['helper'], function (helper) {
 
             return new Promise(function (resolve) {
                 if (loopFlag === 'firstA') {
-                    let lf = 'last';
                     buffer[L].val = init[I].val;
-                    buffer[L].div = moveToBuffer(L, I)
-                    $('.graph').find('.bar-block[data-index="' + I + '"]').css('visibility', 'hidden')
+                    buffer[L].div = moveToBuffer(L, I);
+                    $('.graph').find('.bar-block[data-index="' + I + '"]').css('visibility', 'hidden');
 
-                    helper.setVariableValue('merge', 'i', I + 1)
-                    helper.setVariableValue('merge', 'j', J)
-                    helper.setVariableValue('merge', 'l', L + 1)
-                    $('.graph .bar-block[data-index="'+I+'"]').css('background','unset')
-                    $('.graph .bar-block[data-index="'+(I+1)+'"]').css('background','red')
-                    $('.buffer .bar-block[data-index="'+L+'"]').css('border','unset')
-                    $('.buffer .bar-block[data-index="'+(L+1)+'"]').css('border','1px solid green')
+                    helper.setVariableValue('merge', 'i', I + 1);
+                    helper.setVariableValue('merge', 'j', J);
+                    helper.setVariableValue('merge', 'l', L + 1);
+
+                    $('.graph .bar-block[data-index="' + I + '"]').css('background', 'unset');
+                    $('.graph .bar-block[data-index="' + (I + 1) + '"]').css('background', '#DC3545');
+                    $('.buffer .bar-block[data-index="' + L + '"]').css('border', 'unset');
+                    $('.buffer .bar-block[data-index="' + (L + 1) + '"]').css('border', '1px solid green');
+
                     helper.changeCodeHighlight(6, function () {
                         if (typeof init[I + 1] !== 'undefined' && (I + 1) < k && J < n) {
                             helper.changeCodeHighlight(4, function () {
@@ -115,45 +121,49 @@ define(['helper'], function (helper) {
                     }, animationSpeed, 'merge');
                 } else if (loopFlag === 'firstB') {
                     buffer[L].val = init[J].val;
-                    buffer[L].div = moveToBuffer(L, J)
-                    $('.graph').find('.bar-block[data-index="' + J + '"]').css('visibility', 'hidden')
+                    buffer[L].div = moveToBuffer(L, J);
+                    $('.graph').find('.bar-block[data-index="' + J + '"]').css('visibility', 'hidden');
 
-                    helper.setVariableValue('merge', 'i', I)
-                    helper.setVariableValue('merge', 'j', (I) < k ? J + 1 : J)
-                    helper.setVariableValue('merge', 'l', L + 1)
-                    $('.graph .bar-block[data-index="'+J+'"]').css('background','unset')
-                    $('.graph .bar-block[data-index="'+((I) < k ? J + 1 : J)+'"]').css('background','blue')
-                    $('.buffer .bar-block[data-index="'+L+'"]').css('border','unset')
-                    $('.buffer .bar-block[data-index="'+(L+1)+'"]').css('border','1px solid green')
+                    helper.setVariableValue('merge', 'i', I);
+                    helper.setVariableValue('merge', 'j', I < k ? J + 1 : J);
+                    helper.setVariableValue('merge', 'l', L + 1);
+
+                    $('.graph .bar-block[data-index="' + J + '"]').css('background', 'unset');
+                    $('.graph .bar-block[data-index="' + (I < k ? (J + 1) : J) + '"]').css('background', '#007BFF');
+                    $('.buffer .bar-block[data-index="' + L + '"]').css('border', 'unset');
+                    $('.buffer .bar-block[data-index="' + (L + 1) + '"]').css('border', '1px solid green');
+
                     helper.changeCodeHighlight(8, function () {
-                            if(I < k && (J + 1) < n) {
-                                helper.changeCodeHighlight(4, function () {
-                                    resolve(loop(I, ((I) < k ? J + 1 : J), L + 1, 'first'));
+                        if (I < k && (J + 1) < n) {
+                            helper.changeCodeHighlight(4, function () {
+                                resolve(loop(I, ((I) < k ? J + 1 : J), L + 1, 'first'));
+                            }, animationSpeed, 'merge');
+                        } else if (I < k) {
+                            helper.changeCodeHighlight(4, function () {
+                                resolve(loop(I, J + 1, L + 1, 'second'));
+                            }, animationSpeed, 'merge');
+                        } else {
+                            helper.changeCodeHighlight(4, function () {
+                                helper.changeCodeHighlight(10, function () {
+                                    resolve(loop(I, J, L + 1, 'last'));
                                 }, animationSpeed, 'merge');
-                            } else if (I < k) {
-                                helper.changeCodeHighlight(4, function () {
-                                    resolve(loop(I, J + 1, L + 1, 'second'));
-                                }, animationSpeed, 'merge');
-                            } else {
-                                helper.changeCodeHighlight(4, function () {
-                                    helper.changeCodeHighlight(10, function () {
-                                        resolve(loop(I, J, L + 1, 'last'));
-                                    }, animationSpeed, 'merge');
-                                }, animationSpeed, 'merge');
-                            }
+                            }, animationSpeed, 'merge');
+                        }
                     }, animationSpeed, 'merge');
                 } else if (loopFlag === 'second') {
                     buffer[L].val = init[I].val;
-                    buffer[L].div = moveToBuffer(L, I)
-                    $('.graph').find('.bar-block[data-index="' + I + '"]').css('visibility', 'hidden')
+                    buffer[L].div = moveToBuffer(L, I);
+                    $('.graph').find('.bar-block[data-index="' + I + '"]').css('visibility', 'hidden');
 
-                    helper.setVariableValue('merge', 'i', (I + 1) < k ? I + 1 : I)
-                    helper.setVariableValue('merge', 'j', J)
-                    helper.setVariableValue('merge', 'l', L + 1)
-                    $('.graph .bar-block[data-index="'+I+'"]').css('background','unset')
-                    $('.graph .bar-block[data-index="'+((I + 1) < k ? I + 1 : I)+'"]').css('background','red')
-                    $('.buffer .bar-block[data-index="'+L+'"]').css('border','unset')
-                    $('.buffer .bar-block[data-index="'+(L+1)+'"]').css('border','1px solid green')
+                    helper.setVariableValue('merge', 'i', (I + 1) < k ? I + 1 : I);
+                    helper.setVariableValue('merge', 'j', J);
+                    helper.setVariableValue('merge', 'l', L + 1);
+
+                    $('.graph .bar-block[data-index="' + I + '"]').css('background', 'unset');
+                    $('.graph .bar-block[data-index="' + ((I + 1) < k ? I + 1 : I) + '"]').css('background', '#DC3545');
+                    $('.buffer .bar-block[data-index="' + L + '"]').css('border', 'unset');
+                    $('.buffer .bar-block[data-index="' + (L + 1) + '"]').css('border', '1px solid green');
+
                     helper.changeCodeHighlight(11, function () {
                         helper.changeCodeHighlight((I + 1) < k ? 10 : 13, function () {
                             resolve(loop((I + 1) < k ? I + 1 : I, J, L + 1, (I + 1) < k ? 'second' : 'last'));
@@ -163,16 +173,19 @@ define(['helper'], function (helper) {
                     if (typeof init[J] !== 'undefined' && (J) < n) {
 
                         helper.changeCodeHighlight(14, function () {
-                            buffer[J].val = init[J].val
-                            buffer[J].div = moveToBuffer(L, J, J + 1 < n)
-                            $('.graph').find('.bar-block[data-index="' + (J) + '"]').css('visibility', 'hidden')
-                            helper.setVariableValue('merge', 'i', I)
-                            helper.setVariableValue('merge', 'j', J + 1)
-                            helper.setVariableValue('merge', 'l', L + 1)
-                            $('.graph .bar-block[data-index="'+J+'"]').css('background','unset')
-                            $('.graph .bar-block[data-index="'+(J+1)+'"]').css('background','blue')
-                            $('.buffer .bar-block[data-index="'+L+'"]').css('border','unset')
-                            $('.buffer .bar-block[data-index="'+(L+1)+'"]').css('border','1px solid green')
+                            buffer[J].val = init[J].val;
+                            buffer[J].div = moveToBuffer(L, J, J + 1 < n);
+                            $('.graph').find('.bar-block[data-index="' + (J) + '"]').css('visibility', 'hidden');
+
+                            helper.setVariableValue('merge', 'i', I);
+                            helper.setVariableValue('merge', 'j', J + 1);
+                            helper.setVariableValue('merge', 'l', L + 1);
+
+                            $('.graph .bar-block[data-index="' + J + '"]').css('background', 'unset');
+                            $('.graph .bar-block[data-index="' + (J + 1) + '"]').css('background', '#007BFF');
+                            $('.buffer .bar-block[data-index="' + L + '"]').css('border', 'unset');
+                            $('.buffer .bar-block[data-index="' + (L + 1) + '"]').css('border', '1px solid green');
+
                             resolve(loop(I, J + 1, L + 1, 'last'));
                         }, animationSpeed, 'merge');
                     } else {
@@ -192,17 +205,17 @@ define(['helper'], function (helper) {
                     } else {
                         helper.changeCodeHighlight(7, function () {
                             resolve({'i': I, 'j': J, 'l': L, 'loopFlag': 'firstB'});
-                        }, animationSpeed, 'merge')
+                        }, animationSpeed, 'merge');
                     }
-                }, animationSpeed, 'merge')
+                }, animationSpeed, 'merge');
             } else if (loopFlag === 'second') {
                 helper.changeCodeHighlight(10, function () {
                     resolve({'i': I, 'j': J, 'l': L, 'loopFlag': 'second'});
-                }, animationSpeed, 'merge')
+                }, animationSpeed, 'merge');
             } else {
                 helper.changeCodeHighlight([13], function () {
                     resolve({'i': I, 'j': J, 'l': L, 'loopFlag': 'last'});
-                }, animationSpeed, 'merge')
+                }, animationSpeed, 'merge');
             }
         });
     }
@@ -219,7 +232,7 @@ define(['helper'], function (helper) {
                 'hideBarBlock': id === -1
             });
 
-        $('.buffer').find('.bar-block[data-index="' + L + '"]').last().replaceWith($bar)
+        $('.buffer').find('.bar-block[data-index="' + L + '"]').last().replaceWith($bar);
 
         return $bar;
     }
@@ -243,11 +256,11 @@ define(['helper'], function (helper) {
                     'height': '0'
                 }),
                 val: 0
-            }
+            };
         }
 
         for (let i = 0; i < N; i++) {
-            let bufferContainerBarIndex = itemsInBufferContainer ? i % (2 * itemsInBufferContainer) : i % (2 * (level + 1))
+            let bufferContainerBarIndex = itemsInBufferContainer ? i % (2 * itemsInBufferContainer) : i % (2 * (level + 1));
 
             if (bufferContainerBarIndex === 0) {
                 if (typeof $bufferContainer !== 'undefined') {
@@ -265,9 +278,9 @@ define(['helper'], function (helper) {
                     'noOrder': true,
                     'customBarBlockClasses': 'buffer-container',
                     'noBorder': true,
-                }).removeClass('d-flex'))
+                }).removeClass('d-flex'));
             } else {
-                $bufferContainer.append(buffer[i].div)
+                $bufferContainer.append(buffer[i].div);
             }
         }
         for (let i = N; i < Math.ceil(N / 2) * 2; i++) {
@@ -289,9 +302,9 @@ define(['helper'], function (helper) {
                 });
             }
             if (typeof buffer[i] === 'undefined') {
-                $bufferContainer.append(extraBar)
+                $bufferContainer.append(extraBar);
             } else {
-                $bufferContainer.append(buffer[i].div)
+                $bufferContainer.append(buffer[i].div);
             }
             buffer[i] = {
                 div: $(extraBar),
@@ -300,8 +313,8 @@ define(['helper'], function (helper) {
             $bufferContainer.append(extraBar);
         }
         bufferContainers.push($bufferContainer);
-        $buffer.append(bufferContainers)
-        $('.graph-block').append($buffer)
+        $buffer.append(bufferContainers);
+        $('.graph-block').append($buffer);
     }
 
     function initMergeSortCode() {
@@ -342,9 +355,9 @@ define(['helper'], function (helper) {
                 {'line': '  B[J] = ARR[J];', 'tab': 1},
             ],
             mergeVariables = {
-                0: {'color': 'red', 'label': 'I'},
-                1: {'color': 'blue', 'label': 'J'},
-                2: {'color': 'green', 'label': 'L'}
+                0: {'color': '#DC3545', 'label': 'I'},
+                1: {'color': '#007BFF', 'label': 'J'},
+                2: {'color': '#28A745', 'label': 'L'}
             };
 
         helper.initCode(codeStructureSort, $codeBlockSort, 'MERGESORT (ARR, N)', codeVariables);
@@ -354,18 +367,17 @@ define(['helper'], function (helper) {
 
     return {
         init: function (graphContainer) {
-            init = {},
-                level = 0,
-                N = 0,
-                n = 2,
-                k = n / 2,
-                C = 0,
-                itemsInBufferContainer = n,
-                masterI = 0,
-                masterJ = k,
-                masterL = 0;
+            init = {};
+            level = 0;
+            N = 0;
+            n = 2;
+            k = n / 2;
+            C = 0;
+            itemsInBufferContainer = n;
+            masterI = 0;
+            masterJ = k;
+            masterL = 0;
 
-            initMergeSortCode();
             graphContainer.find('.bar-block').each(function (index, $div) {
                 init[index] = {
                     div: $div,
@@ -373,26 +385,31 @@ define(['helper'], function (helper) {
                 };
             });
             N = graphContainer.find('.bar-block').length;
-            maxValue = Math.max.apply(null, Object.values(init).map(c => c.val))
+            maxValue = Math.max.apply(null, Object.values(init).map(c => c.val));
+
             for (let i = N; i < Math.ceil(N / n) * n; i++) {
                 let extraBar = helper.createBar(i, -1, {
                     'withNumbers': false,
                     'noOrder': true,
                     'customBarBlockClasses': 'd-none'
                 }).removeClass('d-flex');
+
                 init[i] = {
                     div: $(extraBar),
                     val: maxValue,
                 };
                 graphContainer.append(extraBar);
             }
+
+            initMergeSortCode();
             initBuffer();
+
             helper.getStepButton().on('click', sortIteration);
 
             return this;
         },
         sortIteration: function () {
-            return sortIteration()
+            return sortIteration();
         },
         setAnimationSpeed: function (newAnimationSpeed) {
             if (newAnimationSpeed > animationSpeed) {

@@ -65,7 +65,8 @@ body {
     justify-content: space-around;
 }
 
-.graph .multidigit-container {
+.graph .multidigit-container,
+.sorted .multidigit-container {
     height: 100%;
     display: flex;
     flex-direction: row;
@@ -123,7 +124,7 @@ body {
 	position: relative;
     width: 100%;
     height: 100%;
-    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    /*text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;*/
 }
 
 .bar-block.sorted {
@@ -135,15 +136,17 @@ body {
 	width: 100%;
 	opacity: 0;
 }
-
 .bar {
-	position: absolute;
-	bottom: 0;
-	width: 10px;
-	background: red;
-    border-top: 2px solid black;
-    border-right: 2px solid black;
-    border-left: 2px solid black;
+    position: absolute;
+    bottom: 0;
+    width: 10px;
+    background: red;
+}
+
+body:not(#radixsort) .graph .bar {
+    /*border-top: 2px solid black;*/
+    /*border-right: 2px solid black;*/
+    /*border-left: 2px solid black;*/
 }
 .bar.low-width {
     border-top: unset;
@@ -188,8 +191,8 @@ body {
     border: 1px solid black;
 }
 
-.counter-container .counter-bars .border-bottom-red {
-    border-bottom: 1px solid red;
+.border-bottom-red {
+    border-top: 1px solid red !important;
 }
 
 .graph-block .border-buffer,
@@ -247,8 +250,7 @@ body {
 }
 
 #control-panel.modal .modal-dialog {
-    /*top: 50%;*/
-    top: 59%;
+    top: 50%;
     right: 0;
     position: absolute;
     z-index: 100;
