@@ -26,7 +26,7 @@ body {
 .graph {
     justify-content: space-around;
     flex-direction: row;
-    font-weight: bold;
+    font-weight: 700;
     margin-top: 50px;
 }
 
@@ -124,7 +124,6 @@ body {
 	position: relative;
     width: 100%;
     height: 100%;
-    /*text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;*/
 }
 
 .bar-block.sorted {
@@ -240,7 +239,6 @@ body:not(#radixsort) .graph .bar {
     transition: 0.5s;
 }
 
-.navbar-header .open-control-panel.active,
 .navbar-header .open-control-panel:hover {
     color: black;
     background: #93faff;
@@ -407,46 +405,20 @@ body.override{
 p {
     margin: 0 0 20px;
 }
-.tm-image {
-    width: 100%;
-    height: 100%;
-}
+
 .header {
     height: 60px;
     z-index: 1051;
     position: absolute;
     width: 100%;
 }
-.navbar-toggle {
-    position: absolute;
-    top: 8px;
-    right: 17px;
-    margin: 0;
-    z-index: 99999999;
-    color: #fff;
-    padding: 10px 10px;
-    background-color: #006699;
-    border: none;
-    font-weight: bold;
-    display:none;
-}
+
 .header .navbar-header {
     display: flex;
     align-items: baseline;
     border-bottom: 1px solid #93FAFF;
     height: 100%;
     justify-content: space-between;
-}
-
-.header .navbar-brand {
-    border-right: 1px solid #93FAFF;
-    padding: 0 20px;
-    display: flex;
-    height: 100%;
-    align-items: center;
-    color: #fff;
-    font-weight:300;
-    font-size: 18px;
 }
 
 .header .main-menu {
@@ -492,33 +464,7 @@ p {
 .header ul li:hover {
     background: #93FAFF;
 }
-.header.scroll .navbar-brand {
-    font-size: 18px;
-}
 
-#home {
-    padding-top: 8.5em;
-}
-.content {
-    padding-right: 0;
-    padding-left: 0;
-}
-.content-item {
-    padding-right: 0;
-    padding-left: 0;
-    min-height:570px !important;
-}
-.content-item p:last-child {
-    margin-bottom: 0;
-}
-.background.content-item-1 {
-    padding: 60px 65px;
-}
-.last {
-    padding-right: 0;
-    padding-left: 0;
-    min-height:284px !important;    
-}
 .background {
     background-color: #fff;
     padding: 55px 45px;
@@ -535,274 +481,14 @@ p {
         -ms-flex-pack: center;
             justify-content: center;
 }
-.about-text {
-    margin-bottom: 0;
-    line-height: 1.6;
-}
-.main-title {    
-    font-weight: 300;
-    font-size: 34px;
-    line-height: 1.4;
-    margin-top: 70px;
-    margin-bottom: 70px;
-}
-.section-title {
-    font-size: 1.5em;
-    margin-top: 0;
-    margin-bottom: 25px;
-}
-.dark-blue-text {
-    color: #006699;
-}
-.light-blue-text {
-    color: #2FACFF;
-}
-.dark-blue-bordered-btn:hover,
-.dark-blue-bordered-btn:focus,
-.dark-blue-btn {
-    background: #006699;
-    color: white;    
-}
-.dark-blue-btn:hover,
-.dark-blue-btn:focus,
-.dark-blue-bordered-btn {
-    background: none;
-    border: 1px solid #006699;
-    color: #006699;
-}
-.section-text {
-    line-height: 1.6;
-    font-size: 1em;
-    margin-bottom: 15px;
-}
-.background ul {
-   margin-bottom:20px;
-}
-.background li {
-    list-style: none;
-    font-size: 16px;
-    line-height: 27px;
-}
-.btn {
-    border-radius:0;
-    padding: 10px 25px;
-    margin-top: 20px;
-    font-size: 20px;
-    font-weight: 300;
-    margin-right: 15px;
-    transition:all 0.3s;
-    -webkit-transition:all 0.3s;
-}
-.btn:last-child {
-    margin-right: 0;
-}
-.btn-big {
-    padding: 10px 40px;
-    min-width: 176px;
-}
-.btn-contact {
-    font-size: 17px;
-    padding: 10px 35px;
-    color: #807D7D;
-    font-weight: 300;
-    margin-top: 0;
-    transition: all 0.3s ease;
-}
-.btn-contact:hover,
-.btn-contact:focus {
-    color: white;
-    background-color: rgba(47,47,47,0.5);
-}
-.no-bg {
-    background: none;
-    border: 1px solid #aaa;
-}
-.yellow-btn {
-    background:#ACA633;
-    border:1px solid #ACA633;
-    color:#fff;
-}
-.yellow-btn:hover,
-.yellow-btn:focus {
-    background: none;
-    color: #ACA633;
-}
-.green-btn {
-    background:#168887;
-    border:1px solid #168887;
-    color:#fff; 
-}
-.green-btn:hover,
-.green-btn:focus {
-    background: none;
-    color: #168887;
-}
-.normal-btn {
-    font-size: 16px;
-    font-weight: 300;
-    min-width: 145px;
-}
-.form-control {
-    box-shadow: none;
-    font-size: 16px;
-    height: auto;
-    padding: 8px 12px;
-}
-.form-group {
-    margin-bottom: 18px;
-}
-.contact-form {
-    overflow: hidden;
-    margin-left: -15px;
-    margin-right: -15px;
-}
-.content-item input, .content-item textarea {
-    border-radius:0;
-}
-.contact-field {
-    padding-left: 0;
-    padding-right: 0;
-}
-.footer {
-    color:#fff;
-    font-size: 14px;
-    font-weight: 400;
-    padding:48px 0;
-}
-.footer a {
-	color: #FF6;
-}
-.margin-b-0 {
-    margin-bottom: 0;
-}
-.flexbox {
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-flex-direction: column;
-        -ms-flex-direction: column;
-            flex-direction: column;
-    -webkit-justify-content: center;
-        -ms-flex-pack: center;
-            justify-content: center;
-}
-.pad-l-3 {
-    padding-left: 3px;
-}
-.margin-b-25 {
-    margin-bottom: 25px;
-}
-
-@media screen and (max-width:1199px){
-    .content-item {
-        min-height: 470px !important;
-    }
-    .content-item img {
-        min-height: 470px !important;
-    }
-    .background p {
-        line-height: 22px;        
-    }
-    .background p,
-    .background li {
-        font-size: 13px;
-    }
-    .background h2 {
-        margin-bottom: 15px !important;
-    }
-    p {
-        margin: 0 0 10px;
-    }
-    .btn {
-        margin-top: 15px;        
-    }
-    .background {
-        background-color: #fff;        
-    }
-    .last {
-        min-height: 235px !important;
-    }
-    textarea#message {
-        height: 125px;
-    }
-}
-
-@media screen and (max-width: 1199px) and (min-width: 992px) {
-    .background {
-        padding: 25px;
-    }
-    .background.content-item-1 {
-        padding: 0 40px;
-    }
-    .btn {
-        margin-top: 10px;
-    }
-    .btn-contact {
-        margin-top: 0;
-    }
-    .form-control {
-        font-size: 0.9em;
-    }
-}
 
 @media screen and (max-width:991px){
-
-    .content-item {
-        min-height: inherit !important;
-    }
-    .content-item img {
-        min-height: inherit !important;
-    }
     .header ul li a {
         padding: 5px 15px;
-    }
-    .background p {
-        line-height: 27px;
-    }
-    .background p,
-    .background li {
-        font-size: 16px;
-    }
-    .background h2 {
-        margin-bottom: 20px;
-    }
-    p {
-        margin: 0 0 20px;
-    }
-    .btn {
-        margin-top: 20px;        
-    }
-    .last {
-        min-height: 284px !important;
-    }
-    textarea#message {
-        height: inherit;
     }
 }
 
 @media screen and (max-width:767px){
-    .last {
-        min-height: inherit !important;
-    }
-    .header.scroll .navbar-brand {
-        padding: 12px 15px 0;
-    }
-    .navbar-toggle {
-       display:block;
-       top: 15px;
-       background-color: white;       
-    }
-    .header.scroll .navbar-toggle {
-        top: 8px;
-    }
-    .navbar-toggle .icon-bar {
-        background-color: #006699;
-    }
-    
-    .header ul li a:hover,
-    .header ul li .current {
-        border-top: none;
-    }
     .header {
         padding: 5px 0;
     }
@@ -818,11 +504,6 @@ p {
         transition: max-height 0.3s;
         overflow: hidden;
     }
-    /* http://css3.bradshawenterprises.com/animating_height/ */
-    .main-menu.show {
-        max-height: 250px;
-        overflow: auto;
-    }
     .main-menu ul li {
         display: block;
         padding: 10px 0;
@@ -833,33 +514,6 @@ p {
         padding: 0 0;
         width: 100%;
         float: left;
-    }
-    #home {
-        padding-top: 62px;
-    }
-    .pad-l-3 {
-        padding-left: 15px;
-    }
-}
-
-@media screen and (max-width:500px) {
-    .btn {
-        margin-top: 10px;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .background.content-item-1 {
-        padding: 40px 45px;
-    }
-}
-
-@media screen and (max-width: 420px) {
-    .background {
-        padding: 40px 35px;
-    }
-    .background.content-item-1 {
-        padding: 20px 25px;
     }
 }
 
