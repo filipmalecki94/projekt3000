@@ -5,38 +5,41 @@ define(['helper'], function (helper) {
         helper.getStepButton().off('click', sortIteration);
 
         if (n === 0) {
-            $('.graph.tree').remove()
+            $('.graph.tree').remove();
             $.each(collection, function (i, e) {
-                e.el.removeClass('sorted')
-                e.el.css('background', 'black')
-            })
+                e.el.removeClass('sorted');
+                e.el.css('background', 'black');
+            });
+
             return;
         }
-        helper.setVariableValue('heapsort', 'i', buildIndex >= 0 ? buildIndex : 0)
-        helper.setVariableValue('heapsort', 'n', n)
+
+        helper.setVariableValue('heapsort', 'i', buildIndex >= 0 ? buildIndex : 0);
+        helper.setVariableValue('heapsort', 'n', n);
+
         if (buildIndex >= 0) {
             helper.changeCodeHighlight(0, function () {
                 helper.changeCodeHighlight(1, function () {
-                    shiftDown(collection, n, buildIndex--).then(function (){
+                    shiftDown(collection, n, buildIndex--).then(function () {
                         helper.getStepButton().on('click', sortIteration);
-                    })
-                }, animationSpeed, 'heapsort')
-            }, animationSpeed, 'heapsort')
+                    });
+                }, animationSpeed, 'heapsort');
+            }, animationSpeed, 'heapsort');
         } else {
-            if(--n) {
-                helper.setVariableValue('heapsort', 'i', 0)
-                helper.setVariableValue('heapsort', 'n', n)
+            if (--n) {
+                helper.setVariableValue('heapsort', 'i', 0);
+                helper.setVariableValue('heapsort', 'n', n);
                 helper.changeCodeHighlight(3, function () {
                     helper.changeCodeHighlight(4, function () {
                         swap(collection, n, 0).then(function (result) {
                             helper.changeCodeHighlight(5, function () {
-                                shiftDown(result, n, 0).then(function (){
+                                shiftDown(result, n, 0).then(function () {
                                     helper.getStepButton().on('click', sortIteration);
-                                })
-                            }, animationSpeed, 'heapsort')
-                        })
-                    }, animationSpeed, 'heapsort')
-                }, animationSpeed, 'heapsort')
+                                });
+                            }, animationSpeed, 'heapsort');
+                        });
+                    }, animationSpeed, 'heapsort');
+                }, animationSpeed, 'heapsort');
             } else {
                 helper.getStepButton().on('click', sortIteration);
             }
@@ -78,12 +81,14 @@ define(['helper'], function (helper) {
 
     function shiftDown(t, n, i) {
         let nn = n;
-        helper.setVariableValue('shift_down', 'i', i)
-        helper.setVariableValue('shift_down', 'x', t[i].val)
+
+        helper.setVariableValue('shift_down', 'i', i);
+        helper.setVariableValue('shift_down', 'x', t[i].val);
+
         return loop(t, n, i, i, true).then(function (result) {
             $.each(result, function (i, e) {
                 if (i < nn) {
-                    e.elNode.css('background', 'black')
+                    e.elNode.css('background', 'black');
                     e.el.css('background', 'black');
                 }
             });
@@ -96,21 +101,26 @@ define(['helper'], function (helper) {
 
         return helper.changeCodeHighlight(2, function () {
             let kk = 2 * i + 2;
+
+            helper.setVariableValue('shift_down', 'k', 2 * i + 2);
             if (x) {
                 let kk = 2 * i + 2;
+
                 kk < NN && t[kk] && !t[kk].elNode.hasClass('sorted') && helper.colorElement(t[kk].elNode, '#93faff', '#93faff', 'black');
                 kk < NN && t[kk] && !t[kk].el.hasClass('sorted') && helper.colorElement(t[kk].el, '#93faff');
+
                 (kk - 1) < NN && t[kk - 1] && !t[kk - 1].elNode.hasClass('sorted') && helper.colorElement(t[kk - 1].elNode, '#93faff', '#93faff', 'black');
                 (kk - 1) < NN && t[kk - 1] && !t[kk - 1].el.hasClass('sorted') && helper.colorElement(t[kk - 1].el, '#93faff');
-                helper.colorElement($('.line[line-id="' + i + '"]'), null, '#93faff');
             }
-            t[i] && helper.colorElement(t[i].elNode, '#93faff', 'blue', 'white');
-            t[i] && helper.colorElement(t[i].el, '#93faff', 'blue');
-            helper.setVariableValue('shift_down', 'k', 2 * i + 2)
-            kk < NN && t[kk] && helper.colorElement(t[kk].elNode, false, 'red', 'white')
-            kk < NN && t[kk] && helper.colorElement(t[kk].el, '#93faff', 'red')
-            return helper.changeCodeHighlight(3, function () {
 
+            t[i] && helper.colorElement(t[i].elNode, '#93faff', '#007BFF', 'white');
+            t[i] && helper.colorElement(t[i].el, '#93faff', '#007BFF');
+            helper.colorElement($('.line[line-id="' + i + '"]'), null, '#93faff');
+
+            kk < NN && t[kk] && helper.colorElement(t[kk].elNode, false, '#DC3545', 'white');
+            kk < NN && t[kk] && helper.colorElement(t[kk].el, '#93faff', '#DC3545');
+
+            return helper.changeCodeHighlight(3, function () {
                 return loopCode(t, n, k, i, x).then(function (result) {
                     return new Promise(function (resolve) {
                         if (typeof result.N != 'undefined') {
@@ -118,13 +128,13 @@ define(['helper'], function (helper) {
                         } else {
                             $.each(t, function (i, e) {
                                 if (i < NN) {
-                                    helper.colorElement(e.elNode, e.el.css('color'), 'black', e.el.css('color'))
+                                    helper.colorElement(e.elNode, e.el.css('color'), 'black', e.el.css('color'));
                                     helper.colorElement(e.el, 'black', 'black');
                                 }
                             });
                             helper.changeCodeHighlight(10, function () {
                                 resolve(result.T);
-                            }, animationSpeed, 'shift_down')
+                            }, animationSpeed, 'shift_down');
                         }
                     });
                 });
@@ -137,19 +147,22 @@ define(['helper'], function (helper) {
 
         return new Promise(function (resolve) {
             helper.changeCodeHighlight(4, function () {
-                let f = (k < n) && (+t[k].val > +t[k - 1].val) ? 1 : 2;
+                let conditionPart = (k < n) && (+t[k].val > +t[k - 1].val) ? 1 : 2;
 
                 if (((k < n) && (+t[k].val > +t[k - 1].val)
                     || (--k < n)) && +t[k].val > +t[i].val) {
-                    helper.changeCodeHighlight(f == 2 ? 5 : 4, function () {
-                        if (f == 2) {
+                    helper.changeCodeHighlight(conditionPart === 2 ? 5 : 4, function () {
+                        if (conditionPart === 2) {
                             helper.setVariableValue('shift_down', 'k', k);
-                            (k+1) < n && t[k + 1] && helper.colorElement(t[k + 1].elNode, false, '#93faff', 'black');
-                            k < n && t[k] && helper.colorElement(t[k].elNode, false, 'red', 'white');
-                            (k+1) < n && t[k + 1] && helper.colorElement(t[k + 1].el, '#93faff', 'black');
-                            k < n && t[k] && helper.colorElement(t[k].el, '#93faff', 'red');
+
+                            k < n && t[k] && helper.colorElement(t[k].elNode, false, '#DC3545', 'white');
+                            k < n && t[k] && helper.colorElement(t[k].el, '#93faff', '#DC3545');
+
+                            (k + 1) < n && t[k + 1] && helper.colorElement(t[k + 1].elNode, false, '#93faff', 'black');
+                            (k + 1) < n && t[k + 1] && helper.colorElement(t[k + 1].el, '#93faff', 'black');
                         }
-                        helper.changeCodeHighlight(f == 2 ? 6 : null, function () {
+
+                        helper.changeCodeHighlight(conditionPart === 2 ? 6 : null, function () {
                             helper.changeCodeHighlight(7, function () {
                                 t[k].elNode.animateSwap({
                                     target: t[i].elNode,
@@ -168,33 +181,38 @@ define(['helper'], function (helper) {
                                         t[i] = x;
 
                                         t[i] && helper.colorElement(t[i].elNode, t[i].el.css('color'), 'black', t[i].el.css('color'));
-                                        kk < n && t[kk] && helper.colorElement(t[kk].elNode, t[kk].el.css('color'), 'black', t[kk].el.css('color'));
-                                        (kk - 1) < n && t[kk - 1] && helper.colorElement(t[kk - 1].elNode, t[kk - 1].el.css('color'), 'black', t[kk - 1].el.css('color'));
                                         t[i] && helper.colorElement(t[i].el, 'black', 'black');
-                                        kk < n && t[kk] && helper.colorElement(t[kk].el, 'black', 'black');
-                                        (kk - 1) < n && t[kk - 1] && helper.colorElement(t[kk - 1].el, 'black', 'black');
                                         helper.colorElement($('.line[line-id="' + i + '"]'), null, x.elNode.css('border-color'));
+
+                                        kk < n && t[kk] && helper.colorElement(t[kk].elNode, t[kk].el.css('color'), 'black', t[kk].el.css('color'));
+                                        kk < n && t[kk] && helper.colorElement(t[kk].el, 'black', 'black');
+
+                                        (kk - 1) < n && t[kk - 1] && helper.colorElement(t[kk - 1].elNode, t[kk - 1].el.css('color'), 'black', t[kk - 1].el.css('color'));
+                                        (kk - 1) < n && t[kk - 1] && helper.colorElement(t[kk - 1].el, 'black', 'black');
 
                                         helper.setVariableValue('shift_down', 'i', k);
                                         helper.changeCodeHighlight(8, function () {
                                             resolve({'T': t, 'N': n, 'K': k, 'I': k});
-                                        }, animationSpeed, 'shift_down')
+                                        }, animationSpeed, 'shift_down');
                                     }
                                 });
                             }, animationSpeed, 'shift_down');
                         }, animationSpeed, 'shift_down');
-                    }, f == 2 ? animationSpeed : null, 'shift_down');
+                    }, conditionPart === 2 ? animationSpeed : null, 'shift_down');
                 } else {
                     helper.changeCodeHighlight(5, function () {
-                        helper.setVariableValue('shift_down', 'k', k);
-                        (k + 1) < n && t[k + 1] && helper.colorElement(t[k + 1].elNode, false, '#93faff', 'black');
-                        k < n && t[k] && helper.colorElement(t[k].elNode, false, 'red', 'white');
-                        (k + 1) < n && t[k + 1] && helper.colorElement(t[k + 1].el, '#93faff', 'black');
-                        k < n && t[k] && helper.colorElement(t[k].el, '#93faff', 'red');
+                        let kk = conditionPart === 2 ? 0 : -1;
+
+                        (k + 1 + kk) < n && t[k + 1 + kk] && helper.colorElement(t[k + 1 + kk].elNode, false, '#93faff', 'black');
+                        (k + kk) < n && t[k + kk] && helper.colorElement(t[k + kk].elNode, false, '#DC3545', 'white');
+
+                        (k + 1 + kk) < n && t[k + 1 + kk] && helper.colorElement(t[k + 1 + kk].el, '#93faff', 'black');
+                        (k + kk) < n && t[k + kk] && helper.colorElement(t[k + kk].el, '#93faff', '#DC3545');
+
+                        helper.setVariableValue('shift_down', 'k', k + kk);
                         helper.changeCodeHighlight(6, function () {
                             helper.changeCodeHighlight(9, function () {
                                 t[i] && $('.line[line-id="' + i + '"]').css('background', t[i].el.css('color'));
-
                                 resolve({'T': t});
                             }, animationSpeed, 'shift_down');
                         }, animationSpeed, 'shift_down');
@@ -236,14 +254,14 @@ define(['helper'], function (helper) {
                 {'line': '}', 'tab': 0},
             ],
             shiftDownVariables = {
-                0: {'color': 'red', 'label': 'K'},
-                1: {'color': 'blue', 'label': 'I'},
-                2: {'color': 'green', 'label': 'X'},
+                0: {'color': '#DC3545', 'label': 'K'},
+                1: {'color': '#007BFF', 'label': 'I'},
+                2: {'color': '#28A745', 'label': 'X'},
             };
 
         helper.initCode(codeStructureSort, $codeBlockSort, 'HEAPSORT (ARR, N)', codeVariables);
         helper.initCode(codeStructureShiftDown, $codeBlockShiftDown, 'SHIFT_DOWN (ARR, N, I)', shiftDownVariables);
-        $('.code-container').append($codeBlockSort).append($codeBlockShiftDown)
+        $('.code-container').append($codeBlockSort).append($codeBlockShiftDown);
     }
 
     return {

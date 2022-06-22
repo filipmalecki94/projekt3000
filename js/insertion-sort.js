@@ -29,6 +29,8 @@ define(['helper'], function (helper) {
 
                     if (typeof collection[++i] === 'undefined') {
                         helper.changeCodeHighlight([]);
+                        helper.setVariableValue('insertion_sort', 'i');
+                        helper.setVariableValue('insertion_sort', 'j');
                         $.each(collection, function (index, object) {
                             object.div.removeClass('sorted');
                         });
@@ -125,7 +127,7 @@ define(['helper'], function (helper) {
                 1: {'color': '#007BFF', 'label': 'J'}
             };
 
-        helper.initCode(codeStructure, $codeBlock, 'insertion_sort', variables);
+        helper.initCode(codeStructure, $codeBlock, 'INSERTION_SORT', variables);
         $('.code-container').append($codeBlock);
     }
 

@@ -1,59 +1,71 @@
 define(['helper'], function (helper) {
     let collection = [], animationSpeed = 100, level = 0,
-        N, k, quicksort;
+        N, q, quicksort;
 
     function sortIteration() {
         helper.getStepButton().off('click', sortIteration);
         if (level === 0) {
             appendPartitionLevel(0, N);
-            helper.setVariableValue('quick_sort', 'low', -1)
-            helper.setVariableValue('quick_sort', 'high', N)
+            helper.setVariableValue('quick_sort', 'low', -1);
+            helper.setVariableValue('quick_sort', 'high', N);
             quicksort = quick(-1, N);
         }
-        quicksort.next()
+        quicksort.next();
     }
 
     function* quick(i, j) {
-        helper.setVariableValue('quick_sort', 'low', i)
-        helper.setVariableValue('quick_sort', 'high', j)
         $('.graph .bar-block').css('background', 'unset');
-        if (i + 1 === N - 1 && j === N) {
-            $('.graph-block .partition .partition-level').remove()
-            return;
-        }
-        helper.increaseComparisonCounter()
-        if (2 < Math.abs(j - i)) {
-            collection[i] && collection[i].div.css('background','red')
-            collection[j] && collection[j].div.css('background','blue')
+        helper.setVariableValue('quick_sort', 'low', i);
+        helper.setVariableValue('quick_sort', 'high', j);
+
+        if (1 < Math.abs(j - i - 1)) {
+            collection[i] && collection[i].div.css('background', '#DC3545');
+            collection[j] && collection[j].div.css('background', '#007BFF');
+
             yield* partition(i, j);
-            yield k;
-            appendPartitionLevel(i+1, k);
-            yield* quick(i, k);
+            yield q;
+
+            appendPartitionLevel(i + 1, q);
+            yield* quick(i, q);
             removePartitionLevelG();
-            appendPartitionLevel(k, j);
-            yield* quick(k-1, j);
+
+            appendPartitionLevel(q, j);
+            yield* quick(q - 1, j);
             removePartitionLevelG();
         }
     }
 
     function* partition(i, j) {
         let mid = Math.ceil((i + j) / 2),
-            x = +collection[mid].val;
+            x = collection[mid].val;
 
         helper.changeCodeHighlight(0, function () {
             if (i + 1 === j || mid === N - 1) {
+                $('.graph-block .partition').empty();
+                $('.graph-block .graph .bar-block')
+                    .removeClass('border border-success')
+                    .css('background', 'unset');
+
+                helper.changeCodeHighlight([]);
+                helper.setVariableValue('quick_sort', 'q');
+                helper.setVariableValue('quick_sort', 'low');
+                helper.setVariableValue('quick_sort', 'high');
+                helper.setVariableValue('partition', 'x');
+                helper.setVariableValue('partition', 'low');
+                helper.setVariableValue('partition', 'high');
+
                 return;
             }
             helper.changeCodeHighlight(1, function () {
-                markPivot(Math.ceil((i + j) / 2))
-                helper.setVariableValue('partition', 'low', i)
-                helper.setVariableValue('partition', 'high', j)
+                markPivot(Math.ceil((i + j) / 2));
+                helper.setVariableValue('partition', 'low', i);
+                helper.setVariableValue('partition', 'high', j);
                 helper.changeCodeHighlight(0, function () {
-                    helper.changeCodeHighlight(1, function () {
+                    helper.changeCodeHighlight(2, function () {
                         loop(i, j, mid, x, 'low').then(function (result) {
                             if (result) {
-                                helper.setVariableValue('quick_sort', 'q', result.i)
-                                k = result.i
+                                helper.setVariableValue('quick_sort', 'q', result.i);
+                                q = result.i;
                             }
                             helper.getStepButton().on('click', sortIteration);
                         });
@@ -69,9 +81,9 @@ define(['helper'], function (helper) {
 
             return new Promise(function (resolve) {
                 if (loopFlag === 'swap') {
-                    helper.changeCodeHighlight(8, function () {
+                    helper.changeCodeHighlight(9, function () {
                         if (i < j) {
-                            helper.changeCodeHighlight(9, function () {
+                            helper.changeCodeHighlight(10, function () {
                                 return $(collection[i].div).animateSwap({
                                     target: collection[j].div,
                                     speed: animationSpeed,
@@ -81,44 +93,51 @@ define(['helper'], function (helper) {
                                         collection[i] = collection[j];
                                         collection[j] = y;
 
-                                        collection[i].div.css('background', 'red')
-                                        collection[j].div.css('background', 'blue')
+                                        collection[i].div.css('background', '#DC3545');
+                                        collection[j].div.css('background', '#007BFF');
 
                                         if (i === mid || j === mid) {
                                             mid = i + j - mid;
                                         }
-                                        return helper.changeCodeHighlight(1, function () {
+
+                                        return helper.changeCodeHighlight(2, function () {
                                             return resolve(loop(i, j, mid, x, 'low'));
                                         }, animationSpeed, 'partition');
                                     }
-                                })
+                                });
                             }, animationSpeed, 'partition');
                         } else {
-                            helper.changeCodeHighlight(10, function () {
-                                helper.changeCodeHighlight(11, function () {
-                                    resolve({'i': i, 'j': j, 'mid': mid, 'x': x})
+                            helper.changeCodeHighlight(11, function () {
+                                helper.changeCodeHighlight(12, function () {
+                                    resolve({'i': i, 'j': j, 'mid': mid, 'x': x});
                                 }, animationSpeed, 'partition');
                             }, animationSpeed, 'partition');
                         }
                     }, animationSpeed, 'partition');
                 } else {
-                    if (loopFlag === 'low' && +collection[i].val < x) {
-                        return helper.changeCodeHighlight(3, function () {
+                    if (loopFlag === 'low' && collection[i].val < x) {
+                        return helper.changeCodeHighlight(4, function () {
+                            helper.increaseComparisonCounter();
+
                             return resolve(loop(i, j, mid, x, 'low'));
                         }, animationSpeed, 'partition');
                     }
-                    if (loopFlag === 'low' && +collection[i].val >= x) {
-                        return helper.changeCodeHighlight(3, function () {
+                    if (loopFlag === 'low' && collection[i].val >= x) {
+                        return helper.changeCodeHighlight(4, function () {
+                            helper.increaseComparisonCounter();
+
                             return resolve(loop(i, j, mid, x, 'high'));
                         }, animationSpeed, 'partition');
                     }
-                    if (loopFlag === 'high' && +collection[j].val > x) {
-                        return helper.changeCodeHighlight(6, function () {
+                    if (loopFlag === 'high' && collection[j].val > x) {
+                        return helper.changeCodeHighlight(7, function () {
+                            helper.increaseComparisonCounter();
+
                             return resolve(loop(i, j, mid, x, 'high'));
                         }, animationSpeed, 'partition');
                     }
-                    if (loopFlag === 'high' && +collection[i].val >= x && +collection[j].val <= x) {
-                        return helper.changeCodeHighlight(6, function () {
+                    if (loopFlag === 'high' && collection[i].val >= x && collection[j].val <= x) {
+                        return helper.changeCodeHighlight(7, function () {
                             return resolve(loop(i, j, mid, x, 'swap'));
                         }, animationSpeed, 'partition');
                     }
@@ -130,32 +149,32 @@ define(['helper'], function (helper) {
     function loopCode(i, j, mid, x, loopFlag) {
         return new Promise(function (resolve) {
             if (loopFlag === 'low') {
-                helper.setVariableValue('partition', 'low', i + 1)
-                collection[i] && collection[i].div.css('background', j <= i ? 'blue' : 'unset')
-                collection[i + 1] && collection[i + 1].div.css('background', j === i+1 ? 'linear-gradient(45deg, rgba(0,0,255,1) 50%, rgba(255,0,0,1) 50%)' : 'red')
-                helper.changeCodeHighlight(2, function () {
-                    resolve({'i': i + 1, 'j': j, 'mid': mid, 'x': x, 'loopFlag': 'low'})
+                helper.setVariableValue('partition', 'low', i + 1);
+                collection[i] && collection[i].div.css('background', j <= i ? '#007BFF' : 'unset');
+                collection[i + 1] && collection[i + 1].div.css('background', j === i + 1 ? 'linear-gradient(45deg, #007BFF 50%, #DC3545 50%)' : '#DC3545');
+                helper.changeCodeHighlight(3, function () {
+                    resolve({'i': i + 1, 'j': j, 'mid': mid, 'x': x, 'loopFlag': 'low'});
                 }, animationSpeed, 'partition');
-            } else if(loopFlag === 'high') {
-                helper.setVariableValue('partition', 'high', j - 1)
-                collection[j] && collection[j].div.css('background', j === i ? 'red' : 'unset')
-                collection[j - 1] && collection[j - 1].div.css('background', j-1 === i ? 'linear-gradient(45deg, rgba(0,0,255,1) 50%, rgba(255,0,0,1) 50%)': 'blue')
-                helper.changeCodeHighlight(5, function () {
-                    resolve({'i': i, 'j': j - 1, 'mid': mid, 'x': x, 'loopFlag': 'high'})
+            } else if (loopFlag === 'high') {
+                helper.setVariableValue('partition', 'high', j - 1);
+                collection[j] && collection[j].div.css('background', j === i ? '#DC3545' : 'unset');
+                collection[j - 1] && collection[j - 1].div.css('background', j - 1 === i ? 'linear-gradient(45deg, #007BFF 50%, #DC3545 50%)' : '#007BFF');
+                helper.changeCodeHighlight(6, function () {
+                    resolve({'i': i, 'j': j - 1, 'mid': mid, 'x': x, 'loopFlag': 'high'});
                 }, animationSpeed, 'partition');
             } else {
                 if (i >= j) {
-                    resolve({'i': i, 'j': j, 'mid': mid, 'x': x, 'loopFlag': 'swap'})
+                    resolve({'i': i, 'j': j, 'mid': mid, 'x': x, 'loopFlag': 'swap'});
                 } else {
-                    resolve({'i': i, 'j': j, 'mid': mid, 'x': x, 'loopFlag': 'swap'})
+                    resolve({'i': i, 'j': j, 'mid': mid, 'x': x, 'loopFlag': 'swap'});
                 }
             }
         });
     }
 
     function appendPartitionLevel(i, j) {
-        $('.graph-block .partition').append(createPartitionLevel(level, i, j))
-        enablePartitionRangeField(level++, i, j)
+        $('.graph-block .partition').append(createPartitionLevel(level, i, j));
+        enablePartitionRangeField(level++, i, j);
     }
 
     function removePartitionLevelG() {
@@ -163,8 +182,7 @@ define(['helper'], function (helper) {
     }
 
     function createPartition() {
-        return $('<div/>', {'class': 'partition'})
-            .css({'width': '100%', 'height': '100px'});
+        return $('<div/>', {'class': 'partition'}).css({'width': '100%', 'height': '100px'});
     }
 
     function createPartitionLevel(level, i, j) {
@@ -195,9 +213,9 @@ define(['helper'], function (helper) {
     }
 
     function markPivot(pivot) {
-        $('.graph .bar-block').removeClass('border border-success')
-        collection[pivot].div.addClass('border border-success')
-        helper.setVariableValue('partition', 'x', collection[pivot].val)
+        $('.graph .bar-block').removeClass('border border-success');
+        collection[pivot].div.addClass('border border-success');
+        helper.setVariableValue('partition', 'x', collection[pivot].val);
     }
 
     function initQuicksortCode() {
@@ -212,12 +230,13 @@ define(['helper'], function (helper) {
                 {'line': '}', 'tab': 0},
             ],
             codeVariables = {
-                0: {'color': 'green', 'label': 'Q'},
-                1: {'color': 'red', 'label': 'LOW'},
-                2: {'color': 'blue', 'label': 'HIGH'}
+                0: {'color': '#28A745', 'label': 'Q'},
+                1: {'color': '#DC3545', 'label': 'LOW'},
+                2: {'color': '#007BFF', 'label': 'HIGH'}
             },
             codeStructurePartition = [
                 {'line': 'X = ARR[N / 2];', 'tab': 0},
+                {'line': '&nbsp;', 'tab': 1},
                 {'line': 'WHILE ( ) {', 'tab': 0},
                 {'line': '  DO ++LOW', 'tab': 1},
                 {'line': '  WHILE (ARR[LOW] < X);', 'tab': 1},
@@ -232,14 +251,14 @@ define(['helper'], function (helper) {
                 {'line': '}', 'tab': 0},
             ],
             partitionVariables = {
-                0: {'color': 'green', 'label': 'X'},
-                1: {'color': 'red', 'label': 'LOW'},
-                2: {'color': 'blue', 'label': 'HIGH'}
+                0: {'color': '#28A745', 'label': 'X'},
+                1: {'color': '#DC3545', 'label': 'LOW'},
+                2: {'color': '#007BFF', 'label': 'HIGH'}
             };
 
-        helper.initCode(codeStructureSort, $codeBlockSort, 'quick sort', codeVariables);
-        helper.initCode(codeStructurePartition, $codeBlockPartition, 'partition', partitionVariables);
-        $('.code-container').append($codeBlockSort).append($codeBlockPartition)
+        helper.initCode(codeStructureSort, $codeBlockSort, 'QUICK_SORT (ARR, LOW, HIGH)', codeVariables);
+        helper.initCode(codeStructurePartition, $codeBlockPartition, 'PARTITION (ARR, LOW, HIGH)', partitionVariables);
+        $('.code-container').append($codeBlockSort).append($codeBlockPartition);
     }
 
     return {
@@ -247,7 +266,7 @@ define(['helper'], function (helper) {
             initQuicksortCode();
             collection = [];
             level = 0;
-            k = null;
+            q = null;
             N = graphContainer.find('.bar-block').length;
             $('.graph').before(createPartition());
             graphContainer.find('.bar-block').each(function (index, $div) {
@@ -261,7 +280,7 @@ define(['helper'], function (helper) {
             return this;
         },
         sortIteration: function () {
-            return sortIteration
+            return sortIteration;
         },
         setAnimationSpeed: function (newAnimationSpeed) {
             if (newAnimationSpeed > animationSpeed) {

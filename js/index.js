@@ -157,7 +157,7 @@ require(['helper',
         $('.numerical-fields input#speed-input').value = animationSpeed
         $(hash).addClass('current');
         $('.code-container').empty();
-        $('.graph').empty();
+        $('.graph').empty().removeAttr('style');
         $('.next').unbind();
         $('.counter-container').remove();
         $('.buffer').remove();

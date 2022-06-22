@@ -5,8 +5,7 @@ define(['helper'], function (helper) {
         counter = {},
         sorted = {},
         stepDone = 0,
-        animationSpeed = 200,
-        interval,
+        animationSpeed = 100,
         i = 0;
 
     function sortIteration() {
@@ -32,7 +31,7 @@ define(['helper'], function (helper) {
                         }, animationSpeed);
                     }
                 }, animationSpeed);
-            }, true);
+            }, true, animationSpeed);
 
             return;
         }
@@ -59,25 +58,23 @@ define(['helper'], function (helper) {
                         helper.setVariableValue('counting_sort', 'i', i);
                         helper.changeCodeHighlight(6, function () {
                             helper.setVariableValue('counting_sort', 'i', 1);
+                            $('.counter-container .counter-labels .bar-block[data-index="0"]').addClass('border-bottom-red');
+                            $('.sorted').empty().removeClass('preset').append(getVerticalBarsOrder());
                             helper.changeCodeHighlight(9, function () {
                                 stepDone = 2;
                                 i = 1;
-                                helper.darkenBars($('.graph .bar-block .bar'), null, true);
+                                helper.darkenBars($('.graph .bar-block .bar'), null, true, animationSpeed);
                                 helper.getStepButton().on('click', sortIteration);
                             }, animationSpeed);
                         }, animationSpeed);
                     }
                 }, animationSpeed);
 
-            });
+            }, false, animationSpeed);
             return;
         }
 
         if (stepDone === 2) {
-            if (i === 1) {
-                $('.sorted').empty().removeClass('preset').append(getVerticalBarsOrder());
-            }
-
             helper.darkenBars($('.counter-container .counter-bars .bar-block[data-index="' + i + '"]'), function () {
                 $('.sorted #' + i + ' .bar').removeClass('invisible');
                 $('.counter-container .counter-labels .bar-block[data-index="' + i + '"]').addClass('border-bottom-red');
@@ -94,61 +91,45 @@ define(['helper'], function (helper) {
                                 stepDone = 3;
                                 i = n - 1;
                                 helper.setVariableValue('counting_sort', 'i', n - 1);
-                                helper.darkenBars($('.graph .bar-block'), null, true);
+                                helper.darkenBars($('.graph .bar-block'), null, true, animationSpeed);
                                 helper.getStepButton().on('click', sortIteration);
                             }, animationSpeed);
                         }, animationSpeed);
                     }
                 }, animationSpeed);
-            });
+            },false, animationSpeed);
 
             return;
         }
 
         if (stepDone === 3) {
-            let e = --counter[init[i].val].count, values = [];
+            let e = --counter[init[i].val].count;
 
             helper.darkenBars(init[i].div, function () {
                 sorted[e].val = init[i].val;
                 sorted[e].div = init[i].div;
-                $('.sorted .bar-block[data-index="' + e + '"] .bar').replaceWith(helper.createBar(e, sorted[e].val,
+                $('.sorted .bar-block[data-index="' + e + '"]').replaceWith(helper.createBar(e, sorted[e].val,
                     {
                         'withNumbers': true,
-                        'onlyBar': true,
-                        'isOversize': n < 50
+                        'isOversize': n > 50
                     }));
                 helper.changeCodeHighlight(13, function () {
                     if (i-- === 0) {
                         stepDone = 4;
 
-                        $.each(sorted, function (index, object) {
-                            values.push(object.val);
-                        });
-
-                        $('.graph').empty();
-                        $('.sorted').remove();
                         $('.counter-container').remove();
 
                         helper.setVariableValue('counting_sort', 'i', null);
                         helper.changeCodeHighlight(12, function () {
-                            helper.changeCodeHighlight([], function () {
-                                $.each(helper.createBars($('.graph'), values,
-                                    {
-                                        'withNumbers': true
-                                    }
-                                ).find('.bar-block'), function (index, $div) {
-                                    init[index] = {
-                                        div: $($div),
-                                        val: parseInt($(this).attr('id')),
-                                    }
-                                    sorted[index] = {div: '', val: 0}
-                                });
-
-                                initSortedContainer();
-                                initCounters();
-
-                                helper.getStepButton().on('click', sortIteration);
-                            }, animationSpeed);
+                            $('.graph').empty().animateSwap({
+                                target: $('.sorted'),
+                                speed: 1500,
+                                opacity: "1",
+                                callback: function () {
+                                    $('.graph').removeAttr('style');
+                                    helper.changeCodeHighlight([]);
+                                }
+                            });
                         }, animationSpeed);
                     } else {
                         helper.setVariableValue('counting_sort', 'i', i);
@@ -157,7 +138,7 @@ define(['helper'], function (helper) {
                         });
                     }
                 }, animationSpeed);
-            });
+            }, false, animationSpeed);
         }
     }
 
@@ -184,7 +165,7 @@ define(['helper'], function (helper) {
                 1: {'color': 'gray', 'label': 'K'}
             };
 
-        helper.initCode(codeStructure, $codeBlock, 'counting_sort', variables);
+        helper.initCode(codeStructure, $codeBlock, 'COUNTING_SORT', variables);
         $('.code-container').append($codeBlock);
     }
 
@@ -290,13 +271,12 @@ define(['helper'], function (helper) {
 
     return {
         init: function (graphContainer) {
-            clearInterval(interval);
-
             init = {};
             maxValue = 0;
             counter = {};
             sorted = {};
             stepDone = 0;
+            i = 0;
             maxValue = Math.max(...
                 graphContainer.find('.bar-block')
                     .map(function () {
@@ -324,7 +304,7 @@ define(['helper'], function (helper) {
             return this;
         },
         sortIteration: function () {
-            return sortIteration()
+            return sortIteration();
         },
         setAnimationSpeed: function (newAnimationSpeed) {
             if (newAnimationSpeed > animationSpeed) {
